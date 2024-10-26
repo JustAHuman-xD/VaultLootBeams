@@ -1,6 +1,5 @@
 package com.lootbeams.mixin.client;
 
-import com.lootbeams.ClientSetup;
 import com.lootbeams.Utils;
 import com.lootbeams.config.Configuration;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -29,7 +28,7 @@ public abstract class ItemEntityRendererMixin extends EntityRenderer<ItemEntity>
         this.entityRenderDispatcher.setRenderShadow(true);
         if (Utils.rendersBeam(itemEntity)) {
             lootbeams$entity = itemEntity;
-            this.entityRenderDispatcher.setRenderShadow(!Configuration.GLOW_EFFECT.get());
+            this.entityRenderDispatcher.setRenderShadow(!Configuration.BEAM_SHADOW.get());
         }
     }
 

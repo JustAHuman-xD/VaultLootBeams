@@ -64,11 +64,7 @@ public class ClientSetup {
 		}
 	}
 
-	public static void playDropSound(ItemEntity itemEntity) {
-		if (!Configuration.SOUND.get()) {
-			return;
-		}
-
+	public static void attemptDropSound(ItemEntity itemEntity) {
 		ItemStack itemStack = itemEntity.getItem();
 		Item item = itemStack.getItem();
 		if ((Configuration.SOUND_ALL_ITEMS.get() && !Utils.isItemInRegistryList(Configuration.SOUND_ONLY_BLACKLIST.get(), item))

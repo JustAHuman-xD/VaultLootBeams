@@ -29,9 +29,9 @@ public class Configuration {
 	public static final ForgeConfigSpec.DoubleValue BEAM_ALPHA;
 	public static final ForgeConfigSpec.BooleanValue SOLID_BEAM;
 	public static final ForgeConfigSpec.BooleanValue GLOWING_BEAM;
-	public static final ForgeConfigSpec.BooleanValue ANIMATE_GLOW;
-	public static final ForgeConfigSpec.BooleanValue GLOW_EFFECT;
-	public static final ForgeConfigSpec.DoubleValue GLOW_EFFECT_RADIUS;
+	public static final ForgeConfigSpec.BooleanValue ANIMATE_SHADOW;
+	public static final ForgeConfigSpec.BooleanValue BEAM_SHADOW;
+	public static final ForgeConfigSpec.DoubleValue SHADOW_RADIUS;
 	public static final ForgeConfigSpec.BooleanValue WHITE_CENTER;
 
 	public static final ForgeConfigSpec.BooleanValue PARTICLES;
@@ -79,20 +79,23 @@ public class Configuration {
 		REQUIRE_ON_GROUND = clientBuilder.comment("If the item needs to be on the ground to render the Loot Beam.").define("require_ground", true);
 		COLOR_OVERRIDES = clientBuilder.comment("Overrides an item's beam color with hex color. Must follow the specific format: (registryname=hexcolor) Or (#tagname=hexcolor). Example: \"minecraft:stone=0xFFFFFF\". This also accepts modids.").define("color_overrides", new ArrayList<>());
 
-		clientBuilder.comment("Beam Configuration").push("Beam Properties");
+		clientBuilder.comment("Beam Properties").push("Beam Properties");
 		BEAM_RADIUS = clientBuilder.comment("The radius of the Loot Beam.").defineInRange("beam_radius", 1D, 0D, 5D);
 		BEAM_HEIGHT = clientBuilder.comment("The height of the Loot Beam.").defineInRange("beam_height", 2D, 0D, 10D);
-		BEAM_Y_OFFSET = clientBuilder.comment("The Y-offset of the loot beam.").defineInRange("beam_y_offset", 0D, -30D, 30D);
+		BEAM_Y_OFFSET = clientBuilder.comment("The Y-offset of the loot Beam.").defineInRange("beam_y_offset", 0D, -30D, 30D);
 		BEAM_ALPHA = clientBuilder.comment("Transparency of the Loot Beam.").defineInRange("beam_alpha", 0.85D, 0D, 1D);
 		SOLID_BEAM = clientBuilder.comment("If the Loot Beam should use a solid texture or the beacon style texture.").define("solid_beam", true);
 		WHITE_CENTER = clientBuilder.comment("If the Loot Beam should have a white center.").define("white_center", true);
 		GLOWING_BEAM = clientBuilder.comment("If the Loot Beam should be glowing.").define("glowing_beam", true);
-		GLOW_EFFECT = clientBuilder.comment("If the Loot Beam should have a glow effect around the base of the item.").define("glow_effect", true);
-		GLOW_EFFECT_RADIUS = clientBuilder.comment("The radius of the glow effect.").defineInRange("glow_effect_radius", 0.5D, 0.00001D, 1D);
-		ANIMATE_GLOW = clientBuilder.comment("If the glow effect should be animated.").define("animate_glow", true);
 		clientBuilder.pop();
 
-		clientBuilder.comment("Particle Config").push("Beam Particles");
+		clientBuilder.comment("Glowing Beam Shadow").push("Glowing Beam Shadow");
+		BEAM_SHADOW = clientBuilder.comment("If Loot Beams should have a glowing \"shadow\" around the base of the item.").define("beam_shadow", true);
+		SHADOW_RADIUS = clientBuilder.comment("The radius of the shadow.").defineInRange("shadow_radius", 0.5D, 0.00001D, 1D);
+		ANIMATE_SHADOW = clientBuilder.comment("If the shadow should be animated.").define("animate_shadow", true);
+		clientBuilder.pop();
+
+		clientBuilder.comment("Beam Particles").push("Beam Particles");
 		PARTICLES = clientBuilder.comment("If particles should appear around the item.").define("particles", true);
 		PARTICLE_SIZE = clientBuilder.comment("The size of the particles.").defineInRange("particle_size", 0.25D, 0.00001D, 10D);
 		PARTICLE_SPEED = clientBuilder.comment("The speed of the particles.").defineInRange("particle_speed", 0.1D, 0.00001D, 10D);
@@ -103,9 +106,9 @@ public class Configuration {
 		clientBuilder.pop();
 
 		clientBuilder.comment("Item Config").push("Items");
-		ALL_ITEMS = clientBuilder.comment("If all Items Loot Beams should be rendered. Has priority over only_equipment and only_rare.").define("all_items", true);
-		ONLY_RARE = clientBuilder.comment("If Loot Beams should only be rendered on items with rarity.").define("only_rare", false);
-		ONLY_EQUIPMENT = clientBuilder.comment("If Loot Beams should only be rendered on equipment. (Equipment includes: Swords, Tools, Armor, Shields, Bows, Crossbows, Tridents, Arrows, and Fishing Rods)").define("only_equipment", false);
+		ALL_ITEMS = clientBuilder.comment("If all items should render Loot Beams.").define("all_items", false);
+		ONLY_RARE = clientBuilder.comment("If item's with a rarity should render Loot Beams.").define("rare_items", false);
+		ONLY_EQUIPMENT = clientBuilder.comment("If equipment item's should render Loot Beams. (Equipment includes: Swords, Tools, Armor, Shields, Bows, Crossbows, Tridents, Arrows, and Fishing Rods)").define("equipment_items", false);
 		WHITELIST = clientBuilder.comment("Registry names of items that Loot Beams should render on. Example: \"minecraft:stone\", \"minecraft:iron_ingot\", You can also specify modids for a whole mod's items.").define("whitelist", new ArrayList<>());
 		BLACKLIST = clientBuilder.comment("Registry names of items that Loot Beams should NOT render on. This has priority over everything. You can also specify modids for a whole mod's items.").define("blacklist", new ArrayList<>());
 		clientBuilder.pop();

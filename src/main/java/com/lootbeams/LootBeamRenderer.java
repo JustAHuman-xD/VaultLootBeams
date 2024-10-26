@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.util.StringUtil;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -47,16 +48,16 @@ public class LootBeamRenderer extends RenderType {
 
 	public static void renderLootBeam(PoseStack stack, MultiBufferSource buffer, float pTicks, long worldTime, ItemEntity itemEntity) {
 		float beamAlpha = Configuration.BEAM_ALPHA.get().floatValue();
-		float entityTime = itemEntity.tickCount;
+		float entityTime = itemEntity.getAge();
 
 		// Fade out when close
 		double distanceSqr = Minecraft.getInstance().player.distanceToSqr(itemEntity);
-		if (distanceSqr < 2f) {
-			beamAlpha *= (float) distanceSqr;
+		if (distanceSqr < 1.5f) {
+			beamAlpha *= (float) (distanceSqr / 1.5f);
 		}
 
 		// Don't render beam if its too transparent
-		if (beamAlpha <= 0.15f) {
+		if (beamAlpha <= 0.05f) {
 			return;
 		}
 
@@ -108,15 +109,16 @@ public class LootBeamRenderer extends RenderType {
 			stack.popPose();
 		}
 
-		if (Configuration.GLOW_EFFECT.get() && itemEntity.isOnGround()) {
+		if (Configuration.BEAM_SHADOW.get() && itemEntity.isOnGround()) {
 			stack.pushPose();
 			stack.translate(0, 0.001f, 0);
-			float radius = Configuration.GLOW_EFFECT_RADIUS.get().floatValue();
-			if (Configuration.ANIMATE_GLOW.get()) {
-				beamAlpha *= (float) ((Math.abs(Math.cos((entityTime + pTicks) / 10f)) * 0.5f + 0.5f) * 1.3f);
-				radius *= (float) ((Math.abs(Math.cos((entityTime + pTicks) / 10f) * 0.45f)) * 0.75f + 0.75f);
+			float radius = Configuration.SHADOW_RADIUS.get().floatValue();
+			if (Configuration.ANIMATE_SHADOW.get()) {
+				float multiplier = (float) (Mth.sin((entityTime + pTicks) / 10.0F + itemEntity.bobOffs + (float) Math.PI) * 0.75 + 0.75F) * 0.6f;
+				beamAlpha *= multiplier;
+				radius *= multiplier;
 			}
-			renderGlow(stack, buffer.getBuffer(getGlow()), r, g, b, beamAlpha * 0.4f, radius);
+			renderGlow(stack, buffer.getBuffer(getGlow()), r, g, b, beamAlpha, radius);
 			stack.popPose();
 		}
 		stack.popPose();
@@ -286,7 +288,7 @@ public class LootBeamRenderer extends RenderType {
 	}
 
 	private static RenderType getGlow() {
-		return Configuration.GLOW_EFFECT.get() ? GLOWING_GLOW : DEFAULT_GLOW;
+		return Configuration.BEAM_SHADOW.get() ? GLOWING_GLOW : DEFAULT_GLOW;
 	}
 
 	private static RenderType createBeamRenderType(ResourceLocation texture) {
