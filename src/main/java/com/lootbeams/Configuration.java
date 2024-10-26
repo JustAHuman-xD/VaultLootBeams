@@ -56,7 +56,6 @@ public class Configuration {
 	public static final ForgeConfigSpec.DoubleValue NAMETAG_BACKGROUND_ALPHA;
 	public static final ForgeConfigSpec.DoubleValue NAMETAG_SCALE;
 	public static final ForgeConfigSpec.DoubleValue NAMETAG_Y_OFFSET;
-	public static final ForgeConfigSpec.BooleanValue DMCLOOT_COMPAT_RARITY;
 	public static final ForgeConfigSpec.ConfigValue<List<String>> CUSTOM_RARITIES;
 	public static final ForgeConfigSpec.BooleanValue WHITE_RARITIES;
 	public static final ForgeConfigSpec.BooleanValue VANILLA_RARITIES;
@@ -120,7 +119,6 @@ public class Configuration {
 		NAMETAG_BACKGROUND_ALPHA = clientBuilder.comment("Transparency of the nametag background/border.").defineInRange("nametag_background_alpha", 0.5D, 0D, 1D);
 		NAMETAG_SCALE = clientBuilder.comment("Scale of the nametag.").defineInRange("nametag_scale", 1, -10D, 10D);
 		NAMETAG_Y_OFFSET = clientBuilder.comment("The Y-offset of the nametag.").defineInRange("nametag_y_offset", 0.75D, -30D, 30D);
-		DMCLOOT_COMPAT_RARITY = clientBuilder.comment("If a smaller tag should be rendered under with DMCLoot rarities.").define("dmcloot_compat_rarity", true);
 		CUSTOM_RARITIES = clientBuilder.comment("Define what the smaller tag should render on. Example: \"Exotic\", \"Ancient\". The string supplied has to be the tooltip line below the name. This is really only used for modpacks.").define("custom_rarities", new ArrayList<>());
 		WHITE_RARITIES = clientBuilder.comment("If rarities should ignore color and render as white (This is really only used for modpacks)").define("white_rarities", false);
 		VANILLA_RARITIES = clientBuilder.comment("If vanilla rarities should be rendered.").define("vanilla_rarities", true);
@@ -139,7 +137,7 @@ public class Configuration {
 		CLIENT_CONFIG = clientBuilder.build();
 	}
 
-	public static Color getColorFromItemOverrides(Item i) {
+	public static Color colorOverride(Item item) {
 		List<String> overrides = COLOR_OVERRIDES.get();
 		if (overrides.isEmpty()) {
 			return null;
@@ -158,26 +156,25 @@ public class Configuration {
 				colorIn = Color.decode(configValue[1]);
 			} catch (Exception e) {
 				LootBeams.LOGGER.error(String.format("Color overrides error! \"%s\" is not a valid hex color for \"%s\"", configValue[1], nameIn));
-				return null;
+				continue;
 			}
 
 			// Mod id
-			if (!nameIn.contains(":") && ForgeRegistries.ITEMS.getKey(i).getNamespace().equals(nameIn)) {
+			if (!nameIn.contains(":") && ForgeRegistries.ITEMS.getKey(item).getNamespace().equals(nameIn)) {
 				return colorIn;
 			}
 
 			if (registry != null) {
 				// Tag
-				if (nameIn.startsWith("#") && ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registry.ITEM_REGISTRY, registry)).contains(i)) {
+				if (nameIn.startsWith("#") && ForgeRegistries.ITEMS.tags().getTag(TagKey.create(Registry.ITEM_REGISTRY, registry)).contains(item)) {
 					return colorIn;
 				}
 
 				// Item
 				Item registryItem = ForgeRegistries.ITEMS.getValue(registry);
-				if (registryItem != null && registryItem.asItem() == i) {
+				if (registryItem != null && registryItem.asItem() == item) {
 					return colorIn;
 				}
-
 			}
 		}
 

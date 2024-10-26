@@ -12,22 +12,20 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(EntityRenderer.class)
 public class EntityRendererMixin<T extends Entity> {
-    @Unique
-    ItemEntity entity;
+    @Unique ItemEntity lootbeams$entity;
 
-    @Inject(at = @At("HEAD"), method = "render", locals = LocalCapture.CAPTURE_FAILHARD)
-    public void render(T p_114485_, float p_114486_, float p_114487_, PoseStack p_114488_, MultiBufferSource p_114489_, int p_114490_, CallbackInfo ci) {
-        if (p_114485_ instanceof ItemEntity ie) {
-            entity = ie;
+    @Inject(at = @At("HEAD"), method = "render")
+    public void render(T entity, float yaw, float tickDelta, PoseStack stack, MultiBufferSource buffer, int light, CallbackInfo ci) {
+        if (entity instanceof ItemEntity itemEntity) {
+            lootbeams$entity = itemEntity;
         }
     }
 
     @ModifyVariable(at = @At("HEAD"), method = "render", ordinal = 0, argsOnly = true)
     public int render(int light) {
-        return entity != null ? ClientSetup.overrideLight(entity, light) : light;
+        return lootbeams$entity != null ? ClientSetup.overrideLight(lootbeams$entity, light) : light;
     }
 }
