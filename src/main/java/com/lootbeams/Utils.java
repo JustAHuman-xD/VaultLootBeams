@@ -1,5 +1,7 @@
 package com.lootbeams;
 
+import com.lootbeams.config.Configuration;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -33,8 +35,22 @@ public class Utils {
     private static final Map<ItemEntity, Component> NAME_CACHE = new HashMap<>();
     private static final Map<ItemEntity, List<Component>> TOOLTIP_CACHE = new HashMap<>();
 
-    public static boolean isRare(ItemEntity item) {
-        return item.getItem().getRarity() != Rarity.COMMON;
+    public static boolean rendersBeam(ItemEntity itemEntity) {
+        ItemStack itemStack = itemEntity.getItem();
+        Item item = itemStack.getItem();
+        LocalPlayer player = Minecraft.getInstance().player;
+        return player != null && player.distanceToSqr(itemEntity) <= Math.pow(Configuration.RENDER_DISTANCE.get(), 2)
+                && (Configuration.ALL_ITEMS.get()
+                    || (Configuration.ONLY_EQUIPMENT.get() && Utils.isEquipmentItem(item))
+                    || (Configuration.ONLY_RARE.get() && Utils.isRare(itemStack))
+                    || (Utils.isItemInRegistryList(Configuration.WHITELIST.get(), item))
+                )
+				&& !Utils.isItemInRegistryList(Configuration.BLACKLIST.get(), item)
+                && (!Configuration.REQUIRE_ON_GROUND.get() || itemEntity.isOnGround());
+    }
+
+    public static boolean isRare(ItemStack itemStack) {
+        return itemStack.getRarity() != Rarity.COMMON;
     }
 
     public static String capitalize(String str) {
@@ -129,22 +145,22 @@ public class Utils {
         return dot > 1.0D - accuracy / length && !target.isInvisible();
     }
 
-    public static void cache(ItemEntity ie) {
-        nameCache(ie, ie.getItem());
-        tooltipCache(ie, ie.getItem());
+    public static void cache(ItemEntity itemEntity) {
+        nameCache(itemEntity, itemEntity.getItem());
+        tooltipCache(itemEntity, itemEntity.getItem());
     }
 
-    public static Component nameCache(ItemEntity ie, ItemStack itemStack) {
-        return NAME_CACHE.computeIfAbsent(ie, o1 -> itemStack.getHoverName());
+    public static Component nameCache(ItemEntity itemEntity, ItemStack itemStack) {
+        return NAME_CACHE.computeIfAbsent(itemEntity, ie -> itemStack.getHoverName());
     }
 
-    public static List<Component> tooltipCache(ItemEntity ie, ItemStack itemStack) {
-        return TOOLTIP_CACHE.computeIfAbsent(ie, o1 -> itemStack.getTooltipLines(null, TooltipFlag.Default.NORMAL));
+    public static List<Component> tooltipCache(ItemEntity itemEntity, ItemStack itemStack) {
+        return TOOLTIP_CACHE.computeIfAbsent(itemEntity, ie -> itemStack.getTooltipLines(null, TooltipFlag.Default.NORMAL));
     }
 
-    public static void unCache(ItemEntity ie) {
-        NAME_CACHE.remove(ie);
-        TOOLTIP_CACHE.remove(ie);
+    public static void unCache(ItemEntity itemEntity) {
+        NAME_CACHE.remove(itemEntity);
+        TOOLTIP_CACHE.remove(itemEntity);
     }
 
     /**

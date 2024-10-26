@@ -1,5 +1,6 @@
-package com.lootbeams;
+package com.lootbeams.config;
 
+import com.lootbeams.LootBeams;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -74,15 +75,15 @@ public class Configuration {
 		clientBuilder.comment("Beam Config").push("Loot Beams");
 		RENDER_NAME_COLOR = clientBuilder.comment("If beams should be colored the same as the Items name (excludes name colors from rarity). This has priority over render_rarity_color.").define("render_name_color", true);
 		RENDER_RARITY_COLOR = clientBuilder.comment("If beams should be colored the same as the Items rarity.").define("render_rarity_color", true);
-		RENDER_DISTANCE = clientBuilder.comment("How close the player has to be to see the beam. (note: ItemEntities stop rendering at 24 blocks, so that is the limit for beams)").defineInRange("render_distance", 24D, 0D, 24D);
+		RENDER_DISTANCE = clientBuilder.comment("How close the player has to be to see the beam. (note: in vanilla items stop rendering at 24 blocks.)").defineInRange("render_distance", 24D, 0D, 1024D);
 		REQUIRE_ON_GROUND = clientBuilder.comment("If the item needs to be on the ground to render the Loot Beam.").define("require_ground", true);
 		COLOR_OVERRIDES = clientBuilder.comment("Overrides an item's beam color with hex color. Must follow the specific format: (registryname=hexcolor) Or (#tagname=hexcolor). Example: \"minecraft:stone=0xFFFFFF\". This also accepts modids.").define("color_overrides", new ArrayList<>());
 
-		clientBuilder.comment("Beam Configuration").push("Beam");
-		BEAM_RADIUS = clientBuilder.comment("The radius of the Loot Beam.").defineInRange("beam_radius", 0.55D, 0D, 5D);
-		BEAM_HEIGHT = clientBuilder.comment("The height of the Loot Beam.").defineInRange("beam_height", 1.5D, 0D, 10D);
-		BEAM_Y_OFFSET = clientBuilder.comment("The Y-offset of the loot beam.").defineInRange("beam_y_offset", 0.5D, -30D, 30D);
-		BEAM_ALPHA = clientBuilder.comment("Transparency of the Loot Beam.").defineInRange("beam_alpha", 0.75D, 0D, 1D);
+		clientBuilder.comment("Beam Configuration").push("Beam Properties");
+		BEAM_RADIUS = clientBuilder.comment("The radius of the Loot Beam.").defineInRange("beam_radius", 1D, 0D, 5D);
+		BEAM_HEIGHT = clientBuilder.comment("The height of the Loot Beam.").defineInRange("beam_height", 2D, 0D, 10D);
+		BEAM_Y_OFFSET = clientBuilder.comment("The Y-offset of the loot beam.").defineInRange("beam_y_offset", 0D, -30D, 30D);
+		BEAM_ALPHA = clientBuilder.comment("Transparency of the Loot Beam.").defineInRange("beam_alpha", 0.85D, 0D, 1D);
 		SOLID_BEAM = clientBuilder.comment("If the Loot Beam should use a solid texture or the beacon style texture.").define("solid_beam", true);
 		WHITE_CENTER = clientBuilder.comment("If the Loot Beam should have a white center.").define("white_center", true);
 		GLOWING_BEAM = clientBuilder.comment("If the Loot Beam should be glowing.").define("glowing_beam", true);
@@ -91,7 +92,7 @@ public class Configuration {
 		ANIMATE_GLOW = clientBuilder.comment("If the glow effect should be animated.").define("animate_glow", true);
 		clientBuilder.pop();
 
-		clientBuilder.comment("Particle Config").push("Particles");
+		clientBuilder.comment("Particle Config").push("Beam Particles");
 		PARTICLES = clientBuilder.comment("If particles should appear around the item.").define("particles", true);
 		PARTICLE_SIZE = clientBuilder.comment("The size of the particles.").defineInRange("particle_size", 0.25D, 0.00001D, 10D);
 		PARTICLE_SPEED = clientBuilder.comment("The speed of the particles.").defineInRange("particle_speed", 0.1D, 0.00001D, 10D);
@@ -125,7 +126,7 @@ public class Configuration {
 		clientBuilder.pop();
 
 		clientBuilder.comment("Sounds").push("Sounds");
-		SOUND = clientBuilder.comment("If sounds should be played when items are picked up.").define("play_sounds", true);
+		SOUND = clientBuilder.comment("If sounds should be played when items are picked up.").define("play_sounds", false);
 		SOUND_VOLUME = clientBuilder.comment("The volume of the sound.").defineInRange("sound_volume", 1D, 0D, 1D);
 		SOUND_ALL_ITEMS = clientBuilder.comment("If sounds should play on all items. Has priority over sound_only_equipment and sound_only_rare.").define("sound_all_items", false);
 		SOUND_ONLY_RARE = clientBuilder.comment("If sounds should only be played on items with rarity.").define("sound_only_rare", true);

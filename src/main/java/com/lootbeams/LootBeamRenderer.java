@@ -1,5 +1,6 @@
 package com.lootbeams;
 
+import com.lootbeams.config.Configuration;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -44,12 +45,12 @@ public class LootBeamRenderer extends RenderType {
 		super(p_173178_, p_173179_, p_173180_, p_173181_, p_173182_, p_173183_, p_173184_, p_173185_);
 	}
 
-	public static void renderLootBeam(PoseStack stack, MultiBufferSource buffer, float pTicks, long worldTime, ItemEntity item) {
+	public static void renderLootBeam(PoseStack stack, MultiBufferSource buffer, float pTicks, long worldTime, ItemEntity itemEntity) {
 		float beamAlpha = Configuration.BEAM_ALPHA.get().floatValue();
-		float entityTime = item.tickCount;
+		float entityTime = itemEntity.tickCount;
 
 		// Fade out when close
-		double distanceSqr = Minecraft.getInstance().player.distanceToSqr(item);
+		double distanceSqr = Minecraft.getInstance().player.distanceToSqr(itemEntity);
 		if (distanceSqr < 2f) {
 			beamAlpha *= (float) distanceSqr;
 		}
@@ -65,7 +66,7 @@ public class LootBeamRenderer extends RenderType {
 		float yOffset = Configuration.BEAM_Y_OFFSET.get().floatValue();
 
 
-		Color color = Utils.getItemColor(item);
+		Color color = Utils.getItemColor(itemEntity);
 		float r = color.getRed() / 255f;
 		float g = color.getGreen() / 255f;
 		float b = color.getBlue() / 255f;
@@ -107,7 +108,7 @@ public class LootBeamRenderer extends RenderType {
 			stack.popPose();
 		}
 
-		if (Configuration.GLOW_EFFECT.get() && item.isOnGround()) {
+		if (Configuration.GLOW_EFFECT.get() && itemEntity.isOnGround()) {
 			stack.pushPose();
 			stack.translate(0, 0.001f, 0);
 			float radius = Configuration.GLOW_EFFECT_RADIUS.get().floatValue();
@@ -121,11 +122,11 @@ public class LootBeamRenderer extends RenderType {
 		stack.popPose();
 
 		if (Configuration.RENDER_NAMETAGS.get()) {
-			renderNameTag(stack, buffer, item, color);
+			renderNameTag(stack, buffer, itemEntity, color);
 		}
 
-		if (Configuration.PARTICLES.get() && !Configuration.PARTICLE_RARE_ONLY.get() || Utils.isRare(item)) {
-			renderParticles(pTicks, item, (int) entityTime, r, g, b);
+		if (Configuration.PARTICLES.get() && (!Configuration.PARTICLE_RARE_ONLY.get() || Utils.isRare(itemEntity.getItem()))) {
+			renderParticles(pTicks, itemEntity, (int) entityTime, r, g, b);
 		}
 	}
 
@@ -165,17 +166,17 @@ public class LootBeamRenderer extends RenderType {
 		builder.vertex(matrixPose, radius, (float) 0, -radius).color(red, green, blue, alpha).uv(1, 0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).normal(matrixNormal, 0.0F, 1.0F, 0.0F).endVertex();
 	}
 
-	private static void renderNameTag(PoseStack stack, MultiBufferSource buffer, ItemEntity ie, Color color) {
+	private static void renderNameTag(PoseStack stack, MultiBufferSource buffer, ItemEntity itemEntity, Color color) {
 		// If player is crouching or looking at the item
 		Minecraft instance = Minecraft.getInstance();
         LocalPlayer player = instance.player;
 		if (player == null || (!player.isCrouching()
 				&& !(Configuration.RENDER_NAMETAGS_ONLOOK.get()
-				&& Utils.isLookingAt(player, ie, Configuration.NAMETAG_LOOK_SENSITIVITY.get())))) {
+				&& Utils.isLookingAt(player, itemEntity, Configuration.NAMETAG_LOOK_SENSITIVITY.get())))) {
 			return;
 		}
 
-		ItemStack itemStack = ie.getItem();
+		ItemStack itemStack = itemEntity.getItem();
 		double yOffset = Configuration.NAMETAG_Y_OFFSET.get();
 		float nametagScale = Configuration.NAMETAG_SCALE.get().floatValue();
 		float foregroundAlpha = Configuration.NAMETAG_TEXT_ALPHA.get().floatValue();
@@ -186,13 +187,13 @@ public class LootBeamRenderer extends RenderType {
 		stack.pushPose();
 
 		// Render nametags at heights based on player distance
-		stack.translate(0.0D, Math.min(1D, instance.player.distanceToSqr(ie) * 0.025D) + yOffset, 0.0D);
+		stack.translate(0.0D, Math.min(1D, instance.player.distanceToSqr(itemEntity) * 0.025D) + yOffset, 0.0D);
 		stack.mulPose(instance.getEntityRenderDispatcher().cameraOrientation());
 		stack.scale(-0.02F * nametagScale, -0.02F * nametagScale, 0.02F * nametagScale);
 
 		// Render stack counts on nametag
 		Font fontRenderer = instance.font;
-		String itemName = StringUtil.stripColor(Utils.nameCache(ie, itemStack).getString());
+		String itemName = StringUtil.stripColor(Utils.nameCache(itemEntity, itemStack).getString());
 		if (Configuration.RENDER_STACKCOUNT.get()) {
 			int count = itemStack.getCount();
 			if (count > 1) {
@@ -208,7 +209,7 @@ public class LootBeamRenderer extends RenderType {
 		stack.translate(0.0D, 10, 0.0D);
 		stack.scale(0.75f, 0.75f, 0.75f);
 		boolean textDrawn = false;
-		List<Component> tooltip = Utils.tooltipCache(ie, itemStack);
+		List<Component> tooltip = Utils.tooltipCache(itemEntity, itemStack);
 
 		if (tooltip.size() >= 2) {
 			Component tooltipRarity = tooltip.get(1);
@@ -228,7 +229,7 @@ public class LootBeamRenderer extends RenderType {
 			Color rarityColor = Utils.getRawColor(tooltip.get(0));
 			foregroundColor = new Color(rarityColor.getRed(), rarityColor.getGreen(), rarityColor.getBlue(), (int) (255 * foregroundAlpha)).getRGB();
 			backgroundColor = new Color(rarityColor.getRed(), rarityColor.getGreen(), rarityColor.getBlue(), (int) (255 * backgroundAlpha)).getRGB();
-			String rarity = ie.getItem().getRarity().name().toLowerCase();
+			String rarity = itemEntity.getItem().getRarity().name().toLowerCase();
 			renderText(fontRenderer, stack, buffer, Utils.capitalize(rarity), foregroundColor, backgroundColor, backgroundAlpha);
 		}
 
