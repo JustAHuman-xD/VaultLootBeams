@@ -84,7 +84,7 @@ public class LootBeamRenderer extends RenderType {
 		stack.mulPose(Vector3f.XP.rotationDegrees(180));
 		renderPart(stack, buffer.getBuffer(getBeam()), r, g, b, beamAlpha, beamHeight, 0.0F, beamRadius, beamRadius, 0.0F, -beamRadius, 0.0F, 0.0F, -beamRadius, false);
 		stack.mulPose(Vector3f.XP.rotationDegrees(-180));
-		renderPart(stack, buffer.getBuffer(getBeam()), r, g, b, beamAlpha, beamHeight, 0.0F, beamRadius, beamRadius, 0.0F, -beamRadius, 0.0F, 0.0F, -beamRadius, Configuration.SOLID_BEAM.get());
+		renderPart(stack, buffer.getBuffer(getBeam()), r, g, b, beamAlpha, beamHeight, 0.0F, beamRadius, beamRadius, 0.0F, -beamRadius, 0.0F, 0.0F, -beamRadius, !Configuration.SOLID_BEAM.get());
 		stack.popPose();
 
 		//Render glow around main beam
@@ -94,7 +94,7 @@ public class LootBeamRenderer extends RenderType {
 		stack.mulPose(Vector3f.XP.rotationDegrees(180));
 		renderPart(stack, buffer.getBuffer(getBeam()), r, g, b, beamAlpha * 0.4f, beamHeight, -glowRadius, -glowRadius, glowRadius, -glowRadius, -beamRadius, glowRadius, glowRadius, glowRadius, false);
 		stack.mulPose(Vector3f.XP.rotationDegrees(-180));
-		renderPart(stack, buffer.getBuffer(getBeam()), r, g, b, beamAlpha * 0.4f, beamHeight, -glowRadius, -glowRadius, glowRadius, -glowRadius, -beamRadius, glowRadius, glowRadius, glowRadius, Configuration.SOLID_BEAM.get());
+		renderPart(stack, buffer.getBuffer(getBeam()), r, g, b, beamAlpha * 0.4f, beamHeight, -glowRadius, -glowRadius, glowRadius, -glowRadius, -beamRadius, glowRadius, glowRadius, glowRadius, !Configuration.SOLID_BEAM.get());
 		stack.popPose();
 
 		if (Configuration.WHITE_CENTER.get()) {
@@ -104,7 +104,7 @@ public class LootBeamRenderer extends RenderType {
 			stack.mulPose(Vector3f.XP.rotationDegrees(180));
 			renderPart(stack, buffer.getBuffer(getBeam()), r, g, b, beamAlpha, beamHeight, 0.0F, beamRadius * 0.4f, beamRadius * 0.4f, 0.0F, -beamRadius * 0.4f, 0.0F, 0.0F, -beamRadius * 0.4f, false);
 			stack.mulPose(Vector3f.XP.rotationDegrees(-180));
-			renderPart(stack, buffer.getBuffer(getBeam()), r, g, b, beamAlpha, beamHeight, 0.0F, beamRadius * 0.4f, beamRadius * 0.4f, 0.0F, -beamRadius * 0.4f, 0.0F, 0.0F, -beamRadius * 0.4f, Configuration.SOLID_BEAM.get());
+			renderPart(stack, buffer.getBuffer(getBeam()), r, g, b, beamAlpha, beamHeight, 0.0F, beamRadius * 0.4f, beamRadius * 0.4f, 0.0F, -beamRadius * 0.4f, 0.0F, 0.0F, -beamRadius * 0.4f, !Configuration.SOLID_BEAM.get());
 			stack.popPose();
 		}
 
@@ -279,7 +279,7 @@ public class LootBeamRenderer extends RenderType {
 	}
 
 	private static RenderType getBeam() {
-		if (Configuration.GLOW_EFFECT.get()) {
+		if (Configuration.GLOWING_BEAM.get()) {
 			return GLOWING_BEAM;
 		}
 		return Configuration.SOLID_BEAM.get() ? SOLID_BEAM : DEFAULT_BEAM;
