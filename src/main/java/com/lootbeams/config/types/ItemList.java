@@ -57,31 +57,67 @@ public class ItemList {
         return false;
     }
 
+    public List<String> toStringList() {
+        List<String> items = new ArrayList<>();
+        for (Item item : this.items) {
+            ResourceLocation registryName = item.getRegistryName();
+            if (registryName == null) {
+                LootBeams.LOGGER.warn("Couldn't serialize item {}", item);
+                continue;
+            }
+            items.add(registryName.toString());
+        }
+
+        for (TagKey<Item> tag : this.tags) {
+            items.add("#" + tag.location());
+        }
+
+        items.addAll(this.modIds);
+
+        return items;
+    }
+
+    public JsonArray serialize() {
+        JsonArray items = new JsonArray();
+        for (String item : toStringList()) {
+            items.add(item);
+        }
+        return items;
+    }
+
     public static ItemList deserialize(JsonObject root, String key, ItemList def) {
         if (!(root.get(key) instanceof JsonArray serializedItems)) {
             LootBeams.LOGGER.warn("No/Invalid item list found for {}, using default", key);
             return def;
         }
 
-        List<Item> items = new ArrayList<>();
-        List<TagKey<Item>> tags = new ArrayList<>();
-        List<String> modIds = new ArrayList<>();
-
+        List<String> serialized = new ArrayList<>();
         for (JsonElement element : serializedItems) {
             if (!(element instanceof JsonPrimitive primitive) || !primitive.isString()) {
                 LootBeams.LOGGER.warn("Invalid item entry: {}", element);
                 continue;
             }
+            serialized.add(primitive.getAsString());
+        }
 
-            String itemKey = primitive.getAsString();
-            if (!itemKey.contains(":")) {
-                if (Utils.isModId(key, itemKey)) {
-                    modIds.add(itemKey);
-                }
-            } else if (itemKey.startsWith("#")) {
+        return deserialize(key, serialized);
+    }
+
+    public static ItemList deserialize(String key, List<String> serialized) {
+        Utils.enableWarnings();
+        List<Item> items = new ArrayList<>();
+        List<TagKey<Item>> tags = new ArrayList<>();
+        List<String> modIds = new ArrayList<>();
+
+        for (String itemKey : serialized) {
+            if (itemKey.startsWith("#")) {
                 TagKey<Item> tag = Utils.getTag(key, itemKey);
                 if (tag != null) {
                     tags.add(tag);
+                }
+            } else if (!itemKey.contains(":")) {
+                if (Utils.isModId(key, itemKey)) {
+                    modIds.add(itemKey);
                 }
             } else {
                 Item item = Utils.getItem(key, itemKey);
@@ -91,27 +127,5 @@ public class ItemList {
             }
         }
         return new ItemList(items, tags, modIds);
-    }
-
-    public static JsonArray serialize(ItemList itemMap) {
-        JsonArray items = new JsonArray();
-        for (Item item : itemMap.items) {
-            ResourceLocation registryName = item.getRegistryName();
-            if (registryName == null) {
-                LootBeams.LOGGER.warn("Couldn't serialize item {}", item);
-                continue;
-            }
-            items.add(new JsonPrimitive(registryName.toString()));
-        }
-
-        for (TagKey<Item> tag : itemMap.tags) {
-            items.add(new JsonPrimitive("#" + tag.location()));
-        }
-
-        for (String modId : itemMap.modIds) {
-            items.add(new JsonPrimitive(modId));
-        }
-
-        return items;
     }
 }

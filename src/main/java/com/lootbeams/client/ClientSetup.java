@@ -35,6 +35,7 @@ public class ClientSetup {
 		RELOAD_CONFIG.setKeyModifierAndCode(KeyModifier.CONTROL, InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_L));
 		MinecraftForge.EVENT_BUS.register(ClientSetup.class);
 		ClientRegistry.registerKeyBinding(OPEN_CONFIG);
+		ClientRegistry.registerKeyBinding(RELOAD_CONFIG);
 	}
 
 	@SubscribeEvent

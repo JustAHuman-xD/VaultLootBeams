@@ -17,6 +17,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.ModList;
@@ -35,6 +36,7 @@ import static com.lootbeams.config.ModConfig.CONFIG;
 public class Utils {
     private static final Map<ItemEntity, Component> NAME_CACHE = new HashMap<>();
     private static final Map<ItemEntity, List<Component>> TOOLTIP_CACHE = new HashMap<>();
+    private static boolean warnings = true;
 
     public static boolean rendersBeam(ItemEntity itemEntity) {
         LocalPlayer player = Minecraft.getInstance().player;
@@ -142,7 +144,9 @@ public class Utils {
 
     public static boolean isModId(String context, String itemKey) {
         if (!ModList.get().isLoaded(itemKey)) {
-            LootBeams.LOGGER.warn("Couldn't find mod for id \"{}\" in {}", itemKey, context);
+            if (warnings) {
+                LootBeams.LOGGER.warn("Couldn't find mod for id \"{}\" in {}", itemKey, context);
+            }
             return false;
         }
         return true;
@@ -152,13 +156,17 @@ public class Utils {
         // skip the # before the tag identifier
         ResourceLocation tagResource = ResourceLocation.tryParse(itemKey.substring(1));
         if (tagResource == null) {
-            LootBeams.LOGGER.warn("Invalid tag identifier \"{}\" in {}", itemKey, context);
+            if (warnings) {
+                LootBeams.LOGGER.warn("Invalid tag identifier \"{}\" in {}", itemKey, context);
+            }
             return null;
         }
 
         ITagManager<Item> tagManager = ForgeRegistries.ITEMS.tags();
         if (tagManager == null) {
-            LootBeams.LOGGER.warn("Couldn't find tag manager for items, something has gone very wrong");
+            if (warnings) {
+                LootBeams.LOGGER.warn("Couldn't find tag manager for items, something has gone very wrong");
+            }
             return null;
         }
 
@@ -166,7 +174,9 @@ public class Utils {
                 .map(TagKey::location)
                 .anyMatch(tagResource::equals);
         if (!found) {
-            LootBeams.LOGGER.warn("Couldn't find tag for identifier \"{}\" in {}", itemKey, context);
+            if (warnings) {
+                LootBeams.LOGGER.warn("Couldn't find tag for identifier \"{}\" in {}", itemKey, context);
+            }
             return null;
         }
         return TagKey.create(ForgeRegistries.ITEMS.getRegistryKey(), tagResource);
@@ -175,13 +185,17 @@ public class Utils {
     public static Item getItem(String context, String itemKey) {
         ResourceLocation itemResource = ResourceLocation.tryParse(itemKey);
         if (itemResource == null) {
-            LootBeams.LOGGER.warn("Invalid item identifier \"{}\" in {}", itemKey, context);
+            if (warnings) {
+                LootBeams.LOGGER.warn("Invalid item identifier \"{}\" in {}", itemKey, context);
+            }
             return null;
         }
 
         Item item = ForgeRegistries.ITEMS.getValue(itemResource);
-        if (item == null) {
-            LootBeams.LOGGER.warn("Couldn't find item for identifier \"{}\" in {}", itemKey, context);
+        if (item == null || item == Items.AIR) {
+            if (warnings) {
+                LootBeams.LOGGER.warn("Couldn't find item for identifier \"{}\" in {}", itemKey, context);
+            }
             return null;
         }
         return item;
@@ -202,5 +216,13 @@ public class Utils {
 
     public static boolean passes(ItemCondition condition, ItemList whitelist, ItemList blacklist, ItemStack itemStack) {
         return (condition.test(itemStack) || whitelist.contains(itemStack.getItem())) && !blacklist.contains(itemStack.getItem());
+    }
+
+    public static void enableWarnings() {
+        warnings = true;
+    }
+
+    public static void disableWarnings() {
+        warnings = false;
     }
 }

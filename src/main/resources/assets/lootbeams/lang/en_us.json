@@ -1,4 +1,8 @@
 {
+  "key.categories.lootbeams": "Lootbeams",
+  "key.lootbeams.open_config": "Open Config",
+  "key.lootbeams.reload_config": "Reload Config (From File)",
+
   "lootbeams.config.title": "Lootbeams",
   "lootbeams.config.category.general": "General",
   "lootbeams.config.category.beam_properties": "Beam Properties",
@@ -97,5 +101,9 @@
   "lootbeams.config.soundWhitelist": "Play Sound Whitelist",
   "lootbeams.config.soundWhitelist.tooltip": "replace",
   "lootbeams.config.soundBlacklist": "Play Sound Blacklist",
-  "lootbeams.config.soundBlacklist.tooltip": "replace"
+  "lootbeams.config.soundBlacklist.tooltip": "replace",
+
+  "lootbeams.config.error.invalidModId": "Invalid mod id",
+  "lootbeams.config.error.invalidTag": "Invalid tag identifier",
+  "lootbeams.config.error.invalidItem": "Invalid item identifier"
 }

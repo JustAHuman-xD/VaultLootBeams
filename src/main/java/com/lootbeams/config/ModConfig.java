@@ -137,8 +137,8 @@ public class ModConfig {
         root.addProperty("renderDistance", renderDistance);
         root.addProperty("requireGround", requireGround);
         root.addProperty("renderCondition", renderCondition.name());
-        root.add("renderWhitelist", ItemList.serialize(renderWhitelist));
-        root.add("renderBlacklist", ItemList.serialize(renderBlacklist));
+        root.add("renderWhitelist", renderWhitelist.serialize());
+        root.add("renderBlacklist", renderBlacklist.serialize());
 
         root.addProperty("beamRadius", beamRadius);
         root.addProperty("beamHeight", beamHeight);
@@ -150,7 +150,7 @@ public class ModConfig {
         root.addProperty("animateShadow", animateShadow);
         root.addProperty("beamRenderMode", beamRenderMode.name());
         root.addProperty("beamColorMode", beamColorMode.name());
-        root.add("customColors", ColorMap.serialize(customColors));
+        root.add("customColors", customColors.serialize());
 
         root.addProperty("beamParticles", beamParticles);
         root.addProperty("particleSize", particleSize);
@@ -159,8 +159,8 @@ public class ModConfig {
         root.addProperty("particleCount", particleCount);
         root.addProperty("particleLifetime", particleLifetime);
         root.addProperty("particleCondition", particleCondition.name());
-        root.add("particleWhitelist", ItemList.serialize(particleWhitelist));
-        root.add("particleBlacklist", ItemList.serialize(particleBlacklist));
+        root.add("particleWhitelist", particleWhitelist.serialize());
+        root.add("particleBlacklist", particleBlacklist.serialize());
 
         root.addProperty("beamNameplate", beamNameplate);
         root.addProperty("nameplateOnLook", nameplateOnLook);
@@ -174,14 +174,14 @@ public class ModConfig {
         root.addProperty("renderVanillaRarities", renderVanillaRarities);
         root.add("customNameplateRarities", JsonUtils.serializeList(customNameplateRarities));
         root.addProperty("nameplateCondition", nameplateCondition.name());
-        root.add("nameplateWhitelist", ItemList.serialize(nameplateWhitelist));
-        root.add("nameplateBlacklist", ItemList.serialize(nameplateBlacklist));
+        root.add("nameplateWhitelist", nameplateWhitelist.serialize());
+        root.add("nameplateBlacklist", nameplateBlacklist.serialize());
 
         root.addProperty("landingSound", landingSound);
         root.addProperty("soundVolume", soundVolume);
         root.addProperty("soundCondition", soundCondition.name());
-        root.add("soundWhitelist", ItemList.serialize(soundWhitelist));
-        root.add("soundBlacklist", ItemList.serialize(soundBlacklist));
+        root.add("soundWhitelist", soundWhitelist.serialize());
+        root.add("soundBlacklist", soundBlacklist.serialize());
 
         try (final FileWriter fileWriter = new FileWriter(getConfigFile())) {
             GSON.toJson(root, fileWriter);

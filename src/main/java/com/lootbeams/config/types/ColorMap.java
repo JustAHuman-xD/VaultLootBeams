@@ -62,25 +62,50 @@ public class ColorMap {
         return null;
     }
 
+    public JsonObject serialize() {
+        JsonObject object = new JsonObject();
+        for (Map.Entry<Item, List<Color>> entry : this.itemColors.entrySet()) {
+            ResourceLocation itemKey = ForgeRegistries.ITEMS.getKey(entry.getKey());
+            if (itemKey == null) {
+                LootBeams.LOGGER.warn("Couldn't serialize custom color for item {}", entry.getKey());
+                continue;
+            }
+
+            List<Color> colors = entry.getValue();
+            if (colors.size() == 1) {
+                object.addProperty(itemKey.toString(), serialize(colors.get(0)));
+                continue;
+            }
+
+            JsonArray array = new JsonArray();
+            for (Color color : colors) {
+                array.add(serialize(color));
+            }
+            object.add(itemKey.toString(), array);
+        }
+        return object;
+    }
+
     public static ColorMap deserialize(JsonObject root, String key, ColorMap def) {
         if (!(root.get(key) instanceof JsonObject serializedColors)) {
             LootBeams.LOGGER.warn("No/Invalid color map found for {}, using default", key);
             return def;
         }
 
+        Utils.enableWarnings();
         Map<Item, List<Color>> itemColors = new HashMap<>();
         Map<TagKey<Item>, List<Color>> tagColors = new HashMap<>();
         Map<String, List<Color>> modColors = new HashMap<>();
         for (String itemKey : serializedColors.keySet()) {
             List<Color> colors = getColors(key, itemKey, serializedColors.get(itemKey));
-            if (!itemKey.contains(":")) {
-                if (Utils.isModId(key, itemKey) && colors != null && !colors.isEmpty()) {
-                    modColors.put(itemKey, colors);
-                }
-            } else if (itemKey.startsWith("#")) {
+             if (itemKey.startsWith("#")) {
                 TagKey<Item> tag = Utils.getTag(key, itemKey);
                 if (tag != null && colors != null && !colors.isEmpty()) {
                     tagColors.put(tag, colors);
+                }
+            } else if (!itemKey.contains(":")) {
+                if (Utils.isModId(key, itemKey) && colors != null && !colors.isEmpty()) {
+                    modColors.put(itemKey, colors);
                 }
             } else {
                 Item item = Utils.getItem(key, itemKey);
@@ -130,30 +155,6 @@ public class ColorMap {
         }
         LootBeams.LOGGER.warn("Invalid color for item \"{}\" in {}", itemKey, key);
         return null;
-    }
-
-    public static JsonObject serialize(ColorMap customColors) {
-        JsonObject object = new JsonObject();
-        for (Map.Entry<Item, List<Color>> entry : customColors.itemColors.entrySet()) {
-            ResourceLocation itemKey = ForgeRegistries.ITEMS.getKey(entry.getKey());
-            if (itemKey == null) {
-                LootBeams.LOGGER.warn("Couldn't serialize custom color for item {}", entry.getKey());
-                continue;
-            }
-
-            List<Color> colors = entry.getValue();
-            if (colors.size() == 1) {
-                object.addProperty(itemKey.toString(), serialize(colors.get(0)));
-                continue;
-            }
-
-            JsonArray array = new JsonArray();
-            for (Color color : colors) {
-                array.add(serialize(color));
-            }
-            object.add(itemKey.toString(), array);
-        }
-        return object;
     }
 
     private static String serialize(Color color) {
