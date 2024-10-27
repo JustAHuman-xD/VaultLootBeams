@@ -62,6 +62,21 @@ public class ColorMap {
         return null;
     }
 
+    public List<String> keySet() {
+        List<String> keys = new ArrayList<>();
+        for (Item item : itemColors.keySet()) {
+            ResourceLocation registryName = item.getRegistryName();
+            if (registryName != null) {
+                keys.add(registryName.toString());
+            }
+        }
+        for (TagKey<Item> tag : tagColors.keySet()) {
+            keys.add("#" + tag.location());
+        }
+        keys.addAll(modColors.keySet());
+        return keys;
+    }
+
     public JsonObject serialize() {
         JsonObject object = new JsonObject();
         for (Map.Entry<Item, List<Color>> entry : this.itemColors.entrySet()) {
@@ -70,20 +85,29 @@ public class ColorMap {
                 LootBeams.LOGGER.warn("Couldn't serialize custom color for item {}", entry.getKey());
                 continue;
             }
+            object.add(itemKey.toString(), serializeColors(entry.getValue()));
+        }
 
-            List<Color> colors = entry.getValue();
-            if (colors.size() == 1) {
-                object.addProperty(itemKey.toString(), serialize(colors.get(0)));
-                continue;
-            }
+        for (Map.Entry<TagKey<Item>, List<Color>> entry : this.tagColors.entrySet()) {
+            object.add("#" + entry.getKey().location(), serializeColors(entry.getValue()));
+        }
 
-            JsonArray array = new JsonArray();
-            for (Color color : colors) {
-                array.add(serialize(color));
-            }
-            object.add(itemKey.toString(), array);
+        for (Map.Entry<String, List<Color>> entry : this.modColors.entrySet()) {
+            object.add(entry.getKey(), serializeColors(entry.getValue()));
         }
         return object;
+    }
+
+    private JsonElement serializeColors(List<Color> colors) {
+        if (colors.size() == 1) {
+            return new JsonPrimitive(serialize(colors.get(0)));
+        }
+
+        JsonArray array = new JsonArray();
+        for (Color color : colors) {
+            array.add(serialize(color));
+        }
+        return array;
     }
 
     public static ColorMap deserialize(JsonObject root, String key, ColorMap def) {

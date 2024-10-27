@@ -38,7 +38,7 @@ public class ModConfig {
     public double shadowRadius = 0.5;
     public boolean animateShadow = true;
     public BeamRenderMode beamRenderMode = BeamRenderMode.GLOWING;
-    public BeamColorMode beamColorMode = BeamColorMode.NAME_OR_RARITY_COLOR;
+    public BeamColorMode beamColorMode = BeamColorMode.NAME_OR_RARITY;
     public ColorMap customColors = new ColorMap();
 
     public boolean beamParticles = true;

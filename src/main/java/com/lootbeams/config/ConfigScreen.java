@@ -12,9 +12,9 @@ import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
-import org.lwjgl.system.CallbackI;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Optional;
 
 import static com.lootbeams.config.ModConfig.CONFIG;
@@ -39,6 +39,7 @@ public class ConfigScreen {
         enumEntry(general, entryBuilder, "renderCondition", ItemCondition.class);
         itemListEntry(general, entryBuilder, "renderWhitelist");
         itemListEntry(general, entryBuilder, "renderBlacklist");
+        general.addEntry(entryBuilder.startTextDescription(translate("listSyntax")).build());
 
         doubleEntry(beamProperties, entryBuilder, "beamRadius", 0, 5);
         doubleEntry(beamProperties, entryBuilder, "beamHeight", 0, 10);
@@ -50,7 +51,7 @@ public class ConfigScreen {
         booleanEntry(beamProperties, entryBuilder, "animateShadow");
         enumEntry(beamProperties, entryBuilder, "beamRenderMode", BeamRenderMode.class);
         enumEntry(beamProperties, entryBuilder, "beamColorMode", BeamColorMode.class);
-        // TODO: customColors
+        beamProperties.addEntry(entryBuilder.startTextDescription(translate("customColors")).build());
 
         booleanEntry(beamParticles, entryBuilder, "beamParticles");
         doubleEntry(beamParticles, entryBuilder, "particleSize", 0.00001, 10);
@@ -72,7 +73,7 @@ public class ConfigScreen {
         doubleEntry(beamNameplate, entryBuilder, "nameplateTextAlpha", 0, 1);
         doubleEntry(beamNameplate, entryBuilder, "nameplateBackgroundAlpha", 0, 1);
         booleanEntry(beamNameplate, entryBuilder, "renderVanillaRarities");
-        // TODO: customNameplateRarities
+        stringListEntry(beamNameplate, entryBuilder, "customNameplateRarities");
         enumEntry(beamNameplate, entryBuilder, "nameplateCondition", ItemCondition.class);
         itemListEntry(beamNameplate, entryBuilder, "nameplateWhitelist");
         itemListEntry(beamNameplate, entryBuilder, "nameplateBlacklist");
@@ -135,6 +136,21 @@ public class ConfigScreen {
             E value = (E) field.get(CONFIG);
             E def = (E) field.get(DEFAULT);
             category.addEntry(entryBuilder.startEnumSelector(translate(fieldName), enumClass, value)
+                    .setTooltip(translate(fieldName + ".tooltip"))
+                    .setDefaultValue(def)
+                    .setSaveConsumer(newValue -> attemptSet(field, newValue, fieldName, newValue))
+                    .build());
+        } catch (Exception e) {
+            logFailedEntry(fieldName);
+        }
+    }
+
+    public static void stringListEntry(ConfigCategory category, ConfigEntryBuilder entryBuilder, String fieldName) {
+        try {
+            Field field = ModConfig.class.getDeclaredField(fieldName);
+            List<String> value = (List<String>) field.get(CONFIG);
+            List<String> def = (List<String>) field.get(DEFAULT);
+            category.addEntry(entryBuilder.startStrList(translate(fieldName), value)
                     .setTooltip(translate(fieldName + ".tooltip"))
                     .setDefaultValue(def)
                     .setSaveConsumer(newValue -> attemptSet(field, newValue, fieldName, newValue))
