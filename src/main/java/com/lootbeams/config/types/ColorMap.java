@@ -136,13 +136,14 @@ public class ColorMap {
                 continue;
             }
 
-            if (entry.getValue().size() == 1) {
-                object.addProperty(itemKey.toString(), entry.getValue().get(0));
+            List<Integer> colors = entry.getValue();
+            if (colors.size() == 1) {
+                object.addProperty(itemKey.toString(), Integer.toHexString(colors.get(0)));
                 continue;
             }
 
             JsonArray array = new JsonArray();
-            for (Integer color : entry.getValue()) {
+            for (Integer color : colors) {
                 array.add(new JsonPrimitive(Integer.toHexString(color)));
             }
             object.add(itemKey.toString(), array);
