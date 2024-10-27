@@ -2,6 +2,7 @@ package com.lootbeams.utils;
 
 import com.lootbeams.LootBeams;
 import com.lootbeams.config.types.ItemCondition;
+import com.lootbeams.config.types.ItemList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
@@ -10,19 +11,17 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.StringDecomposer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.BowItem;
-import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ShieldItem;
-import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.tags.ITagManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,9 +54,19 @@ public class Utils {
 
         try {
             // From custom colors
-            Integer override = CONFIG.customColors.get(itemStack.getItem());
-            if (override != null) {
-                return override;
+            List<Integer> override = CONFIG.customColors.get(itemStack.getItem());
+            if (override != null && !override.isEmpty()) {
+                if (override.size() == 1) {
+                    return override.get(0);
+                }
+
+                int stage = (itemEntity.getAge() / 20) % override.size();
+                int progress = itemEntity.getAge() % 20;
+
+                int colorStart = override.get(stage);
+                int colorEnd = override.get((stage + 1) % override.size());
+                float blendFactor = progress / 20.0f;
+                return blendColors(colorStart, colorEnd, blendFactor);
             }
 
             // From NBT
@@ -131,43 +140,67 @@ public class Utils {
         TOOLTIP_CACHE.remove(itemEntity);
     }
 
-    /**
-     * @return If the {@link Item} is an "Equipment Item"
-     */
-    public static boolean isEquipmentItem(Item item) {
-        return item instanceof TieredItem
-                || item instanceof ArmorItem
-                || item instanceof ShieldItem
-                || item instanceof BowItem
-                || item instanceof CrossbowItem;
+    public static boolean isModId(String context, String itemKey) {
+        if (!ModList.get().isLoaded(itemKey)) {
+            LootBeams.LOGGER.warn("Couldn't find mod for id \"{}\" in {}", itemKey, context);
+            return false;
+        }
+        return true;
     }
 
-    /**
-     * @return Checks if the given {@link Item} is in the given {@link List} of registry names.
-     */
-    public static boolean isItemInRegistryList(List<String> registryNames, Item item) {
-        if (registryNames.isEmpty()) {
-            return false;
+    public static TagKey<Item> getTag(String context, String itemKey) {
+        // skip the # before the tag identifier
+        ResourceLocation tagResource = ResourceLocation.tryParse(itemKey.substring(1));
+        if (tagResource == null) {
+            LootBeams.LOGGER.warn("Invalid tag identifier \"{}\" in {}", itemKey, context);
+            return null;
         }
 
-        ResourceLocation itemResource = ForgeRegistries.ITEMS.getKey(item);
+        ITagManager<Item> tagManager = ForgeRegistries.ITEMS.tags();
+        if (tagManager == null) {
+            LootBeams.LOGGER.warn("Couldn't find tag manager for items, something has gone very wrong");
+            return null;
+        }
+
+        boolean found = tagManager.getTagNames()
+                .map(TagKey::location)
+                .anyMatch(tagResource::equals);
+        if (!found) {
+            LootBeams.LOGGER.warn("Couldn't find tag for identifier \"{}\" in {}", itemKey, context);
+            return null;
+        }
+        return TagKey.create(ForgeRegistries.ITEMS.getRegistryKey(), tagResource);
+    }
+
+    public static Item getItem(String context, String itemKey) {
+        ResourceLocation itemResource = ResourceLocation.tryParse(itemKey);
         if (itemResource == null) {
-            return false;
+            LootBeams.LOGGER.warn("Invalid item identifier \"{}\" in {}", itemKey, context);
+            return null;
         }
 
-        for (String id : registryNames.stream().filter(s -> !s.isEmpty()).toList()) {
-            if (!id.contains(":")  && itemResource.getNamespace().equals(id)) {
-                return true;
-            } else if (itemResource.equals(ResourceLocation.tryParse(id))) {
-                return true;
-            }
+        Item item = ForgeRegistries.ITEMS.getValue(itemResource);
+        if (item == null) {
+            LootBeams.LOGGER.warn("Couldn't find item for identifier \"{}\" in {}", itemKey, context);
+            return null;
         }
+        return item;
+    }
 
-        return false;
+    public static int color(int color, float a) {
+        return color(rC(color), gC(color), bC(color), a);
+    }
+
+    public static int color(float r, float g, float b) {
+        return color(r, g, b, 1);
     }
 
     public static int color(float r, float g, float b, float a) {
         return color((int) r * 255, (int) g * 255, (int) b * 255, (int) a * 255);
+    }
+
+    public static int color(int r, int g, int b) {
+        return color(r, g, b, 255);
     }
 
     public static int color(int r, int g, int b, int a) {
@@ -178,26 +211,46 @@ public class Utils {
     }
 
     public static float r(int color) {
-        return ((color >> 16) & 0xFF) / 255.0f;
+        return (color >> 16) & 0xFF;
+    }
+
+    public static float rC(int color) {
+        return r(color) / 255.0f;
     }
 
     public static float g(int color) {
-        return ((color >> 8) & 0xFF) / 255.0f;
+        return (color >> 8) & 0xFF;
     }
 
-    public static float b(int color) {
-        return (color & 0xFF) / 255.0f;
+    public static float gC(int color) {
+        return g(color) / 255.0f;
     }
 
-    public static float a(int color) {
-        return ((color >> 24) & 0xFF) / 255.0f;
+    public static int b(int color) {
+        return color & 0xFF;
     }
 
-    public static boolean passes(ItemCondition condition, List<Item> whitelist, List<Item> blacklist, ItemStack itemStack) {
+    public static float bC(int color) {
+        return b(color) / 255.0f;
+    }
+
+    public static int a(int color) {
+        return (color >> 24) & 0xFF;
+    }
+
+    public static float aC(int color) {
+        return a(color) / 255.0f;
+    }
+
+    private static int blendColors(int color1, int color2, float ratio) {
+        float iRatio = 1 - ratio;
+        return color((int) ((r(color1) * iRatio) + r(color2) * ratio),
+                (int) (g(color1) * iRatio + g(color2) * ratio),
+                (int) (b(color1) * iRatio + b(color2) * ratio),
+                (int) (a(color1) * iRatio + a(color2) * ratio));
+    }
+
+    public static boolean passes(ItemCondition condition, ItemList whitelist, ItemList blacklist, ItemStack itemStack) {
         return (condition.test(itemStack) || whitelist.contains(itemStack.getItem())) && !blacklist.contains(itemStack.getItem());
-    }
-
-    public static int color(int color, float a) {
-        return color(r(color), g(color), b(color), a);
     }
 }

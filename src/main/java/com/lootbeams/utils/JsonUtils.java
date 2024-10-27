@@ -5,12 +5,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.lootbeams.LootBeams;
-import net.minecraft.world.item.Item;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 public class JsonUtils {
@@ -92,37 +90,6 @@ public class JsonUtils {
     public static boolean get(JsonElement json, String key, boolean def) {
         return handle(json, obj -> obj.get(key) instanceof JsonPrimitive primitive
                 && primitive.isBoolean() ? primitive.getAsBoolean() : def, def);
-    }
-
-    public static List<Item> getItemList(JsonElement json, String key, List<Item> def) {
-        return handle(json, obj -> {
-            if (obj.get(key) instanceof JsonArray array) {
-                List<Item> items = new ArrayList<>();
-                //TODO: Deserialize items
-                return items;
-            }
-            return def;
-        }, def);
-    }
-
-    public static JsonArray serializeItemList(List<Item> items) {
-        JsonArray array = new JsonArray();
-        // TODO: Serialize items
-        return array;
-    }
-
-    public static Map<Item, Integer> loadCustomColors(JsonObject root, String key, Map<Item, Integer> def) {
-        if (root.get(key) instanceof JsonObject customColors) {
-            // TODO: Deserialize custom colors
-            return def;
-        }
-        return def;
-    }
-
-    public static JsonObject serializeCustomColors(Map<Item, Integer> customColors) {
-        JsonObject object = new JsonObject();
-        // TODO: Serialize custom colors
-        return object;
     }
 
     public static <T> T get(JsonElement json, String key, @Nonnull T def) {

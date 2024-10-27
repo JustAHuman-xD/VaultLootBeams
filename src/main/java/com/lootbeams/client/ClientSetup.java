@@ -27,10 +27,12 @@ public class ClientSetup {
 	private static final String KEYBINDS_CATEGORY = "key.categories.lootbeams";
 
 	public static final KeyMapping OPEN_CONFIG = new KeyMapping(KEYBIND_PREFIX + "open_config", InputConstants.KEY_L, KEYBINDS_CATEGORY);
+	public static final KeyMapping RELOAD_CONFIG = new KeyMapping(KEYBIND_PREFIX + "reload_config", InputConstants.KEY_L, KEYBINDS_CATEGORY);
 
 	public static void init(FMLClientSetupEvent ignored) {
 		CONFIG.loadFromFile();
 		OPEN_CONFIG.setKeyModifierAndCode(KeyModifier.ALT, InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_L));
+		RELOAD_CONFIG.setKeyModifierAndCode(KeyModifier.CONTROL, InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_L));
 		MinecraftForge.EVENT_BUS.register(ClientSetup.class);
 		ClientRegistry.registerKeyBinding(OPEN_CONFIG);
 	}
@@ -60,6 +62,8 @@ public class ClientSetup {
 	public static void onInput(InputEvent.KeyInputEvent event) {
 		if (OPEN_CONFIG.consumeClick()) {
 			Minecraft.getInstance().setScreen(ConfigScreen.create());
+		} else if (RELOAD_CONFIG.consumeClick()) {
+			CONFIG.loadFromFile();
 		}
 	}
 }

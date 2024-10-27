@@ -7,8 +7,9 @@ import com.lootbeams.LootBeams;
 import com.lootbeams.config.types.BeamColorMode;
 import com.lootbeams.config.types.BeamRenderMode;
 import com.lootbeams.config.types.ItemCondition;
+import com.lootbeams.config.types.ItemList;
+import com.lootbeams.config.types.ColorMap;
 import com.lootbeams.utils.JsonUtils;
-import net.minecraft.world.item.Item;
 import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.io.File;
@@ -16,7 +17,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 public class ModConfig {
     private static final Gson GSON = new Gson().newBuilder().setPrettyPrinting().create();
@@ -26,8 +26,8 @@ public class ModConfig {
     public double renderDistance = 24;
     public boolean requireGround = true;
     public ItemCondition renderCondition = ItemCondition.LISTS_ONLY;
-    public List<Item> renderWhitelist = List.of();
-    public List<Item> renderBlacklist = List.of();
+    public ItemList renderWhitelist = new ItemList();
+    public ItemList renderBlacklist =new ItemList();
 
     public double beamRadius = 1;
     public double beamHeight = 2;
@@ -39,7 +39,7 @@ public class ModConfig {
     public boolean animateShadow = true;
     public BeamRenderMode beamRenderMode = BeamRenderMode.GLOWING;
     public BeamColorMode beamColorMode = BeamColorMode.NAME_OR_RARITY_COLOR;
-    public Map<Item, Integer> customColors = Map.of();
+    public ColorMap customColors = new ColorMap();
 
     public boolean beamParticles = true;
     public double particleSize = 0.25;
@@ -48,8 +48,8 @@ public class ModConfig {
     public int particleCount = 19;
     public int particleLifetime = 20;
     public ItemCondition particleCondition = ItemCondition.LISTS_ONLY;
-    public List<Item> particleWhitelist = List.of();
-    public List<Item> particleBlacklist = List.of();
+    public ItemList particleWhitelist = new ItemList();
+    public ItemList particleBlacklist = new ItemList();
 
     public boolean beamNameplate = true;
     public boolean nameplateOnLook = true;
@@ -63,14 +63,14 @@ public class ModConfig {
     public boolean renderVanillaRarities = false;
     public List<String> customNameplateRarities = List.of();
     public ItemCondition nameplateCondition = ItemCondition.LISTS_ONLY;
-    public List<Item> nameplateWhitelist = List.of();
-    public List<Item> nameplateBlacklist = List.of();
+    public ItemList nameplateWhitelist = new ItemList();
+    public ItemList nameplateBlacklist = new ItemList();
 
     public boolean landingSound = false;
     public double soundVolume = 0.3;
     public ItemCondition soundCondition = ItemCondition.LISTS_ONLY;
-    public List<Item> soundWhitelist = List.of();
-    public List<Item> soundBlacklist = List.of();
+    public ItemList soundWhitelist = new ItemList();
+    public ItemList soundBlacklist = new ItemList();
 
     public void loadFromFile() {
         final JsonObject root = new JsonObject();
@@ -84,9 +84,9 @@ public class ModConfig {
 
         renderDistance = JsonUtils.getBounded(root, "renderDistance", 0, 1024, DEFAULT.renderDistance);
         requireGround = JsonUtils.get(root, "requireGround", DEFAULT.requireGround);
-        renderCondition = JsonUtils.get(root, "renderCondition", DEFAULT.renderCondition);
-        renderWhitelist = JsonUtils.getItemList(root, "renderWhitelist", DEFAULT.renderWhitelist);
-        renderBlacklist = JsonUtils.getItemList(root, "renderBlacklist", DEFAULT.renderBlacklist);
+        renderCondition = JsonUtils.get(root, "renderCondition", DEFAULT.renderCondition, ItemCondition.class);
+        renderWhitelist = ItemList.deserialize(root, "renderWhitelist", DEFAULT.renderWhitelist);
+        renderBlacklist = ItemList.deserialize(root, "renderBlacklist", DEFAULT.renderBlacklist);
 
         beamRadius = JsonUtils.getBounded(root, "beamRadius", 0, 5, DEFAULT.beamRadius);
         beamHeight = JsonUtils.getBounded(root, "beamHeight", 0, 10, DEFAULT.beamHeight);
@@ -96,9 +96,9 @@ public class ModConfig {
         beamShadow = JsonUtils.get(root, "beamShadow", DEFAULT.beamShadow);
         shadowRadius = JsonUtils.getBounded(root, "shadowRadius", 0.00001, 1, DEFAULT.shadowRadius);
         animateShadow = JsonUtils.get(root, "animateShadow", DEFAULT.animateShadow);
-        beamRenderMode = JsonUtils.get(root, "beamRenderMode", DEFAULT.beamRenderMode);
-        beamColorMode = JsonUtils.get(root, "beamColorMode", DEFAULT.beamColorMode);
-        customColors = JsonUtils.loadCustomColors(root, "customColors", DEFAULT.customColors);
+        beamRenderMode = JsonUtils.get(root, "beamRenderMode", DEFAULT.beamRenderMode, BeamRenderMode.class);
+        beamColorMode = JsonUtils.get(root, "beamColorMode", DEFAULT.beamColorMode, BeamColorMode.class);
+        customColors = ColorMap.deserialize(root, "customColors", DEFAULT.customColors);
 
         beamParticles = JsonUtils.get(root, "beamParticles", DEFAULT.beamParticles);
         particleSize = JsonUtils.getBounded(root, "particleSize", 0.00001, 10, DEFAULT.particleSize);
@@ -106,9 +106,9 @@ public class ModConfig {
         particleSpread = JsonUtils.getBounded(root, "particleSpread", 0.00001, 10, DEFAULT.particleSpread);
         particleCount = JsonUtils.getBounded(root, "particleCount", 1, 20, DEFAULT.particleCount);
         particleLifetime = JsonUtils.getBounded(root, "particleLifetime", 1, 100, DEFAULT.particleLifetime);
-        particleCondition = JsonUtils.get(root, "particleCondition", DEFAULT.particleCondition);
-        particleWhitelist = JsonUtils.getItemList(root, "particleWhitelist", DEFAULT.particleWhitelist);
-        particleBlacklist = JsonUtils.getItemList(root, "particleBlacklist", DEFAULT.particleBlacklist);
+        particleCondition = JsonUtils.get(root, "particleCondition", DEFAULT.particleCondition, ItemCondition.class);
+        particleWhitelist = ItemList.deserialize(root, "particleWhitelist", DEFAULT.particleWhitelist);
+        particleBlacklist = ItemList.deserialize(root, "particleBlacklist", DEFAULT.particleBlacklist);
 
         beamNameplate = JsonUtils.get(root, "beamNameplate", DEFAULT.beamNameplate);
         nameplateOnLook = JsonUtils.get(root, "nameplateOnLook", DEFAULT.nameplateOnLook);
@@ -121,15 +121,15 @@ public class ModConfig {
         nameplateBackgroundAlpha = JsonUtils.getBounded(root, "nameplateBackgroundAlpha", 0, 1, DEFAULT.nameplateBackgroundAlpha);
         renderVanillaRarities = JsonUtils.get(root, "renderVanillaRarities", DEFAULT.renderVanillaRarities);
         customNameplateRarities = JsonUtils.getList(root, "customNameplateRarities", DEFAULT.customNameplateRarities);
-        nameplateCondition = JsonUtils.get(root, "nameplateCondition", DEFAULT.nameplateCondition);
-        nameplateWhitelist = JsonUtils.getItemList(root, "nameplateWhitelist", DEFAULT.nameplateWhitelist);
-        nameplateBlacklist = JsonUtils.getItemList(root, "nameplateBlacklist", DEFAULT.nameplateBlacklist);
+        nameplateCondition = JsonUtils.get(root, "nameplateCondition", DEFAULT.nameplateCondition, ItemCondition.class);
+        nameplateWhitelist = ItemList.deserialize(root, "nameplateWhitelist", DEFAULT.nameplateWhitelist);
+        nameplateBlacklist = ItemList.deserialize(root, "nameplateBlacklist", DEFAULT.nameplateBlacklist);
 
         landingSound = JsonUtils.get(root, "landingSound", DEFAULT.landingSound);
         soundVolume = JsonUtils.getBounded(root, "soundVolume", 0, 1, DEFAULT.soundVolume);
-        soundCondition = JsonUtils.get(root, "soundCondition", DEFAULT.soundCondition);
-        soundWhitelist = JsonUtils.getItemList(root, "soundWhitelist", DEFAULT.soundWhitelist);
-        soundBlacklist = JsonUtils.getItemList(root, "soundBlacklist", DEFAULT.soundBlacklist);
+        soundCondition = JsonUtils.get(root, "soundCondition", DEFAULT.soundCondition, ItemCondition.class);
+        soundWhitelist = ItemList.deserialize(root, "soundWhitelist", DEFAULT.soundWhitelist);
+        soundBlacklist = ItemList.deserialize(root, "soundBlacklist", DEFAULT.soundBlacklist);
     }
 
     public void saveToFile() {
@@ -137,8 +137,8 @@ public class ModConfig {
         root.addProperty("renderDistance", renderDistance);
         root.addProperty("requireGround", requireGround);
         root.addProperty("renderCondition", renderCondition.name());
-        root.add("renderWhitelist", JsonUtils.serializeItemList(renderWhitelist));
-        root.add("renderBlacklist", JsonUtils.serializeItemList(renderBlacklist));
+        root.add("renderWhitelist", ItemList.serialize(renderWhitelist));
+        root.add("renderBlacklist", ItemList.serialize(renderBlacklist));
 
         root.addProperty("beamRadius", beamRadius);
         root.addProperty("beamHeight", beamHeight);
@@ -150,7 +150,7 @@ public class ModConfig {
         root.addProperty("animateShadow", animateShadow);
         root.addProperty("beamRenderMode", beamRenderMode.name());
         root.addProperty("beamColorMode", beamColorMode.name());
-        root.add("customColors", JsonUtils.serializeCustomColors(customColors));
+        root.add("customColors", ColorMap.serialize(customColors));
 
         root.addProperty("beamParticles", beamParticles);
         root.addProperty("particleSize", particleSize);
@@ -159,8 +159,8 @@ public class ModConfig {
         root.addProperty("particleCount", particleCount);
         root.addProperty("particleLifetime", particleLifetime);
         root.addProperty("particleCondition", particleCondition.name());
-        root.add("particleWhitelist", JsonUtils.serializeItemList(particleWhitelist));
-        root.add("particleBlacklist", JsonUtils.serializeItemList(particleBlacklist));
+        root.add("particleWhitelist", ItemList.serialize(particleWhitelist));
+        root.add("particleBlacklist", ItemList.serialize(particleBlacklist));
 
         root.addProperty("beamNameplate", beamNameplate);
         root.addProperty("nameplateOnLook", nameplateOnLook);
@@ -174,14 +174,14 @@ public class ModConfig {
         root.addProperty("renderVanillaRarities", renderVanillaRarities);
         root.add("customNameplateRarities", JsonUtils.serializeList(customNameplateRarities));
         root.addProperty("nameplateCondition", nameplateCondition.name());
-        root.add("nameplateWhitelist", JsonUtils.serializeItemList(nameplateWhitelist));
-        root.add("nameplateBlacklist", JsonUtils.serializeItemList(nameplateBlacklist));
+        root.add("nameplateWhitelist", ItemList.serialize(nameplateWhitelist));
+        root.add("nameplateBlacklist", ItemList.serialize(nameplateBlacklist));
 
         root.addProperty("landingSound", landingSound);
         root.addProperty("soundVolume", soundVolume);
         root.addProperty("soundCondition", soundCondition.name());
-        root.add("soundWhitelist", JsonUtils.serializeItemList(soundWhitelist));
-        root.add("soundBlacklist", JsonUtils.serializeItemList(soundBlacklist));
+        root.add("soundWhitelist", ItemList.serialize(soundWhitelist));
+        root.add("soundBlacklist", ItemList.serialize(soundBlacklist));
 
         try (final FileWriter fileWriter = new FileWriter(getConfigFile())) {
             GSON.toJson(root, fileWriter);

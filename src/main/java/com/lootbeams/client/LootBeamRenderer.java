@@ -71,9 +71,9 @@ public class LootBeamRenderer extends RenderType {
 		float yOffset = (float) CONFIG.beamYOffset;
 
 		int color = Utils.getItemColor(itemEntity);
-		float r = Utils.r(color);
-		float g = Utils.g(color);
-		float b = Utils.b(color);
+		float r = Utils.rC(color);
+		float g = Utils.gC(color);
+		float b = Utils.bC(color);
 
 		// I will rewrite the beam rendering code soon! I promise!
 
