@@ -1,8 +1,8 @@
-package com.lootbeams.utils;
+package me.justahuman.vaultlootbeams.utils;
 
-import com.lootbeams.LootBeams;
-import com.lootbeams.config.types.ItemCondition;
-import com.lootbeams.config.types.ItemList;
+import me.justahuman.vaultlootbeams.VaultLootBeams;
+import me.justahuman.vaultlootbeams.client.types.ItemCondition;
+import me.justahuman.vaultlootbeams.client.types.ItemList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.lootbeams.config.ModConfig.CONFIG;
+import static me.justahuman.vaultlootbeams.config.ModConfig.CONFIG;
 
 public class Utils {
     private static final Map<ItemEntity, Component> NAME_CACHE = new HashMap<>();
@@ -50,7 +50,7 @@ public class Utils {
      */
     public static Color getItemColor(ItemEntity itemEntity) {
         ItemStack itemStack = itemEntity.getItem();
-        if (LootBeams.CRASH_BLACKLIST.contains(itemStack)) {
+        if (VaultLootBeams.CRASH_BLACKLIST.contains(itemStack)) {
             return Color.WHITE;
         }
 
@@ -79,12 +79,12 @@ public class Utils {
 
             return CONFIG.beamColorMode.getColor(itemEntity, itemStack);
         } catch (Exception e) {
-            LootBeams.LOGGER.error("Failed to get color for ({}), added to temporary blacklist", itemStack.getDisplayName());
-            LootBeams.LOGGER.error("Error: ", e);
-            LootBeams.CRASH_BLACKLIST.add(itemStack);
-            LootBeams.LOGGER.info("Temporary blacklist is now : ");
-            for (ItemStack stack : LootBeams.CRASH_BLACKLIST) {
-                LootBeams.LOGGER.info(stack.getDisplayName());
+            VaultLootBeams.LOGGER.error("Failed to get color for ({}), added to temporary blacklist", itemStack.getDisplayName());
+            VaultLootBeams.LOGGER.error("Error: ", e);
+            VaultLootBeams.CRASH_BLACKLIST.add(itemStack);
+            VaultLootBeams.LOGGER.info("Temporary blacklist is now : ");
+            for (ItemStack stack : VaultLootBeams.CRASH_BLACKLIST) {
+                VaultLootBeams.LOGGER.info(stack.getDisplayName());
             }
             return Color.WHITE;
         }
@@ -145,7 +145,7 @@ public class Utils {
     public static boolean isModId(String context, String itemKey) {
         if (!ModList.get().isLoaded(itemKey)) {
             if (warnings) {
-                LootBeams.LOGGER.warn("Couldn't find mod for id \"{}\" in {}", itemKey, context);
+                VaultLootBeams.LOGGER.warn("Couldn't find mod for id \"{}\" in {}", itemKey, context);
             }
             return false;
         }
@@ -157,7 +157,7 @@ public class Utils {
         ResourceLocation tagResource = ResourceLocation.tryParse(itemKey.substring(1));
         if (tagResource == null) {
             if (warnings) {
-                LootBeams.LOGGER.warn("Invalid tag identifier \"{}\" in {}", itemKey, context);
+                VaultLootBeams.LOGGER.warn("Invalid tag identifier \"{}\" in {}", itemKey, context);
             }
             return null;
         }
@@ -165,7 +165,7 @@ public class Utils {
         ITagManager<Item> tagManager = ForgeRegistries.ITEMS.tags();
         if (tagManager == null) {
             if (warnings) {
-                LootBeams.LOGGER.warn("Couldn't find tag manager for items, something has gone very wrong");
+                VaultLootBeams.LOGGER.warn("Couldn't find tag manager for items, something has gone very wrong");
             }
             return null;
         }
@@ -175,7 +175,7 @@ public class Utils {
                 .anyMatch(tagResource::equals);
         if (!found) {
             if (warnings) {
-                LootBeams.LOGGER.warn("Couldn't find tag for identifier \"{}\" in {}", itemKey, context);
+                VaultLootBeams.LOGGER.warn("Couldn't find tag for identifier \"{}\" in {}", itemKey, context);
             }
             return null;
         }
@@ -186,7 +186,7 @@ public class Utils {
         ResourceLocation itemResource = ResourceLocation.tryParse(itemKey);
         if (itemResource == null) {
             if (warnings) {
-                LootBeams.LOGGER.warn("Invalid item identifier \"{}\" in {}", itemKey, context);
+                VaultLootBeams.LOGGER.warn("Invalid item identifier \"{}\" in {}", itemKey, context);
             }
             return null;
         }
@@ -194,7 +194,7 @@ public class Utils {
         Item item = ForgeRegistries.ITEMS.getValue(itemResource);
         if (item == null || item == Items.AIR) {
             if (warnings) {
-                LootBeams.LOGGER.warn("Couldn't find item for identifier \"{}\" in {}", itemKey, context);
+                VaultLootBeams.LOGGER.warn("Couldn't find item for identifier \"{}\" in {}", itemKey, context);
             }
             return null;
         }

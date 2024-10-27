@@ -1,11 +1,11 @@
-package com.lootbeams.config.types;
+package me.justahuman.vaultlootbeams.client.types;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.lootbeams.LootBeams;
-import com.lootbeams.utils.Utils;
+import me.justahuman.vaultlootbeams.VaultLootBeams;
+import me.justahuman.vaultlootbeams.utils.Utils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -62,27 +62,12 @@ public class ColorMap {
         return null;
     }
 
-    public List<String> keySet() {
-        List<String> keys = new ArrayList<>();
-        for (Item item : itemColors.keySet()) {
-            ResourceLocation registryName = item.getRegistryName();
-            if (registryName != null) {
-                keys.add(registryName.toString());
-            }
-        }
-        for (TagKey<Item> tag : tagColors.keySet()) {
-            keys.add("#" + tag.location());
-        }
-        keys.addAll(modColors.keySet());
-        return keys;
-    }
-
     public JsonObject serialize() {
         JsonObject object = new JsonObject();
         for (Map.Entry<Item, List<Color>> entry : this.itemColors.entrySet()) {
             ResourceLocation itemKey = ForgeRegistries.ITEMS.getKey(entry.getKey());
             if (itemKey == null) {
-                LootBeams.LOGGER.warn("Couldn't serialize custom color for item {}", entry.getKey());
+                VaultLootBeams.LOGGER.warn("Couldn't serialize custom color for item {}", entry.getKey());
                 continue;
             }
             object.add(itemKey.toString(), serializeColors(entry.getValue()));
@@ -112,7 +97,7 @@ public class ColorMap {
 
     public static ColorMap deserialize(JsonObject root, String key, ColorMap def) {
         if (!(root.get(key) instanceof JsonObject serializedColors)) {
-            LootBeams.LOGGER.warn("No/Invalid color map found for {}, using default", key);
+            VaultLootBeams.LOGGER.warn("No/Invalid color map found for {}, using default", key);
             return def;
         }
 
@@ -146,7 +131,7 @@ public class ColorMap {
             List<Color> colorList = new ArrayList<>();
             for (JsonElement element : array) {
                 if (!(element instanceof JsonPrimitive primitive)) {
-                    LootBeams.LOGGER.warn("Invalid color entry for item \"{}\" in {}", itemKey, key);
+                    VaultLootBeams.LOGGER.warn("Invalid color entry for item \"{}\" in {}", itemKey, key);
                     continue;
                 }
 
@@ -162,7 +147,7 @@ public class ColorMap {
                 return List.of(color);
             }
         } else {
-            LootBeams.LOGGER.warn("Invalid colors for item \"{}\" in {}", itemKey, key);
+            VaultLootBeams.LOGGER.warn("Invalid colors for item \"{}\" in {}", itemKey, key);
         }
         return null;
     }
@@ -174,10 +159,10 @@ public class ColorMap {
             try {
                 return Color.decode(primitive.getAsString());
             } catch (Exception e) {
-                LootBeams.LOGGER.warn("Invalid color for item \"{}\" in {}", itemKey, key);
+                VaultLootBeams.LOGGER.warn("Invalid color for item \"{}\" in {}", itemKey, key);
             }
         }
-        LootBeams.LOGGER.warn("Invalid color for item \"{}\" in {}", itemKey, key);
+        VaultLootBeams.LOGGER.warn("Invalid color for item \"{}\" in {}", itemKey, key);
         return null;
     }
 

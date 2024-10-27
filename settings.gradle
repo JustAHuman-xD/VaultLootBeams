@@ -13,4 +13,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'lootbeams'
+rootProject.name = 'VaultLootBeams'

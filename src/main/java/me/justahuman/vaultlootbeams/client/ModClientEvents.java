@@ -1,6 +1,6 @@
-package com.lootbeams.client;
+package me.justahuman.vaultlootbeams.client;
 
-import com.lootbeams.LootBeams;
+import me.justahuman.vaultlootbeams.VaultLootBeams;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -8,9 +8,9 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = LootBeams.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = VaultLootBeams.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ModClientEvents {
-    public static final ResourceLocation GLOW_TEXTURE = new ResourceLocation(LootBeams.MODID, "/entity/glow");
+    public static final ResourceLocation GLOW_TEXTURE = new ResourceLocation(VaultLootBeams.MODID, "/entity/glow");
 
     @SubscribeEvent
     public static void onTextureStitch(TextureStitchEvent.Pre event) {

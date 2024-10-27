@@ -2,7 +2,7 @@
   "loot_drop": {
     "sounds": [
       {
-        "name": "lootbeams:loot_drop",
+        "name": "vaultlootbeams:loot_drop",
         "stream": true
       }
     ]

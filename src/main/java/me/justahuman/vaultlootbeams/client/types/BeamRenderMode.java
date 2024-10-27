@@ -1,4 +1,4 @@
-package com.lootbeams.config.types;
+package me.justahuman.vaultlootbeams.client.types;
 
 public enum BeamRenderMode {
     BEACON,

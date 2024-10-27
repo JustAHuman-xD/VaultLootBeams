@@ -2,23 +2,24 @@ license = "MIT"
 loaderVersion = "[38,)"
 modLoader = "javafml"
 [[mods]]
-displayName = "LootBeams"
-modId = "lootbeams"
+displayName = "VaultLootBeams"
+modId = "vaultlootbeams"
 version = "1.18.2"
 logoFile = "banner.png"
-displayURL = "https://www.curseforge.com/minecraft/mc-mods/loot-beams"
-authors = "shiroroku(elise)"
-credits = "amo"
+displayURL = "https://www.curseforge.com/minecraft/mc-mods/vault-loot-beams"
+authors = "JustAHuman"
+credits = "shiroroku(elise), amo"
 description = '''
-Renders highly configurable colored beams on dropped items!
+A fork of the Popular Loot Beams mod modified specifically for the VaultHunters 3rd Edition modpack.
+Vault Loot Beams adds extremely configurable colored beams on dropped items!
 '''
-[[dependencies.lootbeams]]
+[[dependencies.vaultlootbeams]]
 mandatory = true
 modId = "forge"
 ordering = "NONE"
 side = "BOTH"
 versionRange = "[38,)"
-[[dependencies.lootbeams]]
+[[dependencies.vaultlootbeams]]
 mandatory = true
 modId = "minecraft"
 ordering = "NONE"

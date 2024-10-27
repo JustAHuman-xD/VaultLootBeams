@@ -1,11 +1,11 @@
-package com.lootbeams.config.types;
+package me.justahuman.vaultlootbeams.client.types;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.lootbeams.LootBeams;
-import com.lootbeams.utils.Utils;
+import me.justahuman.vaultlootbeams.VaultLootBeams;
+import me.justahuman.vaultlootbeams.utils.Utils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -62,7 +62,7 @@ public class ItemList {
         for (Item item : this.items) {
             ResourceLocation registryName = item.getRegistryName();
             if (registryName == null) {
-                LootBeams.LOGGER.warn("Couldn't serialize item {}", item);
+                VaultLootBeams.LOGGER.warn("Couldn't serialize item {}", item);
                 continue;
             }
             items.add(registryName.toString());
@@ -87,14 +87,14 @@ public class ItemList {
 
     public static ItemList deserialize(JsonObject root, String key, ItemList def) {
         if (!(root.get(key) instanceof JsonArray serializedItems)) {
-            LootBeams.LOGGER.warn("No/Invalid item list found for {}, using default", key);
+            VaultLootBeams.LOGGER.warn("No/Invalid item list found for {}, using default", key);
             return def;
         }
 
         List<String> serialized = new ArrayList<>();
         for (JsonElement element : serializedItems) {
             if (!(element instanceof JsonPrimitive primitive) || !primitive.isString()) {
-                LootBeams.LOGGER.warn("Invalid item entry: {}", element);
+                VaultLootBeams.LOGGER.warn("Invalid item entry: {}", element);
                 continue;
             }
             serialized.add(primitive.getAsString());

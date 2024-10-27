@@ -1,10 +1,10 @@
-package com.lootbeams.utils;
+package me.justahuman.vaultlootbeams.utils;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import com.lootbeams.LootBeams;
+import me.justahuman.vaultlootbeams.VaultLootBeams;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -101,7 +101,7 @@ public class JsonUtils {
     }
 
     private static void warnBounds(String key, Number value, Number min, Number max, Number def) {
-        LootBeams.LOGGER.warn("Value \"{}\" for {} is out of bounds ({} - {}), using default \"{}\"", value, key, min, max, def);
+        VaultLootBeams.LOGGER.warn("Value \"{}\" for {} is out of bounds ({} - {}), using default \"{}\"", value, key, min, max, def);
     }
 
     private static <T> T handle(JsonElement json, Function<JsonObject, T> mapper, T def) {

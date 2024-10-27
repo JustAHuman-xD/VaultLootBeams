@@ -1,15 +1,15 @@
-package com.lootbeams.config;
+package me.justahuman.vaultlootbeams.config;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.lootbeams.LootBeams;
-import com.lootbeams.config.types.BeamColorMode;
-import com.lootbeams.config.types.BeamRenderMode;
-import com.lootbeams.config.types.ItemCondition;
-import com.lootbeams.config.types.ItemList;
-import com.lootbeams.config.types.ColorMap;
-import com.lootbeams.utils.JsonUtils;
+import me.justahuman.vaultlootbeams.VaultLootBeams;
+import me.justahuman.vaultlootbeams.client.types.BeamColorMode;
+import me.justahuman.vaultlootbeams.client.types.BeamRenderMode;
+import me.justahuman.vaultlootbeams.client.types.ItemCondition;
+import me.justahuman.vaultlootbeams.client.types.ItemList;
+import me.justahuman.vaultlootbeams.client.types.ColorMap;
+import me.justahuman.vaultlootbeams.utils.JsonUtils;
 import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.io.File;
@@ -79,7 +79,7 @@ public class ModConfig {
                 jsonObject.entrySet().forEach(entry -> root.add(entry.getKey(), entry.getValue()));
             }
         } catch (Exception e) {
-            LootBeams.LOGGER.error("Error loading the config!", e);
+            VaultLootBeams.LOGGER.error("Error loading the config!", e);
         }
 
         renderDistance = JsonUtils.getBounded(root, "renderDistance", 0, 1024, DEFAULT.renderDistance);
@@ -187,34 +187,34 @@ public class ModConfig {
             GSON.toJson(root, fileWriter);
             fileWriter.flush();
         } catch (IOException e) {
-            LootBeams.LOGGER.error("Error saving the config!", e);
+            VaultLootBeams.LOGGER.error("Error saving the config!", e);
         }
     }
 
     private static File getConfigFile() {
-        File configFile = new File(FMLPaths.CONFIGDIR.get().toFile(), "lootbeams.json");
+        File configFile = new File(FMLPaths.CONFIGDIR.get().toFile(), VaultLootBeams.MODID + ".json");
         try {
             if (configFile.exists() && configFile.isDirectory()) {
                 if (!configFile.delete()) {
-                    LootBeams.LOGGER.error("Failed to delete invalid config file");
+                    VaultLootBeams.LOGGER.error("Failed to delete invalid config file");
                 } else {
-                    LootBeams.LOGGER.info("Deleted invalid config file (was a directory)");
+                    VaultLootBeams.LOGGER.info("Deleted invalid config file (was a directory)");
                 }
             }
         } catch (Exception e) {
-            LootBeams.LOGGER.error("Failed to delete invalid config file", e);
+            VaultLootBeams.LOGGER.error("Failed to delete invalid config file", e);
         }
 
         if (!configFile.exists()) {
             try {
                 configFile.getParentFile().mkdirs();
                 if (!configFile.createNewFile()) {
-                    LootBeams.LOGGER.error("Failed to create config file");
+                    VaultLootBeams.LOGGER.error("Failed to create config file");
                 } else {
-                    LootBeams.LOGGER.info("Created config file");
+                    VaultLootBeams.LOGGER.info("Created config file");
                 }
             } catch (Exception e) {
-                LootBeams.LOGGER.error("Failed to create config file", e);
+                VaultLootBeams.LOGGER.error("Failed to create config file", e);
             }
         }
 

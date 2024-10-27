@@ -1,4 +1,4 @@
-package com.lootbeams.config.types;
+package me.justahuman.vaultlootbeams.client.types;
 
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BowItem;

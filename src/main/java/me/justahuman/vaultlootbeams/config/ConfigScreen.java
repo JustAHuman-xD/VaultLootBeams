@@ -1,11 +1,11 @@
-package com.lootbeams.config;
+package me.justahuman.vaultlootbeams.config;
 
-import com.lootbeams.LootBeams;
-import com.lootbeams.config.types.BeamColorMode;
-import com.lootbeams.config.types.BeamRenderMode;
-import com.lootbeams.config.types.ItemCondition;
-import com.lootbeams.config.types.ItemList;
-import com.lootbeams.utils.Utils;
+import me.justahuman.vaultlootbeams.VaultLootBeams;
+import me.justahuman.vaultlootbeams.client.types.BeamColorMode;
+import me.justahuman.vaultlootbeams.client.types.BeamRenderMode;
+import me.justahuman.vaultlootbeams.client.types.ItemCondition;
+import me.justahuman.vaultlootbeams.client.types.ItemList;
+import me.justahuman.vaultlootbeams.utils.Utils;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
@@ -17,8 +17,8 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 
-import static com.lootbeams.config.ModConfig.CONFIG;
-import static com.lootbeams.config.ModConfig.DEFAULT;
+import static me.justahuman.vaultlootbeams.config.ModConfig.CONFIG;
+import static me.justahuman.vaultlootbeams.config.ModConfig.DEFAULT;
 
 public class ConfigScreen {
     public static Screen create() {
@@ -196,15 +196,15 @@ public class ConfigScreen {
         try {
             field.set(CONFIG, value);
         } catch (Exception e) {
-            LootBeams.LOGGER.error("Failed to set config entry {} to \"{}\"", fieldName, newValue);
+            VaultLootBeams.LOGGER.error("Failed to set config entry {} to \"{}\"", fieldName, newValue);
         }
     }
 
     private static void logFailedEntry(String fieldName) {
-        LootBeams.LOGGER.error("Failed to add config entry for field {}", fieldName);
+        VaultLootBeams.LOGGER.error("Failed to add config entry for field {}", fieldName);
     }
 
     public static Component translate(String key) {
-        return new TranslatableComponent("lootbeams.config." + key);
+        return new TranslatableComponent(VaultLootBeams.MODID + ".config." + key);
     }
 }

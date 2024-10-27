@@ -1,14 +1,14 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "com.lootbeams.mixin",
+  "package": "me.justahuman.vaultlootbeams.mixin",
   "compatibilityLevel": "JAVA_8",
-  "refmap": "lootbeams.refmap.json",
+  "refmap": "vaultlootbeams.refmap.json",
   "mixins": [
     "ItemEntityMixin"
   ],
   "client": [
-    "client.ItemEntityRendererMixin"
+    "ItemEntityRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

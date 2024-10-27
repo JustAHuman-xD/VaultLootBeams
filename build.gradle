@@ -6,11 +6,11 @@ plugins {
 
 apply plugin: 'org.spongepowered.mixin'
 
-group = 'com.lootbeams'
+group = 'me.justahuman.vaultlootbeams'
 version = '1.18.2-release'
 
 java {
-    archivesBaseName = 'lootbeams'
+    archivesBaseName = 'VaultLootBeams'
     toolchain.languageVersion = JavaLanguageVersion.of(17)
 }
 
@@ -41,8 +41,8 @@ dependencies {
 }
 
 mixin {
-    add sourceSets.main, "lootbeams.refmap.json"
-    config 'lootbeams.mixins.json'
+    add sourceSets.main, "vaultlootbeams.refmap.json"
+    config 'vaultlootbeams.mixins.json'
     debug.verbose = true
     debug.export = true
 }
@@ -50,7 +50,7 @@ mixin {
 jar {
     manifest {
         attributes([
-                "Specification-Title": "lootbeams",
+                "Specification-Title": "vaultlootbeams",
                 //"Specification-Vendor": "lootbeams authors",
                 "Specification-Version": "1",
                 "Implementation-Title": project.name,

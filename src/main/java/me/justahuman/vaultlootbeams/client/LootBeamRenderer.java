@@ -1,8 +1,8 @@
-package com.lootbeams.client;
+package me.justahuman.vaultlootbeams.client;
 
-import com.lootbeams.LootBeams;
-import com.lootbeams.config.types.BeamRenderMode;
-import com.lootbeams.utils.Utils;
+import me.justahuman.vaultlootbeams.VaultLootBeams;
+import me.justahuman.vaultlootbeams.utils.Utils;
+import me.justahuman.vaultlootbeams.client.types.BeamRenderMode;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -30,14 +30,14 @@ import java.awt.*;
 import java.util.List;
 import java.util.Random;
 
-import static com.lootbeams.config.ModConfig.CONFIG;
+import static me.justahuman.vaultlootbeams.config.ModConfig.CONFIG;
 
 public class LootBeamRenderer extends RenderType {
 
-	private static final ResourceLocation LOOT_BEAM_TEXTURE = new ResourceLocation(LootBeams.MODID, "textures/entity/loot_beam.png");
-	private static final ResourceLocation WHITE_TEXTURE = new ResourceLocation(LootBeams.MODID, "textures/entity/white.png");
+	private static final ResourceLocation LOOT_BEAM_TEXTURE = new ResourceLocation(VaultLootBeams.MODID, "textures/entity/loot_beam.png");
+	private static final ResourceLocation WHITE_TEXTURE = new ResourceLocation(VaultLootBeams.MODID, "textures/entity/white.png");
 
-	public static final ResourceLocation GLOW_TEXTURE = new ResourceLocation(LootBeams.MODID, "textures/entity/glow.png");
+	public static final ResourceLocation GLOW_TEXTURE = new ResourceLocation(VaultLootBeams.MODID, "textures/entity/glow.png");
 	private static final RenderType DEFAULT_BEAM = createBeamRenderType(LOOT_BEAM_TEXTURE);
 	private static final RenderType SOLID_BEAM = createBeamRenderType(WHITE_TEXTURE);
 	private static final RenderType GLOWING_BEAM = RenderType.lightning();

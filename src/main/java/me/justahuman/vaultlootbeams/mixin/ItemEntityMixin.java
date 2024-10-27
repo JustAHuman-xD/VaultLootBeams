@@ -1,7 +1,7 @@
-package com.lootbeams.mixin;
+package me.justahuman.vaultlootbeams.mixin;
 
-import com.lootbeams.LootBeams;
-import com.lootbeams.utils.Utils;
+import me.justahuman.vaultlootbeams.VaultLootBeams;
+import me.justahuman.vaultlootbeams.utils.Utils;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static com.lootbeams.config.ModConfig.CONFIG;
+import static me.justahuman.vaultlootbeams.config.ModConfig.CONFIG;
 
 @Mixin(ItemEntity.class)
 public class ItemEntityMixin {
@@ -25,7 +25,7 @@ public class ItemEntityMixin {
         ItemEntity itemEntity = (ItemEntity) (Object) this;
         if (!lootbeams$hasPlayedSound && (itemEntity.isOnGround() || (itemEntity.isOnGround() && (itemEntity.tickCount < 10 && itemEntity.tickCount > 3)))) {
             if (Utils.passes(CONFIG.soundCondition, CONFIG.soundWhitelist, CONFIG.soundBlacklist, itemEntity.getItem())) {
-                itemEntity.level.playSound(null, itemEntity, LootBeams.LOOT_DROP.get(), SoundSource.AMBIENT, (float) CONFIG.soundVolume, ((itemEntity.level.random.nextFloat() - itemEntity.level.random.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+                itemEntity.level.playSound(null, itemEntity, VaultLootBeams.LOOT_DROP.get(), SoundSource.AMBIENT, (float) CONFIG.soundVolume, ((itemEntity.level.random.nextFloat() - itemEntity.level.random.nextFloat()) * 0.7F + 1.0F) * 2.0F);
             }
             lootbeams$hasPlayedSound = true;
         }

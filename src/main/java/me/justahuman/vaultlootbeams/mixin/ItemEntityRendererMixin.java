@@ -1,7 +1,7 @@
-package com.lootbeams.mixin.client;
+package me.justahuman.vaultlootbeams.mixin;
 
-import com.lootbeams.utils.Utils;
 import com.mojang.blaze3d.vertex.PoseStack;
+import me.justahuman.vaultlootbeams.utils.Utils;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static com.lootbeams.config.ModConfig.CONFIG;
+import static me.justahuman.vaultlootbeams.config.ModConfig.CONFIG;
 
 @Mixin(ItemEntityRenderer.class)
 public abstract class ItemEntityRendererMixin extends EntityRenderer<ItemEntity> {

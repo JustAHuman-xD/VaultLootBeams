@@ -1,8 +1,8 @@
-package com.lootbeams.client;
+package me.justahuman.vaultlootbeams.client;
 
-import com.lootbeams.LootBeams;
-import com.lootbeams.config.ConfigScreen;
-import com.lootbeams.utils.Utils;
+import me.justahuman.vaultlootbeams.VaultLootBeams;
+import me.justahuman.vaultlootbeams.utils.Utils;
+import me.justahuman.vaultlootbeams.config.ConfigScreen;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -19,12 +19,12 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
-import static com.lootbeams.config.ModConfig.CONFIG;
+import static me.justahuman.vaultlootbeams.config.ModConfig.CONFIG;
 
-@Mod.EventBusSubscriber(modid = LootBeams.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+@Mod.EventBusSubscriber(modid = VaultLootBeams.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ClientSetup {
-	private static final String KEYBIND_PREFIX = "key.lootbeams.";
-	private static final String KEYBINDS_CATEGORY = "key.categories.lootbeams";
+	private static final String KEYBIND_PREFIX = "key." + VaultLootBeams.MODID + ".";
+	private static final String KEYBINDS_CATEGORY = "key.categories." + VaultLootBeams.MODID;
 
 	public static final KeyMapping OPEN_CONFIG = new KeyMapping(KEYBIND_PREFIX + "open_config", InputConstants.KEY_L, KEYBINDS_CATEGORY);
 	public static final KeyMapping RELOAD_CONFIG = new KeyMapping(KEYBIND_PREFIX + "reload_config", InputConstants.KEY_L, KEYBINDS_CATEGORY);

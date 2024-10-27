@@ -1,6 +1,6 @@
-package com.lootbeams.config.types;
+package me.justahuman.vaultlootbeams.client.types;
 
-import com.lootbeams.utils.Utils;
+import me.justahuman.vaultlootbeams.utils.Utils;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 

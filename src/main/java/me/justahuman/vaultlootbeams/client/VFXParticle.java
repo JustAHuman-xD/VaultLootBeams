@@ -1,4 +1,4 @@
-package com.lootbeams.client;
+package me.justahuman.vaultlootbeams.client;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
