@@ -102,9 +102,8 @@ public class ConfigScreen {
             Field configField = ModConfig.class.getDeclaredField(fieldName);
             int value = configField.getInt(CONFIG);
             int def = configField.getInt(DEFAULT);
-            category.addEntry(entryBuilder.startIntField(translate("config." + fieldName), value)
-                    .setTooltip(translate("config." + fieldName + ".tooltip"))
-                    .setMin(min).setMax(max).setDefaultValue(def)
+            category.addEntry(entryBuilder.startIntSlider(translate("config." + fieldName), value, min, max)
+                    .setTooltip(translate("config." + fieldName + ".tooltip")).setDefaultValue(def)
                     .setSaveConsumer(newValue -> {
                         try {
                             configField.setInt(CONFIG, newValue);

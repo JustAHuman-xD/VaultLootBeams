@@ -23,6 +23,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.tags.ITagManager;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +33,6 @@ import java.util.Optional;
 import static com.lootbeams.config.ModConfig.CONFIG;
 
 public class Utils {
-    public static final int WHITE = color(255, 255, 255, 255);
     private static final Map<ItemEntity, Component> NAME_CACHE = new HashMap<>();
     private static final Map<ItemEntity, List<Component>> TOOLTIP_CACHE = new HashMap<>();
 
@@ -46,15 +46,15 @@ public class Utils {
     /**
      * Returns the color from the item's name, rarity, tag, or override.
      */
-    public static Integer getItemColor(ItemEntity itemEntity) {
+    public static Color getItemColor(ItemEntity itemEntity) {
         ItemStack itemStack = itemEntity.getItem();
         if (LootBeams.CRASH_BLACKLIST.contains(itemStack)) {
-            return WHITE;
+            return Color.WHITE;
         }
 
         try {
             // From custom colors
-            List<Integer> override = CONFIG.customColors.get(itemStack.getItem());
+            List<Color> override = CONFIG.customColors.get(itemStack.getItem());
             if (override != null && !override.isEmpty()) {
                 if (override.size() == 1) {
                     return override.get(0);
@@ -63,8 +63,8 @@ public class Utils {
                 int stage = (itemEntity.getAge() / 40) % override.size();
                 int progress = itemEntity.getAge() % 40;
 
-                int colorStart = override.get(stage);
-                int colorEnd = override.get((stage + 1) % override.size());
+                Color colorStart = override.get(stage);
+                Color colorEnd = override.get((stage + 1) % override.size());
                 float blendFactor = progress / 40.0f;
                 return blendColors(colorStart, colorEnd, blendFactor);
             }
@@ -72,7 +72,7 @@ public class Utils {
             // From NBT
             CompoundTag tag = itemStack.getTag();
             if (tag != null && tag.contains("lootbeams.color", Tag.TAG_STRING)) {
-                return Integer.decode(tag.getString("lootbeams.color"));
+                return Color.decode(tag.getString("lootbeams.color"));
             }
 
             return CONFIG.beamColorMode.getColor(itemEntity, itemStack);
@@ -84,14 +84,14 @@ public class Utils {
             for (ItemStack stack : LootBeams.CRASH_BLACKLIST) {
                 LootBeams.LOGGER.info(stack.getDisplayName());
             }
-            return WHITE;
+            return Color.WHITE;
         }
     }
 
     /**
      * Gets color from the first letter in the text component.
      */
-    public static int getRawColor(Component text) {
+    public static Color getRawColor(Component text) {
         List<Style> list = new ArrayList<>();
 
         text.visit((acceptor, styleIn) -> {
@@ -105,11 +105,11 @@ public class Utils {
         if (!list.isEmpty()) {
             TextColor color = list.get(0).getColor();
             if (color != null) {
-                return color.getValue();
+                return new Color(color.getValue());
             }
         }
 
-        return WHITE;
+        return Color.WHITE;
     }
 
     /**
@@ -187,67 +187,17 @@ public class Utils {
         return item;
     }
 
-    public static int color(int color, float a) {
-        return color(rC(color), gC(color), bC(color), a);
+    public static Color color(Color color, float a) {
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (a * 255));
     }
 
-    public static int color(float r, float g, float b) {
-        return color(r, g, b, 1);
-    }
-
-    public static int color(float r, float g, float b, float a) {
-        return color((int) r * 255, (int) g * 255, (int) b * 255, (int) a * 255);
-    }
-
-    public static int color(int r, int g, int b) {
-        return color(r, g, b, 255);
-    }
-
-    public static int color(int r, int g, int b, int a) {
-        return ((a & 0xFF) << 24) |
-                ((r & 0xFF) << 16) |
-                ((g & 0xFF) << 8)  |
-                (b & 0xFF);
-    }
-
-    public static float r(int color) {
-        return (color >> 16) & 0xFF;
-    }
-
-    public static float rC(int color) {
-        return r(color) / 255.0f;
-    }
-
-    public static float g(int color) {
-        return (color >> 8) & 0xFF;
-    }
-
-    public static float gC(int color) {
-        return g(color) / 255.0f;
-    }
-
-    public static int b(int color) {
-        return color & 0xFF;
-    }
-
-    public static float bC(int color) {
-        return b(color) / 255.0f;
-    }
-
-    public static int a(int color) {
-        return (color >> 24) & 0xFF;
-    }
-
-    public static float aC(int color) {
-        return a(color) / 255.0f;
-    }
-
-    private static int blendColors(int color1, int color2, float ratio) {
+    private static Color blendColors(Color color1, Color color2, float ratio) {
         float iRatio = 1 - ratio;
-        return color((int) ((r(color1) * iRatio) + r(color2) * ratio),
-                (int) (g(color1) * iRatio + g(color2) * ratio),
-                (int) (b(color1) * iRatio + b(color2) * ratio),
-                (int) (a(color1) * iRatio + a(color2) * ratio));
+        return new Color(
+                (int) (color1.getRed() * iRatio + color2.getRed() * ratio),
+                (int) (color1.getGreen() * iRatio + color2.getGreen() * ratio),
+                (int) (color1.getBlue() * iRatio + color2.getBlue() * ratio)
+        );
     }
 
     public static boolean passes(ItemCondition condition, ItemList whitelist, ItemList blacklist, ItemStack itemStack) {

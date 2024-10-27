@@ -22,7 +22,8 @@ public enum ItemCondition {
                 || item instanceof BowItem
                 || item instanceof CrossbowItem;
     }),
-    RARE_ITEMS(itemStack -> itemStack.getRarity() != Rarity.COMMON);
+    RARE_ITEMS(itemStack -> itemStack.getRarity() != Rarity.COMMON),
+    RARE_OR_EQUIPMENT(itemStack -> RARE_ITEMS.test(itemStack) || EQUIPMENT.test(itemStack));
 
     private final Predicate<ItemStack> predicate;
 

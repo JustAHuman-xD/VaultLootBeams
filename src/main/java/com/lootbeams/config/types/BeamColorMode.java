@@ -4,24 +4,25 @@ import com.lootbeams.utils.Utils;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 
+import java.awt.*;
 import java.util.function.BiFunction;
 
 public enum BeamColorMode {
-    DEFAULT((itemEntity, itemStack) -> Utils.WHITE),
+    DEFAULT((itemEntity, itemStack) -> Color.WHITE),
     NAME_COLOR((itemEntity, itemStack) -> Utils.getRawColor(Utils.nameCache(itemEntity, itemStack))),
-    RARITY_COLOR((itemEntity, itemStack) -> itemStack.getRarity().color.getColor()),
+    RARITY_COLOR((itemEntity, itemStack) -> new Color(itemStack.getRarity().color.getColor())),
     NAME_OR_RARITY_COLOR((itemEntity, itemStack) -> {
-        int nameColor = Utils.getRawColor(Utils.nameCache(itemEntity, itemStack));
-        return nameColor != Utils.WHITE ? Integer.valueOf(nameColor) : itemStack.getRarity().color.getColor();
+        Color nameColor = NAME_COLOR.getColor(itemEntity, itemStack);
+        return nameColor != Color.WHITE ? nameColor : RARITY_COLOR.getColor(itemEntity, itemStack);
     });
 
-    private final BiFunction<ItemEntity, ItemStack, Integer> colorFunction;
+    private final BiFunction<ItemEntity, ItemStack, Color> colorFunction;
 
-    BeamColorMode(BiFunction<ItemEntity, ItemStack, Integer> colorFunction) {
+    BeamColorMode(BiFunction<ItemEntity, ItemStack, Color> colorFunction) {
         this.colorFunction = colorFunction;
     }
 
-    public int getColor(ItemEntity itemEntity, ItemStack itemStack) {
+    public Color getColor(ItemEntity itemEntity, ItemStack itemStack) {
         return colorFunction.apply(itemEntity, itemStack);
     }
 }

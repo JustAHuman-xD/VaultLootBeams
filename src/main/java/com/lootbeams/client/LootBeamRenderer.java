@@ -26,6 +26,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.StringUtils;
 
+import java.awt.*;
 import java.util.List;
 import java.util.Random;
 
@@ -70,10 +71,10 @@ public class LootBeamRenderer extends RenderType {
 		float beamHeight = (float) CONFIG.beamHeight;
 		float yOffset = (float) CONFIG.beamYOffset;
 
-		int color = Utils.getItemColor(itemEntity);
-		float r = Utils.rC(color);
-		float g = Utils.gC(color);
-		float b = Utils.bC(color);
+		Color color = Utils.getItemColor(itemEntity);
+		float r = color.getRed() / 255.0F;
+		float g = color.getGreen() / 255.0F;
+		float b = color.getBlue() / 255.0F;
 
 		// I will rewrite the beam rendering code soon! I promise!
 
@@ -127,7 +128,7 @@ public class LootBeamRenderer extends RenderType {
 		stack.popPose();
 
 		if (CONFIG.beamNameplate && Utils.passes(CONFIG.nameplateCondition, CONFIG.nameplateWhitelist, CONFIG.nameplateBlacklist, itemEntity.getItem())) {
-			renderNameplate(stack, buffer, itemEntity, r, g, b);
+			renderNameplate(stack, buffer, itemEntity, color);
 		}
 
 		if (CONFIG.beamParticles && Utils.passes(CONFIG.particleCondition, CONFIG.particleWhitelist, CONFIG.particleBlacklist, itemEntity.getItem())) {
@@ -169,7 +170,7 @@ public class LootBeamRenderer extends RenderType {
 		builder.vertex(matrixPose, radius, (float) 0, -radius).color(red, green, blue, alpha).uv(1, 0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).normal(matrixNormal, 0.0F, 1.0F, 0.0F).endVertex();
 	}
 
-	private static void renderNameplate(PoseStack stack, MultiBufferSource buffer, ItemEntity itemEntity, float r, float g, float b) {
+	private static void renderNameplate(PoseStack stack, MultiBufferSource buffer, ItemEntity itemEntity, Color color) {
 		// If player is crouching or looking at the item
 		Minecraft instance = Minecraft.getInstance();
         LocalPlayer player = instance.player;
@@ -182,8 +183,8 @@ public class LootBeamRenderer extends RenderType {
 		float nametagScale = (float) CONFIG.nameplateScale;
 		float foregroundAlpha = (float) CONFIG.nameplateTextAlpha;
 		float backgroundAlpha = (float) CONFIG.nameplateBackgroundAlpha;
-		int foregroundColor = Utils.color(r, g, b, foregroundAlpha);
-		int backgroundColor = Utils.color(r, g, b, backgroundAlpha);
+		int foregroundColor = Utils.color(color, foregroundAlpha).getRGB();
+		int backgroundColor = Utils.color(color, backgroundAlpha).getRGB();
 
 		// Render nameplate at heights based on player distance
 		stack.pushPose();
@@ -217,18 +218,18 @@ public class LootBeamRenderer extends RenderType {
 
 			// Render custom rarities
 			if (CONFIG.customNameplateRarities.contains(rarity)) {
-				int rarityColor = Utils.getRawColor(tooltipRarity);
-				foregroundColor = Utils.color(rarityColor, foregroundAlpha);
-				backgroundColor = Utils.color(rarityColor, backgroundAlpha);
+				Color rarityColor = Utils.getRawColor(tooltipRarity);
+				foregroundColor = Utils.color(rarityColor, foregroundAlpha).getRGB();
+				backgroundColor = Utils.color(rarityColor, backgroundAlpha).getRGB();
 				renderText(fontRenderer, stack, buffer, rarity, foregroundColor, backgroundColor, backgroundAlpha);
 				renderedRarity = true;
 			}
 		}
 
 		if (!renderedRarity && CONFIG.renderVanillaRarities) {
-			int rarityColor = Utils.getRawColor(tooltip.get(0));
-			foregroundColor = Utils.color(rarityColor, foregroundAlpha);
-			backgroundColor = Utils.color(rarityColor, backgroundAlpha);
+			Color rarityColor = Utils.getRawColor(tooltip.get(0));
+			foregroundColor = Utils.color(rarityColor, foregroundAlpha).getRGB();
+			backgroundColor = Utils.color(rarityColor, backgroundAlpha).getRGB();
 			String rarity = itemEntity.getItem().getRarity().name().toLowerCase();
 			renderText(fontRenderer, stack, buffer, StringUtils.capitalize(rarity), foregroundColor, backgroundColor, backgroundAlpha);
 		}
@@ -236,24 +237,24 @@ public class LootBeamRenderer extends RenderType {
 		stack.popPose();
 	}
 
-	private static void renderText(Font fontRenderer, PoseStack stack, MultiBufferSource buffer, String text, int foregroundColor, int backgroundColor, float backgroundAlpha) {
+	private static void renderText(Font font, PoseStack stack, MultiBufferSource buffer, String text, int foregroundColor, int backgroundColor, float backgroundAlpha) {
 		if (!CONFIG.nameplateOutline) {
-			fontRenderer.drawInBatch(text, (float) (-fontRenderer.width(text) / 2D), 0f, foregroundColor, false, stack.last().pose(), buffer, false, backgroundColor, 15728864);
+			font.drawInBatch(text, (float) (-font.width(text) / 2D), 0f, foregroundColor, false, stack.last().pose(), buffer, false, backgroundColor, 15728864);
 			return;
 		}
 
-		float w = -fontRenderer.width(text) / 2f;
-		int bg = Utils.color(0, 0, 0, backgroundAlpha);
+		float w = -font.width(text) / 2f;
+		int bg = new Color(0, 0, 0, (int) (255 * backgroundAlpha)).getRGB();
 
 		// Draws background (border) text
-		fontRenderer.draw(stack, text, w + 1f, 0, bg);
-		fontRenderer.draw(stack, text, w - 1f, 0, bg);
-		fontRenderer.draw(stack, text, w, 1f, bg);
-		fontRenderer.draw(stack, text, w, -1f, bg);
+		font.draw(stack, text, w + 1f, 0, bg);
+		font.draw(stack, text, w - 1f, 0, bg);
+		font.draw(stack, text, w, 1f, bg);
+		font.draw(stack, text, w, -1f, bg);
 
 		// Draws foreground text in front of border
 		stack.translate(0.0D, 0.0D, -0.01D);
-		fontRenderer.draw(stack, text, w, 0, foregroundColor);
+		font.draw(stack, text, w, 0, foregroundColor);
 		stack.translate(0.0D, 0.0D, 0.01D);
 	}
 

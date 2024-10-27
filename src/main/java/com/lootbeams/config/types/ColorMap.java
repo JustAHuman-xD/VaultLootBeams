@@ -12,28 +12,29 @@ import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.tags.ITagManager;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ColorMap {
-    protected final Map<Item, List<Integer>> itemColors;
-    protected final Map<TagKey<Item>, List<Integer>> tagColors;
-    protected final Map<String, List<Integer>> modColors;
+    protected final Map<Item, List<Color>> itemColors;
+    protected final Map<TagKey<Item>, List<Color>> tagColors;
+    protected final Map<String, List<Color>> modColors;
 
     public ColorMap() {
         this(new HashMap<>(), new HashMap<>(), new HashMap<>());
     }
 
-    private ColorMap(Map<Item, List<Integer>> itemColors, Map<TagKey<Item>, List<Integer>> tagColors, Map<String, List<Integer>> modColors) {
+    private ColorMap(Map<Item, List<Color>> itemColors, Map<TagKey<Item>, List<Color>> tagColors, Map<String, List<Color>> modColors) {
         this.itemColors = itemColors;
         this.tagColors = tagColors;
         this.modColors = modColors;
     }
 
-    public List<Integer> get(Item item) {
-        List<Integer> colors = itemColors.get(item);
+    public List<Color> get(Item item) {
+        List<Color> colors = itemColors.get(item);
         if (colors != null) {
             return colors;
         }
@@ -67,11 +68,11 @@ public class ColorMap {
             return def;
         }
 
-        Map<Item, List<Integer>> itemColors = new HashMap<>();
-        Map<TagKey<Item>, List<Integer>> tagColors = new HashMap<>();
-        Map<String, List<Integer>> modColors = new HashMap<>();
+        Map<Item, List<Color>> itemColors = new HashMap<>();
+        Map<TagKey<Item>, List<Color>> tagColors = new HashMap<>();
+        Map<String, List<Color>> modColors = new HashMap<>();
         for (String itemKey : serializedColors.keySet()) {
-            List<Integer> colors = getColors(key, itemKey, serializedColors.get(itemKey));
+            List<Color> colors = getColors(key, itemKey, serializedColors.get(itemKey));
             if (!itemKey.contains(":")) {
                 if (Utils.isModId(key, itemKey) && colors != null && !colors.isEmpty()) {
                     modColors.put(itemKey, colors);
@@ -91,23 +92,23 @@ public class ColorMap {
         return new ColorMap(itemColors, tagColors, modColors);
     }
 
-    private static List<Integer> getColors(String key, String itemKey, JsonElement colors) {
+    private static List<Color> getColors(String key, String itemKey, JsonElement colors) {
         if (colors instanceof JsonArray array) {
-            List<Integer> colorList = new ArrayList<>();
+            List<Color> colorList = new ArrayList<>();
             for (JsonElement element : array) {
                 if (!(element instanceof JsonPrimitive primitive)) {
                     LootBeams.LOGGER.warn("Invalid color entry for item \"{}\" in {}", itemKey, key);
                     continue;
                 }
 
-                Integer color = getColor(key, itemKey, primitive);
+                Color color = getColor(key, itemKey, primitive);
                 if (color != null) {
                     colorList.add(color);
                 }
             }
             return colorList;
         } else if (colors instanceof JsonPrimitive primitive) {
-            Integer color = getColor(key, itemKey, primitive);
+            Color color = getColor(key, itemKey, primitive);
             if (color != null) {
                 return List.of(color);
             }
@@ -117,13 +118,13 @@ public class ColorMap {
         return null;
     }
 
-    private static Integer getColor(String key, String itemKey, JsonPrimitive primitive) {
+    private static Color getColor(String key, String itemKey, JsonPrimitive primitive) {
         if (primitive.isNumber()) {
-            return primitive.getAsInt();
+            return new Color(primitive.getAsInt());
         } else if (primitive.isString()) {
             try {
-                return Integer.decode(primitive.getAsString());
-            } catch (NumberFormatException e) {
+                return Color.decode(primitive.getAsString());
+            } catch (Exception e) {
                 LootBeams.LOGGER.warn("Invalid color for item \"{}\" in {}", itemKey, key);
             }
         }
@@ -133,25 +134,29 @@ public class ColorMap {
 
     public static JsonObject serialize(ColorMap customColors) {
         JsonObject object = new JsonObject();
-        for (Map.Entry<Item, List<Integer>> entry : customColors.itemColors.entrySet()) {
+        for (Map.Entry<Item, List<Color>> entry : customColors.itemColors.entrySet()) {
             ResourceLocation itemKey = ForgeRegistries.ITEMS.getKey(entry.getKey());
             if (itemKey == null) {
                 LootBeams.LOGGER.warn("Couldn't serialize custom color for item {}", entry.getKey());
                 continue;
             }
 
-            List<Integer> colors = entry.getValue();
+            List<Color> colors = entry.getValue();
             if (colors.size() == 1) {
-                object.addProperty(itemKey.toString(), "#" + Integer.toHexString(colors.get(0)));
+                object.addProperty(itemKey.toString(), serialize(colors.get(0)));
                 continue;
             }
 
             JsonArray array = new JsonArray();
-            for (Integer color : colors) {
-                array.add("#" + Integer.toHexString(color));
+            for (Color color : colors) {
+                array.add(serialize(color));
             }
             object.add(itemKey.toString(), array);
         }
         return object;
+    }
+
+    private static String serialize(Color color) {
+        return String.format("0x%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
     }
 }
