@@ -146,12 +146,10 @@ public class LootBeamRenderer extends RenderType {
 	}
 
 	private static void addParticle(ResourceLocation spriteLocation, float red, float green, float blue, float alpha, int lifetime, float size, Vec3 pos, Vec3 motion) {
-		// Make the particle brighter
-		alpha *= 1.5f;
 		Minecraft minecraft = Minecraft.getInstance();
 		VFXParticle provider = new VFXParticle(minecraft.level,
 				minecraft.particleEngine.textureAtlas.getSprite(spriteLocation),
-				red, green, blue, alpha, lifetime, size, pos, motion, 0, false, true);
+				red, green, blue, alpha * 1.5f, lifetime, size, pos, motion);
 		minecraft.particleEngine.add(provider);
 	}
 

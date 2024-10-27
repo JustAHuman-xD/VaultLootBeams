@@ -57,7 +57,7 @@ public class ClientSetup {
 	}
 
 	@SubscribeEvent
-	public static void onKeybind(InputEvent.KeyInputEvent event) {
+	public static void onInput(InputEvent.KeyInputEvent event) {
 		if (OPEN_CONFIG.consumeClick()) {
 			SubMenuConfigScreen configScreen = SubMenuConfigScreen.find(ConfigHelper.ConfigPath.parse(LootBeams.MODID + ":client"));
 			Minecraft.getInstance().setScreen(configScreen);
