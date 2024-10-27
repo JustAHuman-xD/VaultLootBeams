@@ -34,10 +34,9 @@ public class LootBeamRenderer extends RenderType {
 
 	public static final ResourceLocation GLOW_TEXTURE = new ResourceLocation(LootBeams.MODID, "textures/entity/glow.png");
 	private static final RenderType DEFAULT_BEAM = createBeamRenderType(LOOT_BEAM_TEXTURE);
-	private static final RenderType DEFAULT_GLOW = RenderType.entityCutout(GLOW_TEXTURE);
 	private static final RenderType SOLID_BEAM = createBeamRenderType(WHITE_TEXTURE);
 	private static final RenderType GLOWING_BEAM = RenderType.lightning();
-	private static final RenderType GLOWING_GLOW = createGlowRenderType();
+	private static final RenderType BEAM_SHADOW = createShadowRenderType();
 
 	private static final Random RANDOM = new Random();
 
@@ -118,7 +117,7 @@ public class LootBeamRenderer extends RenderType {
 				beamAlpha *= multiplier;
 				radius *= multiplier;
 			}
-			renderGlow(stack, buffer.getBuffer(getGlow()), r, g, b, beamAlpha, radius);
+			renderShadow(stack, buffer.getBuffer(BEAM_SHADOW), r, g, b, beamAlpha, radius);
 			stack.popPose();
 		}
 		stack.popPose();
@@ -156,7 +155,7 @@ public class LootBeamRenderer extends RenderType {
 		minecraft.particleEngine.add(provider);
 	}
 
-	private static void renderGlow(PoseStack stack, VertexConsumer builder, float red, float green, float blue, float alpha, float radius) {
+	private static void renderShadow(PoseStack stack, VertexConsumer builder, float red, float green, float blue, float alpha, float radius) {
 		PoseStack.Pose matrixEntry = stack.last();
 		Matrix4f matrixPose = matrixEntry.pose();
 		Matrix3f matrixNormal = matrixEntry.normal();
@@ -287,10 +286,6 @@ public class LootBeamRenderer extends RenderType {
 		return Configuration.SOLID_BEAM.get() ? SOLID_BEAM : DEFAULT_BEAM;
 	}
 
-	private static RenderType getGlow() {
-		return Configuration.BEAM_SHADOW.get() ? GLOWING_GLOW : DEFAULT_GLOW;
-	}
-
 	private static RenderType createBeamRenderType(ResourceLocation texture) {
 		RenderType.CompositeState state = RenderType.CompositeState.builder()
 				.setShaderState(RenderStateShard.RENDERTYPE_BEACON_BEAM_SHADER)
@@ -301,7 +296,7 @@ public class LootBeamRenderer extends RenderType {
 		return RenderType.create("loot_beam", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, true, state);
 	}
 	
-	private static RenderType createGlowRenderType() {
+	private static RenderType createShadowRenderType() {
 		RenderType.CompositeState state = RenderType.CompositeState.builder()
 				.setShaderState(RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_SHADER)
 				.setTextureState(new RenderStateShard.TextureStateShard(GLOW_TEXTURE, false, false))
