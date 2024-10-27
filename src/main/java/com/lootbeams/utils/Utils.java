@@ -60,12 +60,12 @@ public class Utils {
                     return override.get(0);
                 }
 
-                int stage = (itemEntity.getAge() / 20) % override.size();
-                int progress = itemEntity.getAge() % 20;
+                int stage = (itemEntity.getAge() / 40) % override.size();
+                int progress = itemEntity.getAge() % 40;
 
                 int colorStart = override.get(stage);
                 int colorEnd = override.get((stage + 1) % override.size());
-                float blendFactor = progress / 20.0f;
+                float blendFactor = progress / 40.0f;
                 return blendColors(colorStart, colorEnd, blendFactor);
             }
 

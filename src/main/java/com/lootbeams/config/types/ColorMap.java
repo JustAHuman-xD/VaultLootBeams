@@ -71,7 +71,7 @@ public class ColorMap {
         Map<TagKey<Item>, List<Integer>> tagColors = new HashMap<>();
         Map<String, List<Integer>> modColors = new HashMap<>();
         for (String itemKey : serializedColors.keySet()) {
-            List<Integer> colors = getColors(itemKey, serializedColors.get(itemKey));
+            List<Integer> colors = getColors(key, itemKey, serializedColors.get(itemKey));
             if (!itemKey.contains(":")) {
                 if (Utils.isModId(key, itemKey) && colors != null && !colors.isEmpty()) {
                     modColors.put(itemKey, colors);
@@ -91,39 +91,43 @@ public class ColorMap {
         return new ColorMap(itemColors, tagColors, modColors);
     }
 
-    private static List<Integer> getColors(String itemKey, JsonElement colors) {
+    private static List<Integer> getColors(String key, String itemKey, JsonElement colors) {
         if (colors instanceof JsonArray array) {
             List<Integer> colorList = new ArrayList<>();
             for (JsonElement element : array) {
                 if (!(element instanceof JsonPrimitive primitive)) {
-                    LootBeams.LOGGER.warn("Invalid color entry for item \"{}\" in customColors", itemKey);
+                    LootBeams.LOGGER.warn("Invalid color entry for item \"{}\" in {}", itemKey, key);
                     continue;
                 }
 
-                Integer color = getColor(itemKey, primitive);
+                Integer color = getColor(key, itemKey, primitive);
                 if (color != null) {
                     colorList.add(color);
                 }
             }
             return colorList;
         } else if (colors instanceof JsonPrimitive primitive) {
-            Integer color = getColor(itemKey, primitive);
+            Integer color = getColor(key, itemKey, primitive);
             if (color != null) {
                 return List.of(color);
             }
         } else {
-            LootBeams.LOGGER.warn("Invalid colors for item \"{}\" in customColors", itemKey);
+            LootBeams.LOGGER.warn("Invalid colors for item \"{}\" in {}", itemKey, key);
         }
         return null;
     }
 
-    private static Integer getColor(String itemKey, JsonPrimitive primitive) {
+    private static Integer getColor(String key, String itemKey, JsonPrimitive primitive) {
         if (primitive.isNumber()) {
             return primitive.getAsInt();
         } else if (primitive.isString()) {
-            return Integer.decode(primitive.getAsString());
+            try {
+                return Integer.decode(primitive.getAsString());
+            } catch (NumberFormatException e) {
+                LootBeams.LOGGER.warn("Invalid color for item \"{}\" in {}", itemKey, key);
+            }
         }
-        LootBeams.LOGGER.warn("Invalid color for item \"{}\" in customColors", itemKey);
+        LootBeams.LOGGER.warn("Invalid color for item \"{}\" in {}", itemKey, key);
         return null;
     }
 
@@ -138,13 +142,13 @@ public class ColorMap {
 
             List<Integer> colors = entry.getValue();
             if (colors.size() == 1) {
-                object.addProperty(itemKey.toString(), Integer.toHexString(colors.get(0)));
+                object.addProperty(itemKey.toString(), "#" + Integer.toHexString(colors.get(0)));
                 continue;
             }
 
             JsonArray array = new JsonArray();
             for (Integer color : colors) {
-                array.add(new JsonPrimitive(Integer.toHexString(color)));
+                array.add("#" + Integer.toHexString(color));
             }
             object.add(itemKey.toString(), array);
         }
