@@ -11,7 +11,7 @@ public enum BeamColorMode {
     DEFAULT((itemEntity, itemStack) -> Color.WHITE),
     NAME_COLOR((itemEntity, itemStack) -> Utils.getRawColor(Utils.nameCache(itemEntity, itemStack))),
     RARITY_COLOR((itemEntity, itemStack) -> new Color(itemStack.getRarity().color.getColor())),
-    NAME_OR_RARITY_COLOR((itemEntity, itemStack) -> {
+    NAME_OR_RARITY((itemEntity, itemStack) -> {
         Color nameColor = NAME_COLOR.getColor(itemEntity, itemStack);
         return nameColor != Color.WHITE ? nameColor : RARITY_COLOR.getColor(itemEntity, itemStack);
     });
