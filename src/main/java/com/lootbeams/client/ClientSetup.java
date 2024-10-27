@@ -1,15 +1,12 @@
-package com.lootbeams;
+package com.lootbeams.client;
 
-import com.lootbeams.config.Configuration;
+import com.lootbeams.LootBeams;
+import com.lootbeams.config.ConfigScreen;
+import com.lootbeams.utils.Utils;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.simibubi.create.foundation.config.ui.ConfigHelper;
-import com.simibubi.create.foundation.config.ui.SubMenuConfigScreen;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.InputEvent;
@@ -22,6 +19,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
+import static com.lootbeams.config.ModConfig.CONFIG;
+
 @Mod.EventBusSubscriber(modid = LootBeams.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ClientSetup {
 	private static final String KEYBIND_PREFIX = "key.lootbeams.";
@@ -30,6 +29,7 @@ public class ClientSetup {
 	public static final KeyMapping OPEN_CONFIG = new KeyMapping(KEYBIND_PREFIX + "open_config", InputConstants.KEY_L, KEYBINDS_CATEGORY);
 
 	public static void init(FMLClientSetupEvent ignored) {
+		CONFIG.loadFromFile();
 		OPEN_CONFIG.setKeyModifierAndCode(KeyModifier.ALT, InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_L));
 		MinecraftForge.EVENT_BUS.register(ClientSetup.class);
 		ClientRegistry.registerKeyBinding(OPEN_CONFIG);
@@ -59,20 +59,7 @@ public class ClientSetup {
 	@SubscribeEvent
 	public static void onInput(InputEvent.KeyInputEvent event) {
 		if (OPEN_CONFIG.consumeClick()) {
-			SubMenuConfigScreen configScreen = SubMenuConfigScreen.find(ConfigHelper.ConfigPath.parse(LootBeams.MODID + ":client"));
-			Minecraft.getInstance().setScreen(configScreen);
+			Minecraft.getInstance().setScreen(ConfigScreen.create());
 		}
 	}
-
-	public static void attemptDropSound(ItemEntity itemEntity) {
-		ItemStack itemStack = itemEntity.getItem();
-		Item item = itemStack.getItem();
-		if ((Configuration.SOUND_ALL_ITEMS.get() && !Utils.isItemInRegistryList(Configuration.SOUND_ONLY_BLACKLIST.get(), item))
-				|| (Configuration.SOUND_ONLY_EQUIPMENT.get() && Utils.isEquipmentItem(item))
-				|| (Configuration.SOUND_ONLY_RARE.get() && Utils.isRare(itemStack))
-				|| Utils.isItemInRegistryList(Configuration.SOUND_ONLY_WHITELIST.get(), item)) {
-			itemEntity.level.playSound(null, itemEntity, LootBeams.LOOT_DROP.get(), SoundSource.AMBIENT, Configuration.SOUND_VOLUME.get().floatValue(), ((itemEntity.level.random.nextFloat() - itemEntity.level.random.nextFloat()) * 0.7F + 1.0F) * 2.0F);
-		}
-	}
-
 }

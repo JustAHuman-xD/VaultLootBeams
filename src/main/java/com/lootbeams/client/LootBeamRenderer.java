@@ -1,6 +1,8 @@
-package com.lootbeams;
+package com.lootbeams.client;
 
-import com.lootbeams.config.Configuration;
+import com.lootbeams.LootBeams;
+import com.lootbeams.config.types.BeamRenderMode;
+import com.lootbeams.utils.Utils;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -22,10 +24,12 @@ import net.minecraft.util.StringUtil;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import org.apache.commons.lang3.StringUtils;
 
-import java.awt.*;
 import java.util.List;
 import java.util.Random;
+
+import static com.lootbeams.config.ModConfig.CONFIG;
 
 public class LootBeamRenderer extends RenderType {
 
@@ -46,7 +50,7 @@ public class LootBeamRenderer extends RenderType {
 	}
 
 	public static void renderLootBeam(PoseStack stack, MultiBufferSource buffer, float pTicks, long worldTime, ItemEntity itemEntity) {
-		float beamAlpha = Configuration.BEAM_ALPHA.get().floatValue();
+		float beamAlpha = (float) CONFIG.beamAlpha;
 		float entityTime = itemEntity.getAge();
 
 		// Fade out when close
@@ -60,16 +64,16 @@ public class LootBeamRenderer extends RenderType {
 			return;
 		}
 
-		float beamRadius = 0.05f * Configuration.BEAM_RADIUS.get().floatValue();
+		boolean solidBeam = CONFIG.beamRenderMode == BeamRenderMode.SOLID;
+		float beamRadius = 0.05f * (float) CONFIG.beamRadius;
 		float glowRadius = beamRadius + (beamRadius * 0.2f);
-		float beamHeight = Configuration.BEAM_HEIGHT.get().floatValue();
-		float yOffset = Configuration.BEAM_Y_OFFSET.get().floatValue();
+		float beamHeight = (float) CONFIG.beamHeight;
+		float yOffset = (float) CONFIG.beamYOffset;
 
-
-		Color color = Utils.getItemColor(itemEntity);
-		float r = color.getRed() / 255f;
-		float g = color.getGreen() / 255f;
-		float b = color.getBlue() / 255f;
+		int color = Utils.getItemColor(itemEntity);
+		float r = Utils.r(color);
+		float g = Utils.g(color);
+		float b = Utils.b(color);
 
 		// I will rewrite the beam rendering code soon! I promise!
 
@@ -84,7 +88,7 @@ public class LootBeamRenderer extends RenderType {
 		stack.mulPose(Vector3f.XP.rotationDegrees(180));
 		renderPart(stack, buffer.getBuffer(getBeam()), r, g, b, beamAlpha, beamHeight, 0.0F, beamRadius, beamRadius, 0.0F, -beamRadius, 0.0F, 0.0F, -beamRadius, false);
 		stack.mulPose(Vector3f.XP.rotationDegrees(-180));
-		renderPart(stack, buffer.getBuffer(getBeam()), r, g, b, beamAlpha, beamHeight, 0.0F, beamRadius, beamRadius, 0.0F, -beamRadius, 0.0F, 0.0F, -beamRadius, !Configuration.SOLID_BEAM.get());
+		renderPart(stack, buffer.getBuffer(getBeam()), r, g, b, beamAlpha, beamHeight, 0.0F, beamRadius, beamRadius, 0.0F, -beamRadius, 0.0F, 0.0F, -beamRadius, !solidBeam);
 		stack.popPose();
 
 		//Render glow around main beam
@@ -94,25 +98,25 @@ public class LootBeamRenderer extends RenderType {
 		stack.mulPose(Vector3f.XP.rotationDegrees(180));
 		renderPart(stack, buffer.getBuffer(getBeam()), r, g, b, beamAlpha * 0.4f, beamHeight, -glowRadius, -glowRadius, glowRadius, -glowRadius, -beamRadius, glowRadius, glowRadius, glowRadius, false);
 		stack.mulPose(Vector3f.XP.rotationDegrees(-180));
-		renderPart(stack, buffer.getBuffer(getBeam()), r, g, b, beamAlpha * 0.4f, beamHeight, -glowRadius, -glowRadius, glowRadius, -glowRadius, -beamRadius, glowRadius, glowRadius, glowRadius, !Configuration.SOLID_BEAM.get());
+		renderPart(stack, buffer.getBuffer(getBeam()), r, g, b, beamAlpha * 0.4f, beamHeight, -glowRadius, -glowRadius, glowRadius, -glowRadius, -beamRadius, glowRadius, glowRadius, glowRadius, !solidBeam);
 		stack.popPose();
 
-		if (Configuration.WHITE_CENTER.get()) {
+		if (CONFIG.whiteBeamCenter) {
 			stack.pushPose();
 			stack.translate(0, yOffset, 0);
 			stack.translate(0, 1, 0);
 			stack.mulPose(Vector3f.XP.rotationDegrees(180));
 			renderPart(stack, buffer.getBuffer(getBeam()), r, g, b, beamAlpha, beamHeight, 0.0F, beamRadius * 0.4f, beamRadius * 0.4f, 0.0F, -beamRadius * 0.4f, 0.0F, 0.0F, -beamRadius * 0.4f, false);
 			stack.mulPose(Vector3f.XP.rotationDegrees(-180));
-			renderPart(stack, buffer.getBuffer(getBeam()), r, g, b, beamAlpha, beamHeight, 0.0F, beamRadius * 0.4f, beamRadius * 0.4f, 0.0F, -beamRadius * 0.4f, 0.0F, 0.0F, -beamRadius * 0.4f, !Configuration.SOLID_BEAM.get());
+			renderPart(stack, buffer.getBuffer(getBeam()), r, g, b, beamAlpha, beamHeight, 0.0F, beamRadius * 0.4f, beamRadius * 0.4f, 0.0F, -beamRadius * 0.4f, 0.0F, 0.0F, -beamRadius * 0.4f, !solidBeam);
 			stack.popPose();
 		}
 
-		if (Configuration.BEAM_SHADOW.get() && itemEntity.isOnGround()) {
+		if (CONFIG.beamShadow && itemEntity.isOnGround()) {
 			stack.pushPose();
 			stack.translate(0, 0.001f, 0);
-			float radius = Configuration.SHADOW_RADIUS.get().floatValue();
-			if (Configuration.ANIMATE_SHADOW.get()) {
+			float radius = (float) CONFIG.shadowRadius;
+			if (CONFIG.animateShadow) {
 				float multiplier = (float) (Mth.sin((entityTime + pTicks) / 10.0F + itemEntity.bobOffs + (float) Math.PI) * 0.75 + 0.75F) * 0.6f;
 				beamAlpha *= multiplier;
 				radius *= multiplier;
@@ -122,26 +126,26 @@ public class LootBeamRenderer extends RenderType {
 		}
 		stack.popPose();
 
-		if (Configuration.RENDER_NAMETAGS.get()) {
-			renderNameTag(stack, buffer, itemEntity, color);
+		if (CONFIG.beamNameplate && Utils.passes(CONFIG.nameplateCondition, CONFIG.nameplateWhitelist, CONFIG.nameplateBlacklist, itemEntity.getItem())) {
+			renderNameplate(stack, buffer, itemEntity, r, g, b);
 		}
 
-		if (Configuration.PARTICLES.get() && (!Configuration.PARTICLE_RARE_ONLY.get() || Utils.isRare(itemEntity.getItem()))) {
+		if (CONFIG.beamParticles && Utils.passes(CONFIG.particleCondition, CONFIG.particleWhitelist, CONFIG.particleBlacklist, itemEntity.getItem())) {
 			renderParticles(pTicks, itemEntity, (int) entityTime, r, g, b);
 		}
 	}
 
 	private static void renderParticles(float pTicks, ItemEntity item, int entityTime, float r, float g, float b) {
-		float particleCount = Math.abs(20- Configuration.PARTICLE_COUNT.get().floatValue());
+		float particleCount = Math.abs(20 - CONFIG.particleCount);
 		if (entityTime % particleCount == 0 && pTicks < 0.3f && !Minecraft.getInstance().isPaused()) {
-			addParticle(ModClientEvents.GLOW_TEXTURE, r, g, b, 1.0f, Configuration.PARTICLE_LIFETIME.get(),
-					RANDOM.nextFloat((float) (0.25f * Configuration.PARTICLE_SIZE.get()), (float) (1.1f * Configuration.PARTICLE_SIZE.get())),
-					new Vec3(RANDOM.nextDouble(item.getX() - Configuration.PARTICLE_RADIUS.get(), item.getX() + Configuration.PARTICLE_RADIUS.get()),
-							RANDOM.nextDouble(item.getY() - (Configuration.PARTICLE_RADIUS.get()/3f), item.getY() + (Configuration.PARTICLE_RADIUS.get()/3f)),
-							RANDOM.nextDouble(item.getZ() - Configuration.PARTICLE_RADIUS.get(), item.getZ() + Configuration.PARTICLE_RADIUS.get())),
-					new Vec3(RANDOM.nextDouble(-Configuration.PARTICLE_SPEED.get()/2.0f, Configuration.PARTICLE_SPEED.get()/2.0f),
-							RANDOM.nextDouble(Configuration.PARTICLE_SPEED.get()),
-							RANDOM.nextDouble(-Configuration.PARTICLE_SPEED.get()/2.0f, Configuration.PARTICLE_SPEED.get()/2.0f)));
+			addParticle(ModClientEvents.GLOW_TEXTURE, r, g, b, 1.0f, CONFIG.particleLifetime,
+					RANDOM.nextFloat((float) (0.25f * CONFIG.particleSize), (float) (1.1f * CONFIG.particleSize)),
+					new Vec3(RANDOM.nextDouble(item.getX() - CONFIG.particleSpread, item.getX() + CONFIG.particleSpread),
+							RANDOM.nextDouble(item.getY() - (CONFIG.particleSpread / 3f), item.getY() + (CONFIG.particleSpread / 3f)),
+							RANDOM.nextDouble(item.getZ() - CONFIG.particleSpread, item.getZ() + CONFIG.particleSpread)),
+					new Vec3(RANDOM.nextDouble(-CONFIG.particleSpeed / 2.0f, CONFIG.particleSpeed / 2.0f),
+							RANDOM.nextDouble(CONFIG.particleSpeed),
+							RANDOM.nextDouble(-CONFIG.particleSpeed / 2.0f, CONFIG.particleSpeed / 2.0f)));
 		}
 	}
 
@@ -165,49 +169,46 @@ public class LootBeamRenderer extends RenderType {
 		builder.vertex(matrixPose, radius, (float) 0, -radius).color(red, green, blue, alpha).uv(1, 0).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(15728880).normal(matrixNormal, 0.0F, 1.0F, 0.0F).endVertex();
 	}
 
-	private static void renderNameTag(PoseStack stack, MultiBufferSource buffer, ItemEntity itemEntity, Color color) {
+	private static void renderNameplate(PoseStack stack, MultiBufferSource buffer, ItemEntity itemEntity, float r, float g, float b) {
 		// If player is crouching or looking at the item
 		Minecraft instance = Minecraft.getInstance();
         LocalPlayer player = instance.player;
-		if (player == null || (!player.isCrouching()
-				&& !(Configuration.RENDER_NAMETAGS_ONLOOK.get()
-				&& Utils.isLookingAt(player, itemEntity, Configuration.NAMETAG_LOOK_SENSITIVITY.get())))) {
+		if (player == null || (!player.isCrouching() && !(CONFIG.nameplateOnLook && Utils.isLookingAt(player, itemEntity, CONFIG.nameplateLookSensitivity)))) {
 			return;
 		}
 
 		ItemStack itemStack = itemEntity.getItem();
-		double yOffset = Configuration.NAMETAG_Y_OFFSET.get();
-		float nametagScale = Configuration.NAMETAG_SCALE.get().floatValue();
-		float foregroundAlpha = Configuration.NAMETAG_TEXT_ALPHA.get().floatValue();
-		float backgroundAlpha = Configuration.NAMETAG_BACKGROUND_ALPHA.get().floatValue();
-		int foregroundColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (255 * foregroundAlpha)).getRGB();
-		int backgroundColor = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (255 * backgroundAlpha)).getRGB();
+		double yOffset = CONFIG.nameplateYOffset;
+		float nametagScale = (float) CONFIG.nameplateScale;
+		float foregroundAlpha = (float) CONFIG.nameplateTextAlpha;
+		float backgroundAlpha = (float) CONFIG.nameplateBackgroundAlpha;
+		int foregroundColor = Utils.color(r, g, b, foregroundAlpha);
+		int backgroundColor = Utils.color(r, g, b, backgroundAlpha);
 
+		// Render nameplate at heights based on player distance
 		stack.pushPose();
-
-		// Render nametags at heights based on player distance
-		stack.translate(0.0D, Math.min(1D, instance.player.distanceToSqr(itemEntity) * 0.025D) + yOffset, 0.0D);
+		stack.translate(0.0D, Math.min(1D, player.distanceToSqr(itemEntity) * 0.025D) + yOffset, 0.0D);
 		stack.mulPose(instance.getEntityRenderDispatcher().cameraOrientation());
 		stack.scale(-0.02F * nametagScale, -0.02F * nametagScale, 0.02F * nametagScale);
 
-		// Render stack counts on nametag
+		// Render stack counts
 		Font fontRenderer = instance.font;
 		String itemName = StringUtil.stripColor(Utils.nameCache(itemEntity, itemStack).getString());
-		if (Configuration.RENDER_STACKCOUNT.get()) {
+		if (CONFIG.nameplateIncludeCount) {
 			int count = itemStack.getCount();
 			if (count > 1) {
 				itemName = itemName + " x" + count;
 			}
 		}
 
-		// Move closer to the player so that we don't render in beam, and render the tag
+		// Move closer to the player so that we don't render in beam, and render the nameplate
 		stack.translate(0, 0, -10);
 		renderText(fontRenderer, stack, buffer, itemName, foregroundColor, backgroundColor, backgroundAlpha);
 
-		// Render small tags
+		// Render rarity
 		stack.translate(0.0D, 10, 0.0D);
 		stack.scale(0.75f, 0.75f, 0.75f);
-		boolean textDrawn = false;
+		boolean renderedRarity = false;
 		List<Component> tooltip = Utils.tooltipCache(itemEntity, itemStack);
 
 		if (tooltip.size() >= 2) {
@@ -215,34 +216,34 @@ public class LootBeamRenderer extends RenderType {
 			String rarity = tooltipRarity.getString();
 
 			// Render custom rarities
-			if (Configuration.CUSTOM_RARITIES.get().contains(rarity)) {
-				Color rarityColor = Configuration.WHITE_RARITIES.get() ? Color.WHITE : Utils.getRawColor(tooltipRarity);
-				foregroundColor = new Color(rarityColor.getRed(), rarityColor.getGreen(), rarityColor.getBlue(), (int) (255 * foregroundAlpha)).getRGB();
-				backgroundColor = new Color(rarityColor.getRed(), rarityColor.getGreen(), rarityColor.getBlue(), (int) (255 * backgroundAlpha)).getRGB();
+			if (CONFIG.customNameplateRarities.contains(rarity)) {
+				int rarityColor = Utils.getRawColor(tooltipRarity);
+				foregroundColor = Utils.color(rarityColor, foregroundAlpha);
+				backgroundColor = Utils.color(rarityColor, backgroundAlpha);
 				renderText(fontRenderer, stack, buffer, rarity, foregroundColor, backgroundColor, backgroundAlpha);
-				textDrawn = true;
+				renderedRarity = true;
 			}
 		}
 
-		if (!textDrawn && Configuration.VANILLA_RARITIES.get()) {
-			Color rarityColor = Utils.getRawColor(tooltip.get(0));
-			foregroundColor = new Color(rarityColor.getRed(), rarityColor.getGreen(), rarityColor.getBlue(), (int) (255 * foregroundAlpha)).getRGB();
-			backgroundColor = new Color(rarityColor.getRed(), rarityColor.getGreen(), rarityColor.getBlue(), (int) (255 * backgroundAlpha)).getRGB();
+		if (!renderedRarity && CONFIG.renderVanillaRarities) {
+			int rarityColor = Utils.getRawColor(tooltip.get(0));
+			foregroundColor = Utils.color(rarityColor, foregroundAlpha);
+			backgroundColor = Utils.color(rarityColor, backgroundAlpha);
 			String rarity = itemEntity.getItem().getRarity().name().toLowerCase();
-			renderText(fontRenderer, stack, buffer, Utils.capitalize(rarity), foregroundColor, backgroundColor, backgroundAlpha);
+			renderText(fontRenderer, stack, buffer, StringUtils.capitalize(rarity), foregroundColor, backgroundColor, backgroundAlpha);
 		}
 
 		stack.popPose();
 	}
 
 	private static void renderText(Font fontRenderer, PoseStack stack, MultiBufferSource buffer, String text, int foregroundColor, int backgroundColor, float backgroundAlpha) {
-		if (!Configuration.BORDERS.get()) {
+		if (!CONFIG.nameplateOutline) {
 			fontRenderer.drawInBatch(text, (float) (-fontRenderer.width(text) / 2D), 0f, foregroundColor, false, stack.last().pose(), buffer, false, backgroundColor, 15728864);
 			return;
 		}
 
 		float w = -fontRenderer.width(text) / 2f;
-		int bg = new Color(0, 0, 0, (int) (255 * backgroundAlpha)).getRGB();
+		int bg = Utils.color(0, 0, 0, backgroundAlpha);
 
 		// Draws background (border) text
 		fontRenderer.draw(stack, text, w + 1f, 0, bg);
@@ -278,10 +279,11 @@ public class LootBeamRenderer extends RenderType {
 	}
 
 	private static RenderType getBeam() {
-		if (Configuration.GLOWING_BEAM.get()) {
-			return GLOWING_BEAM;
-		}
-		return Configuration.SOLID_BEAM.get() ? SOLID_BEAM : DEFAULT_BEAM;
+		return switch(CONFIG.beamRenderMode) {
+			case GLOWING -> GLOWING_BEAM;
+			case SOLID -> SOLID_BEAM;
+			default -> DEFAULT_BEAM;
+		};
 	}
 
 	private static RenderType createBeamRenderType(ResourceLocation texture) {

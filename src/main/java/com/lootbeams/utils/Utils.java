@@ -1,6 +1,7 @@
-package com.lootbeams;
+package com.lootbeams.utils;
 
-import com.lootbeams.config.Configuration;
+import com.lootbeams.LootBeams;
+import com.lootbeams.config.types.ItemCondition;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
@@ -17,63 +18,44 @@ import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.lootbeams.config.ModConfig.CONFIG;
+
 public class Utils {
+    public static final int WHITE = color(255, 255, 255, 255);
     private static final Map<ItemEntity, Component> NAME_CACHE = new HashMap<>();
     private static final Map<ItemEntity, List<Component>> TOOLTIP_CACHE = new HashMap<>();
 
     public static boolean rendersBeam(ItemEntity itemEntity) {
-        ItemStack itemStack = itemEntity.getItem();
-        Item item = itemStack.getItem();
         LocalPlayer player = Minecraft.getInstance().player;
-        return player != null && player.distanceToSqr(itemEntity) <= Math.pow(Configuration.RENDER_DISTANCE.get(), 2)
-                && (Configuration.ALL_ITEMS.get()
-                    || (Configuration.ONLY_EQUIPMENT.get() && Utils.isEquipmentItem(item))
-                    || (Configuration.ONLY_RARE.get() && Utils.isRare(itemStack))
-                    || (Utils.isItemInRegistryList(Configuration.WHITELIST.get(), item))
-                )
-				&& !Utils.isItemInRegistryList(Configuration.BLACKLIST.get(), item)
-                && (!Configuration.REQUIRE_ON_GROUND.get() || itemEntity.isOnGround());
-    }
-
-    public static boolean isRare(ItemStack itemStack) {
-        return itemStack.getRarity() != Rarity.COMMON;
-    }
-
-    public static String capitalize(String str) {
-        if (str == null || str.isEmpty()) {
-            return str;
-        }
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
+        return player != null && player.distanceToSqr(itemEntity) <= Math.pow(CONFIG.renderDistance, 2)
+                && passes(CONFIG.renderCondition, CONFIG.renderWhitelist, CONFIG.renderBlacklist, itemEntity.getItem())
+                && (!CONFIG.requireGround || itemEntity.isOnGround());
     }
 
     /**
      * Returns the color from the item's name, rarity, tag, or override.
      */
-    public static Color getItemColor(ItemEntity itemEntity) {
+    public static Integer getItemColor(ItemEntity itemEntity) {
         ItemStack itemStack = itemEntity.getItem();
         if (LootBeams.CRASH_BLACKLIST.contains(itemStack)) {
-            return Color.WHITE;
+            return WHITE;
         }
 
         try {
-            Item item = itemStack.getItem();
-
-            // From Config Overrides
-            Color override = Configuration.colorOverride(item);
+            // From custom colors
+            Integer override = CONFIG.customColors.get(itemStack.getItem());
             if (override != null) {
                 return override;
             }
@@ -81,40 +63,26 @@ public class Utils {
             // From NBT
             CompoundTag tag = itemStack.getTag();
             if (tag != null && tag.contains("lootbeams.color", Tag.TAG_STRING)) {
-                return Color.decode(tag.getString("lootbeams.color"));
+                return Integer.decode(tag.getString("lootbeams.color"));
             }
 
-            // From Name
-            if (Configuration.RENDER_NAME_COLOR.get()) {
-                Color nameColor = getRawColor(nameCache(itemEntity, itemStack));
-                if (!nameColor.equals(Color.WHITE)) {
-                    return nameColor;
-                }
-            }
-
-            // From Rarity
-            if (Configuration.RENDER_RARITY_COLOR.get()) {
-                Integer rarityColor = item.getRarity(itemStack).color.getColor();
-                if (rarityColor != null) {
-                    return new Color(rarityColor);
-                }
-            }
-            return Color.WHITE;
+            return CONFIG.beamColorMode.getColor(itemEntity, itemStack);
         } catch (Exception e) {
             LootBeams.LOGGER.error("Failed to get color for ({}), added to temporary blacklist", itemStack.getDisplayName());
+            LootBeams.LOGGER.error("Error: ", e);
             LootBeams.CRASH_BLACKLIST.add(itemStack);
             LootBeams.LOGGER.info("Temporary blacklist is now : ");
             for (ItemStack stack : LootBeams.CRASH_BLACKLIST) {
                 LootBeams.LOGGER.info(stack.getDisplayName());
             }
-            return Color.WHITE;
+            return WHITE;
         }
     }
 
     /**
      * Gets color from the first letter in the text component.
      */
-    public static Color getRawColor(Component text) {
+    public static int getRawColor(Component text) {
         List<Style> list = new ArrayList<>();
 
         text.visit((acceptor, styleIn) -> {
@@ -128,11 +96,11 @@ public class Utils {
         if (!list.isEmpty()) {
             TextColor color = list.get(0).getColor();
             if (color != null) {
-                return new Color(color.getValue());
+                return color.getValue();
             }
         }
 
-        return Color.WHITE;
+        return WHITE;
     }
 
     /**
@@ -196,5 +164,40 @@ public class Utils {
         }
 
         return false;
+    }
+
+    public static int color(float r, float g, float b, float a) {
+        return color((int) r * 255, (int) g * 255, (int) b * 255, (int) a * 255);
+    }
+
+    public static int color(int r, int g, int b, int a) {
+        return ((a & 0xFF) << 24) |
+                ((r & 0xFF) << 16) |
+                ((g & 0xFF) << 8)  |
+                (b & 0xFF);
+    }
+
+    public static float r(int color) {
+        return ((color >> 16) & 0xFF) / 255.0f;
+    }
+
+    public static float g(int color) {
+        return ((color >> 8) & 0xFF) / 255.0f;
+    }
+
+    public static float b(int color) {
+        return (color & 0xFF) / 255.0f;
+    }
+
+    public static float a(int color) {
+        return ((color >> 24) & 0xFF) / 255.0f;
+    }
+
+    public static boolean passes(ItemCondition condition, List<Item> whitelist, List<Item> blacklist, ItemStack itemStack) {
+        return (condition.test(itemStack) || whitelist.contains(itemStack.getItem())) && !blacklist.contains(itemStack.getItem());
+    }
+
+    public static int color(int color, float a) {
+        return color(r(color), g(color), b(color), a);
     }
 }

@@ -1,6 +1,7 @@
 plugins {
     id 'net.minecraftforge.gradle' version '5.1.+'
     id 'org.spongepowered.mixin' version '0.7.+'
+    id 'java-library'
 }
 
 apply plugin: 'org.spongepowered.mixin'
@@ -22,6 +23,7 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
+    maven { url "https://maven.shedaniel.me/" }
     maven {
         url "https://cursemaven.com"
         content {
@@ -34,7 +36,8 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.18.2-40.1.93'
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    implementation fg.deobf("curse.maven:create-328085:4550986")
+    api fg.deobf("me.shedaniel.cloth:cloth-config-forge:6.3.81")
+    implementation fg.deobf("curse.maven:vault-hunters-official-mod-458203:5631250")
 }
 
 mixin {

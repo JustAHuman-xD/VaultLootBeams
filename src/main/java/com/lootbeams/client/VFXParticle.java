@@ -1,4 +1,4 @@
-package com.lootbeams;
+package com.lootbeams.client;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;

@@ -75,8 +75,8 @@ public class Configuration {
 		clientBuilder.comment("Beam Config").push("Loot Beams");
 		RENDER_NAME_COLOR = clientBuilder.comment("If beams should be colored the same as the Items name (excludes name colors from rarity). This has priority over render_rarity_color.").define("render_name_color", true);
 		RENDER_RARITY_COLOR = clientBuilder.comment("If beams should be colored the same as the Items rarity.").define("render_rarity_color", true);
-		RENDER_DISTANCE = clientBuilder.comment("How close the player has to be to see the beam. (note: in vanilla items stop rendering at 24 blocks.)").defineInRange("render_distance", 24D, 0D, 1024D);
-		REQUIRE_ON_GROUND = clientBuilder.comment("If the item needs to be on the ground to render the Loot Beam.").define("require_ground", true);
+		RENDER_DISTANCE = clientBuilder.comment("").defineInRange("render_distance", 24D, 0D, 1024D);
+		REQUIRE_ON_GROUND = clientBuilder.comment("").define("require_ground", true);
 		COLOR_OVERRIDES = clientBuilder.comment("Overrides an item's beam color with hex color. Must follow the specific format: (registryname=hexcolor) Or (#tagname=hexcolor). Example: \"minecraft:stone=0xFFFFFF\". This also accepts modids.").define("color_overrides", new ArrayList<>());
 
 		clientBuilder.comment("Beam Properties").push("Beam Properties");

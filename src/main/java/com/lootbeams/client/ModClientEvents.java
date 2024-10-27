@@ -1,5 +1,6 @@
-package com.lootbeams;
+package com.lootbeams.client;
 
+import com.lootbeams.LootBeams;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;

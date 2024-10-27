@@ -1,12 +1,10 @@
 package com.lootbeams;
 
-import com.lootbeams.config.Configuration;
+import com.lootbeams.client.ClientSetup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -28,7 +26,6 @@ public class LootBeams {
 	public static final RegistryObject<SoundEvent> LOOT_DROP = register(new SoundEvent(new ResourceLocation(MODID, "loot_drop")));
 
 	public LootBeams() {
-		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, Configuration.CLIENT_CONFIG);
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::init);
 		SOUNDS.register(FMLJavaModLoadingContext.get().getModEventBus());
 	}
