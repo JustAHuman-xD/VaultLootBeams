@@ -43,7 +43,7 @@
   "vaultlootbeams.config.beamRenderMode.tooltip": "Controls the texture and shader of the beam.",
   "vaultlootbeams.config.beamColorMode": "Beam Color Mode",
   "vaultlootbeams.config.beamColorMode.tooltip": "What should determine the color of the beam.",
-  "vaultlootbeams.config.customColors": "You cannot edit custom colors in the gui, you must edit the config file directly.",
+  "vaultlootbeams.config.colorOverrides": "You cannot edit color overrides in the gui, you must edit the config file directly.",
 
   "vaultlootbeams.config.beamParticles": "Render Beam Particles",
   "vaultlootbeams.config.beamParticles.tooltip": "Should any beam particles be rendered.",

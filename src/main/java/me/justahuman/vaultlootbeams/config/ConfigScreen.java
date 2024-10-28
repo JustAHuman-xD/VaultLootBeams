@@ -51,7 +51,7 @@ public class ConfigScreen {
         booleanEntry(beamProperties, entryBuilder, "animateShadow");
         enumEntry(beamProperties, entryBuilder, "beamRenderMode", BeamRenderMode.class);
         enumEntry(beamProperties, entryBuilder, "beamColorMode", BeamColorMode.class);
-        beamProperties.addEntry(entryBuilder.startTextDescription(translate("customColors")).build());
+        beamProperties.addEntry(entryBuilder.startTextDescription(translate("colorOverrides")).build());
 
         booleanEntry(beamParticles, entryBuilder, "beamParticles");
         doubleEntry(beamParticles, entryBuilder, "particleSize", 0.00001, 10);

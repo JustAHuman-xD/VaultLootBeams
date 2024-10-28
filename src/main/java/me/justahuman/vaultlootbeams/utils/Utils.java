@@ -1,6 +1,7 @@
 package me.justahuman.vaultlootbeams.utils;
 
 import me.justahuman.vaultlootbeams.VaultLootBeams;
+import me.justahuman.vaultlootbeams.api.LootBeamHolder;
 import me.justahuman.vaultlootbeams.client.types.ItemCondition;
 import me.justahuman.vaultlootbeams.client.types.ItemList;
 import net.minecraft.client.Minecraft;
@@ -34,15 +35,20 @@ import java.util.Optional;
 import static me.justahuman.vaultlootbeams.config.ModConfig.CONFIG;
 
 public class Utils {
-    private static final Map<ItemEntity, Component> NAME_CACHE = new HashMap<>();
     private static final Map<ItemEntity, List<Component>> TOOLTIP_CACHE = new HashMap<>();
     private static boolean warnings = true;
 
     public static boolean rendersBeam(ItemEntity itemEntity) {
         LocalPlayer player = Minecraft.getInstance().player;
-        return player != null && player.distanceToSqr(itemEntity) <= Math.pow(CONFIG.renderDistance, 2)
-                && passes(CONFIG.renderCondition, CONFIG.renderWhitelist, CONFIG.renderBlacklist, itemEntity.getItem())
-                && (!CONFIG.requireGround || itemEntity.isOnGround());
+        if (player == null || player.distanceToSqr(itemEntity) > Math.pow(CONFIG.renderDistance, 2) || (CONFIG.requireGround && !itemEntity.isOnGround())) {
+            return false;
+        }
+
+        ItemStack itemStack = itemEntity.getItem();
+        if (itemStack.getItem() instanceof LootBeamHolder holder) {
+            return holder.shouldRenderBeam(itemEntity, itemStack);
+        }
+        return passes(CONFIG.renderCondition, CONFIG.renderWhitelist, CONFIG.renderBlacklist, itemEntity.getItem());
     }
 
     /**
@@ -54,40 +60,45 @@ public class Utils {
             return Color.WHITE;
         }
 
-        try {
-            // From custom colors
-            List<Color> override = CONFIG.customColors.get(itemStack.getItem());
-            if (override != null && !override.isEmpty()) {
-                if (override.size() == 1) {
-                    return override.get(0);
-                }
-
-                int stage = (itemEntity.getAge() / 40) % override.size();
-                int progress = itemEntity.getAge() % 40;
-
-                Color colorStart = override.get(stage);
-                Color colorEnd = override.get((stage + 1) % override.size());
-                float blendFactor = progress / 40.0f;
-                return blendColors(colorStart, colorEnd, blendFactor);
-            }
-
-            // From NBT
-            CompoundTag tag = itemStack.getTag();
-            if (tag != null && tag.contains("lootbeams.color", Tag.TAG_STRING)) {
-                return Color.decode(tag.getString("lootbeams.color"));
-            }
-
-            return CONFIG.beamColorMode.getColor(itemEntity, itemStack);
-        } catch (Exception e) {
-            VaultLootBeams.LOGGER.error("Failed to get color for ({}), added to temporary blacklist", itemStack.getDisplayName());
-            VaultLootBeams.LOGGER.error("Error: ", e);
-            VaultLootBeams.CRASH_BLACKLIST.add(itemStack);
-            VaultLootBeams.LOGGER.info("Temporary blacklist is now : ");
-            for (ItemStack stack : VaultLootBeams.CRASH_BLACKLIST) {
-                VaultLootBeams.LOGGER.info(stack.getDisplayName());
-            }
-            return Color.WHITE;
+        if (itemStack.getItem() instanceof LootBeamHolder holder) {
+            return holder.getBeamColor(itemEntity, itemStack);
         }
+
+        // From custom colors
+        List<Color> override = CONFIG.colorOverrides.get(itemStack.getItem());
+        if (override != null && !override.isEmpty()) {
+            if (override.size() == 1) {
+                return override.get(0);
+            }
+
+            int stage = (itemEntity.getAge() / 40) % override.size();
+            int progress = itemEntity.getAge() % 40;
+
+            Color colorStart = override.get(stage);
+            Color colorEnd = override.get((stage + 1) % override.size());
+            float blendFactor = progress / 40.0f;
+            return blendColors(colorStart, colorEnd, blendFactor);
+        }
+
+        // From NBT
+        CompoundTag tag = itemStack.getTag();
+        if (tag != null && tag.contains("lootbeams.color", Tag.TAG_STRING)) {
+            try {
+                return Color.decode(tag.getString("lootbeams.color"));
+            } catch (Exception e) {
+                VaultLootBeams.LOGGER.error("Failed to get color for ({}), added to temporary blacklist", itemStack.getDisplayName());
+                VaultLootBeams.LOGGER.error("Error: ", e);
+                VaultLootBeams.CRASH_BLACKLIST.add(itemStack);
+                VaultLootBeams.LOGGER.info("Temporary blacklist is now : ");
+                for (ItemStack stack : VaultLootBeams.CRASH_BLACKLIST) {
+                    VaultLootBeams.LOGGER.info(stack.getDisplayName());
+                }
+                return Color.WHITE;
+            }
+        }
+
+        // Client Config Color Mode
+        return CONFIG.beamColorMode.getColor(itemEntity, itemStack);
     }
 
     /**
@@ -125,12 +136,7 @@ public class Utils {
     }
 
     public static void cache(ItemEntity itemEntity) {
-        nameCache(itemEntity, itemEntity.getItem());
         tooltipCache(itemEntity, itemEntity.getItem());
-    }
-
-    public static Component nameCache(ItemEntity itemEntity, ItemStack itemStack) {
-        return NAME_CACHE.computeIfAbsent(itemEntity, ie -> itemStack.getHoverName());
     }
 
     public static List<Component> tooltipCache(ItemEntity itemEntity, ItemStack itemStack) {
@@ -138,7 +144,6 @@ public class Utils {
     }
 
     public static void unCache(ItemEntity itemEntity) {
-        NAME_CACHE.remove(itemEntity);
         TOOLTIP_CACHE.remove(itemEntity);
     }
 

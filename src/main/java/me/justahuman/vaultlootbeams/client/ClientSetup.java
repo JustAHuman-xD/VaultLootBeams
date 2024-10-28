@@ -53,13 +53,6 @@ public class ClientSetup {
 	}
 
 	@SubscribeEvent
-	public static void onRenderNameplate(RenderNameplateEvent event) {
-		if (event.getEntity() instanceof ItemEntity itemEntity && Utils.rendersBeam(itemEntity)) {
-			LootBeamRenderer.renderLootBeam(event.getPoseStack(), event.getMultiBufferSource(), event.getPartialTick(), itemEntity.level.getGameTime(), itemEntity);
-		}
-	}
-
-	@SubscribeEvent
 	public static void onInput(InputEvent.KeyInputEvent event) {
 		if (OPEN_CONFIG.consumeClick()) {
 			Minecraft.getInstance().setScreen(ConfigScreen.create());

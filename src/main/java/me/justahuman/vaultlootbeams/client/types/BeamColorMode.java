@@ -9,7 +9,7 @@ import java.util.function.BiFunction;
 
 public enum BeamColorMode {
     DEFAULT((itemEntity, itemStack) -> Color.WHITE),
-    NAME_COLOR((itemEntity, itemStack) -> Utils.getRawColor(Utils.nameCache(itemEntity, itemStack))),
+    NAME_COLOR((itemEntity, itemStack) -> Utils.getRawColor(itemStack.getHoverName())),
     RARITY_COLOR((itemEntity, itemStack) -> new Color(itemStack.getRarity().color.getColor())),
     NAME_OR_RARITY((itemEntity, itemStack) -> {
         Color nameColor = NAME_COLOR.getColor(itemEntity, itemStack);

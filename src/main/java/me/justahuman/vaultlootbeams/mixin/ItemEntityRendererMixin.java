@@ -1,6 +1,7 @@
 package me.justahuman.vaultlootbeams.mixin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import me.justahuman.vaultlootbeams.client.LootBeamRenderer;
 import me.justahuman.vaultlootbeams.utils.Utils;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -11,30 +12,31 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static me.justahuman.vaultlootbeams.config.ModConfig.CONFIG;
 
 @Mixin(ItemEntityRenderer.class)
 public abstract class ItemEntityRendererMixin extends EntityRenderer<ItemEntity> {
-    @Unique private ItemEntity lootbeams$entity;
-
     protected ItemEntityRendererMixin(EntityRendererProvider.Context context) {
         super(context);
     }
 
+    @Unique private boolean vaultLootBeams$rendersBeam;
+
     @Inject(at = @At("HEAD"), method = "render(Lnet/minecraft/world/entity/item/ItemEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V")
-    public void render(ItemEntity itemEntity, float yaw, float tickDelta, PoseStack stack, MultiBufferSource buffer, int light, CallbackInfo ci) {
+    public void renderHead(ItemEntity itemEntity, float yaw, float pTicks, PoseStack stack, MultiBufferSource buffer, int light, CallbackInfo ci) {
         this.entityRenderDispatcher.setRenderShadow(true);
-        if (Utils.rendersBeam(itemEntity)) {
-            this.lootbeams$entity = itemEntity;
+        this.vaultLootBeams$rendersBeam = Utils.rendersBeam(itemEntity);
+        if (vaultLootBeams$rendersBeam) {
             this.entityRenderDispatcher.setRenderShadow(!CONFIG.beamShadow);
         }
     }
 
-    @ModifyVariable(at = @At("HEAD"), method = "render(Lnet/minecraft/world/entity/item/ItemEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V", ordinal = 0, argsOnly = true)
-    public int render(int light) {
-        return this.lootbeams$entity != null ? 15728640 : light;
+    @Inject(at = @At("TAIL"), method = "render(Lnet/minecraft/world/entity/item/ItemEntity;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V")
+    public void renderTail(ItemEntity itemEntity, float yaw, float pTicks, PoseStack stack, MultiBufferSource buffer, int light, CallbackInfo ci) {
+        if (vaultLootBeams$rendersBeam) {
+            LootBeamRenderer.renderLootBeam(stack, buffer, pTicks, itemEntity.level.getGameTime(), itemEntity);
+        }
     }
 }

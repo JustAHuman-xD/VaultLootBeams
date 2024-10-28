@@ -33,14 +33,13 @@ import java.util.Random;
 import static me.justahuman.vaultlootbeams.config.ModConfig.CONFIG;
 
 public class LootBeamRenderer extends RenderType {
-
 	private static final ResourceLocation LOOT_BEAM_TEXTURE = new ResourceLocation(VaultLootBeams.MODID, "textures/entity/loot_beam.png");
 	private static final ResourceLocation WHITE_TEXTURE = new ResourceLocation(VaultLootBeams.MODID, "textures/entity/white.png");
 
 	public static final ResourceLocation GLOW_TEXTURE = new ResourceLocation(VaultLootBeams.MODID, "textures/entity/glow.png");
 	private static final RenderType DEFAULT_BEAM = createBeamRenderType(LOOT_BEAM_TEXTURE);
 	private static final RenderType SOLID_BEAM = createBeamRenderType(WHITE_TEXTURE);
-	private static final RenderType GLOWING_BEAM = RenderType.lightning();
+	private static final RenderType GLOWING_BEAM = createGlowingBeamRenderType();
 	private static final RenderType BEAM_SHADOW = createShadowRenderType();
 
 	private static final Random RANDOM = new Random();
@@ -130,16 +129,12 @@ public class LootBeamRenderer extends RenderType {
 		if (CONFIG.beamNameplate && Utils.passes(CONFIG.nameplateCondition, CONFIG.nameplateWhitelist, CONFIG.nameplateBlacklist, itemEntity.getItem())) {
 			renderNameplate(stack, buffer, itemEntity, color);
 		}
-
-		if (CONFIG.beamParticles && Utils.passes(CONFIG.particleCondition, CONFIG.particleWhitelist, CONFIG.particleBlacklist, itemEntity.getItem())) {
-			renderParticles(pTicks, itemEntity, (int) entityTime, r, g, b);
-		}
 	}
 
-	private static void renderParticles(float pTicks, ItemEntity item, int entityTime, float r, float g, float b) {
+	public static void spawnParticles(ItemEntity item, int entityTime, Color color) {
 		float particleCount = Math.abs(20 - CONFIG.particleCount);
-		if (entityTime % particleCount == 0 && pTicks < 0.3f && !Minecraft.getInstance().isPaused()) {
-			addParticle(ModClientEvents.GLOW_TEXTURE, r, g, b, 1.0f, CONFIG.particleLifetime,
+		if (entityTime % particleCount == 0 && !Minecraft.getInstance().isPaused()) {
+			addParticle(ModClientEvents.GLOW_TEXTURE, color, 1.0f, CONFIG.particleLifetime,
 					RANDOM.nextFloat((float) (0.25f * CONFIG.particleSize), (float) (1.1f * CONFIG.particleSize)),
 					new Vec3(RANDOM.nextDouble(item.getX() - CONFIG.particleSpread, item.getX() + CONFIG.particleSpread),
 							RANDOM.nextDouble(item.getY() - (CONFIG.particleSpread / 3f), item.getY() + (CONFIG.particleSpread / 3f)),
@@ -150,11 +145,11 @@ public class LootBeamRenderer extends RenderType {
 		}
 	}
 
-	private static void addParticle(ResourceLocation spriteLocation, float red, float green, float blue, float alpha, int lifetime, float size, Vec3 pos, Vec3 motion) {
+	private static void addParticle(ResourceLocation spriteLocation, Color color, float alpha, int lifetime, float size, Vec3 pos, Vec3 motion) {
 		Minecraft minecraft = Minecraft.getInstance();
 		VFXParticle provider = new VFXParticle(minecraft.level,
 				minecraft.particleEngine.textureAtlas.getSprite(spriteLocation),
-				red, green, blue, alpha * 1.5f, lifetime, size, pos, motion);
+				color, alpha * 1.5f, lifetime, size, pos, motion);
 		minecraft.particleEngine.add(provider);
 	}
 
@@ -194,7 +189,7 @@ public class LootBeamRenderer extends RenderType {
 
 		// Render stack counts
 		Font fontRenderer = instance.font;
-		String itemName = StringUtil.stripColor(Utils.nameCache(itemEntity, itemStack).getString());
+		String itemName = StringUtil.stripColor(itemStack.getHoverName().getString());
 		if (CONFIG.nameplateIncludeCount) {
 			int count = itemStack.getCount();
 			if (count > 1) {
@@ -292,9 +287,19 @@ public class LootBeamRenderer extends RenderType {
 				.setShaderState(RenderStateShard.RENDERTYPE_BEACON_BEAM_SHADER)
 				.setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
 				.setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-				.setWriteMaskState(RenderStateShard.COLOR_WRITE)
+				.setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
 				.createCompositeState(false);
 		return RenderType.create("loot_beam", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, true, state);
+	}
+
+	private static RenderType createGlowingBeamRenderType() {
+		RenderType.CompositeState state = RenderType.CompositeState.builder()
+				.setShaderState(RENDERTYPE_LIGHTNING_SHADER)
+				.setWriteMaskState(COLOR_DEPTH_WRITE)
+				.setTransparencyState(LIGHTNING_TRANSPARENCY)
+				.setOutputState(WEATHER_TARGET)
+				.createCompositeState(false);
+		return RenderType.create("loot_beam_glowing", DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, true, state);
 	}
 	
 	private static RenderType createShadowRenderType() {
@@ -309,5 +314,4 @@ public class LootBeamRenderer extends RenderType {
 				.createCompositeState(true);
 		return RenderType.create("loot_beam_glow", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, true, state);
 	}
-
 }

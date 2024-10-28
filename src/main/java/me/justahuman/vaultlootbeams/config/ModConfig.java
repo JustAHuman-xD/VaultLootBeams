@@ -39,7 +39,7 @@ public class ModConfig {
     public boolean animateShadow = true;
     public BeamRenderMode beamRenderMode = BeamRenderMode.GLOWING;
     public BeamColorMode beamColorMode = BeamColorMode.NAME_OR_RARITY;
-    public ColorMap customColors = new ColorMap();
+    public ColorMap colorOverrides = new ColorMap();
 
     public boolean beamParticles = true;
     public double particleSize = 0.25;
@@ -98,7 +98,7 @@ public class ModConfig {
         animateShadow = JsonUtils.get(root, "animateShadow", DEFAULT.animateShadow);
         beamRenderMode = JsonUtils.get(root, "beamRenderMode", DEFAULT.beamRenderMode, BeamRenderMode.class);
         beamColorMode = JsonUtils.get(root, "beamColorMode", DEFAULT.beamColorMode, BeamColorMode.class);
-        customColors = ColorMap.deserialize(root, "customColors", DEFAULT.customColors);
+        colorOverrides = ColorMap.deserialize(root, "colorOverrides", DEFAULT.colorOverrides);
 
         beamParticles = JsonUtils.get(root, "beamParticles", DEFAULT.beamParticles);
         particleSize = JsonUtils.getBounded(root, "particleSize", 0.00001, 10, DEFAULT.particleSize);
@@ -150,7 +150,7 @@ public class ModConfig {
         root.addProperty("animateShadow", animateShadow);
         root.addProperty("beamRenderMode", beamRenderMode.name());
         root.addProperty("beamColorMode", beamColorMode.name());
-        root.add("customColors", customColors.serialize());
+        root.add("colorOverrides", colorOverrides.serialize());
 
         root.addProperty("beamParticles", beamParticles);
         root.addProperty("particleSize", particleSize);

@@ -17,7 +17,6 @@ import java.util.List;
 
 @Mod(VaultLootBeams.MODID)
 public class VaultLootBeams {
-
 	public static final String MODID = "vaultlootbeams";
 	public static final Logger LOGGER = LogManager.getLogger();
 	public static final List<ItemStack> CRASH_BLACKLIST = new ArrayList<>();

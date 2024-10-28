@@ -8,15 +8,15 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
+
 public class VFXParticle extends TextureSheetParticle {
     private static final int LIGHT_COLOR = LightTexture.pack(15, 15);
 
-    public VFXParticle(ClientLevel clientWorld, TextureAtlasSprite sprite, float r, float g, float b, float a, int lifetime, float size, Vec3 pos, Vec3 motion) {
+    public VFXParticle(ClientLevel clientWorld, TextureAtlasSprite sprite, Color color, float a, int lifetime, float size, Vec3 pos, Vec3 motion) {
         super(clientWorld, pos.x, pos.y, pos.z);
         this.setSprite(sprite);
-        this.rCol = r;
-        this.gCol = g;
-        this.bCol = b;
+        this.setColor(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F);
         this.alpha = a;
         this.lifetime = lifetime;
         this.quadSize = size / 10;
@@ -56,5 +56,4 @@ public class VFXParticle extends TextureSheetParticle {
     protected int getLightColor(float pPartialTick) {
         return LIGHT_COLOR;
     }
-
 }
