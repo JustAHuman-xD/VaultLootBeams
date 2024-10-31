@@ -4,11 +4,24 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.justahuman.vaultlootbeams.VaultLootBeams;
+import me.justahuman.vaultlootbeams.client.LootBeamRenderer;
 import me.justahuman.vaultlootbeams.client.types.BeamColorMode;
 import me.justahuman.vaultlootbeams.client.types.BeamRenderMode;
 import me.justahuman.vaultlootbeams.client.types.ItemCondition;
 import me.justahuman.vaultlootbeams.client.types.ItemList;
 import me.justahuman.vaultlootbeams.client.types.ColorMap;
+import me.justahuman.vaultlootbeams.client.types.temp.CullShard;
+import me.justahuman.vaultlootbeams.client.types.temp.DepthShard;
+import me.justahuman.vaultlootbeams.client.types.temp.LayeringShard;
+import me.justahuman.vaultlootbeams.client.types.temp.LightmapShard;
+import me.justahuman.vaultlootbeams.client.types.temp.LineShard;
+import me.justahuman.vaultlootbeams.client.types.temp.OutputShard;
+import me.justahuman.vaultlootbeams.client.types.temp.OverlayShard;
+import me.justahuman.vaultlootbeams.client.types.temp.ShaderShard;
+import me.justahuman.vaultlootbeams.client.types.temp.TextureShard;
+import me.justahuman.vaultlootbeams.client.types.temp.TexturingShard;
+import me.justahuman.vaultlootbeams.client.types.temp.TransparencyShard;
+import me.justahuman.vaultlootbeams.client.types.temp.WriteShard;
 import me.justahuman.vaultlootbeams.utils.JsonUtils;
 import net.minecraftforge.fml.loading.FMLPaths;
 
@@ -22,6 +35,20 @@ public class ModConfig {
     private static final Gson GSON = new Gson().newBuilder().setPrettyPrinting().create();
     public static final ModConfig DEFAULT = new ModConfig();
     public static final ModConfig CONFIG = new ModConfig();
+
+    public CullShard cullShard = CullShard.CULL;
+    public DepthShard depthShard = DepthShard.LEQUAL_DEPTH_TEST;
+    public LayeringShard layeringShard = LayeringShard.NO_LAYERING;
+    public LightmapShard lightmapShard = LightmapShard.NO_LIGHTMAP;
+    public LineShard lineShard = LineShard.DEFAULT_LINE;
+    public OutputShard outputShard = OutputShard.WEATHER_TARGET;
+    public OverlayShard overlayShard = OverlayShard.NO_OVERLAY;
+    public ShaderShard shaderShard = ShaderShard.RENDERTYPE_LIGHTNING_SHADER;
+    public TextureShard textureShard = TextureShard.NO_TEXTURE;
+    public TexturingShard texturingShard = TexturingShard.DEFAULT_TEXTURING;
+    public TransparencyShard transparencyShard = TransparencyShard.LIGHTNING_TRANSPARENCY;
+    public WriteShard writeShard = WriteShard.COLOR_DEPTH_WRITE;
+    public boolean affectsOutline = false;
 
     public double renderDistance = 24;
     public boolean requireGround = true;
@@ -134,6 +161,20 @@ public class ModConfig {
 
     public void saveToFile() {
         JsonObject root = new JsonObject();
+        root.addProperty("cullShard", cullShard.name());
+        root.addProperty("depthShard", depthShard.name());
+        root.addProperty("layeringShard", layeringShard.name());
+        root.addProperty("lightmapShard", lightmapShard.name());
+        root.addProperty("lineShard", lineShard.name());
+        root.addProperty("outputShard", outputShard.name());
+        root.addProperty("overlayShard", overlayShard.name());
+        root.addProperty("shaderShard", shaderShard.name());
+        root.addProperty("textureShard", textureShard.name());
+        root.addProperty("texturingShard", texturingShard.name());
+        root.addProperty("transparencyShard", transparencyShard.name());
+        root.addProperty("writeShard", writeShard.name());
+        root.addProperty("affectsOutline", affectsOutline);
+
         root.addProperty("renderDistance", renderDistance);
         root.addProperty("requireGround", requireGround);
         root.addProperty("renderCondition", renderCondition.name());
@@ -189,6 +230,8 @@ public class ModConfig {
         } catch (IOException e) {
             VaultLootBeams.LOGGER.error("Error saving the config!", e);
         }
+
+        LootBeamRenderer.GLOWING_BEAM = null;
     }
 
     private static File getConfigFile() {

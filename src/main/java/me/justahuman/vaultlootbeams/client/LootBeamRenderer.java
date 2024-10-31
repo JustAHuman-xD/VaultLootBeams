@@ -1,6 +1,18 @@
 package me.justahuman.vaultlootbeams.client;
 
 import me.justahuman.vaultlootbeams.VaultLootBeams;
+import me.justahuman.vaultlootbeams.client.types.temp.CullShard;
+import me.justahuman.vaultlootbeams.client.types.temp.DepthShard;
+import me.justahuman.vaultlootbeams.client.types.temp.LayeringShard;
+import me.justahuman.vaultlootbeams.client.types.temp.LightmapShard;
+import me.justahuman.vaultlootbeams.client.types.temp.LineShard;
+import me.justahuman.vaultlootbeams.client.types.temp.OutputShard;
+import me.justahuman.vaultlootbeams.client.types.temp.OverlayShard;
+import me.justahuman.vaultlootbeams.client.types.temp.ShaderShard;
+import me.justahuman.vaultlootbeams.client.types.temp.TextureShard;
+import me.justahuman.vaultlootbeams.client.types.temp.TexturingShard;
+import me.justahuman.vaultlootbeams.client.types.temp.TransparencyShard;
+import me.justahuman.vaultlootbeams.client.types.temp.WriteShard;
 import me.justahuman.vaultlootbeams.utils.Utils;
 import me.justahuman.vaultlootbeams.client.types.BeamRenderMode;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -28,7 +40,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
+import java.util.UUID;
 
 import static me.justahuman.vaultlootbeams.config.ModConfig.CONFIG;
 
@@ -39,7 +53,7 @@ public class LootBeamRenderer extends RenderType {
 	public static final ResourceLocation GLOW_TEXTURE = new ResourceLocation(VaultLootBeams.MODID, "textures/entity/glow.png");
 	private static final RenderType DEFAULT_BEAM = createBeamRenderType(LOOT_BEAM_TEXTURE);
 	private static final RenderType SOLID_BEAM = createBeamRenderType(WHITE_TEXTURE);
-	private static final RenderType GLOWING_BEAM = createGlowingBeamRenderType();
+	public static RenderType GLOWING_BEAM = null;
 	private static final RenderType BEAM_SHADOW = createShadowRenderType();
 
 	private static final Random RANDOM = new Random();
@@ -276,16 +290,16 @@ public class LootBeamRenderer extends RenderType {
 
 	private static RenderType getBeam() {
 		return switch(CONFIG.beamRenderMode) {
-			case GLOWING -> GLOWING_BEAM;
+			case GLOWING -> GLOWING_BEAM != null ? GLOWING_BEAM : createGlowingBeamRenderType();
 			case SOLID -> SOLID_BEAM;
 			default -> DEFAULT_BEAM;
 		};
 	}
 
 	private static RenderType createBeamRenderType(ResourceLocation texture) {
-		RenderType.CompositeState state = RenderType.CompositeState.builder()
+		CompositeState state = CompositeState.builder()
 				.setShaderState(RenderStateShard.RENDERTYPE_BEACON_BEAM_SHADER)
-				.setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+				.setTextureState(new TextureStateShard(texture, false, false))
 				.setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
 				.setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
 				.createCompositeState(false);
@@ -293,19 +307,15 @@ public class LootBeamRenderer extends RenderType {
 	}
 
 	private static RenderType createGlowingBeamRenderType() {
-		RenderType.CompositeState state = RenderType.CompositeState.builder()
-				.setShaderState(RENDERTYPE_LIGHTNING_SHADER)
-				.setWriteMaskState(COLOR_DEPTH_WRITE)
-				.setTransparencyState(LIGHTNING_TRANSPARENCY)
-				.setOutputState(WEATHER_TARGET)
-				.createCompositeState(false);
-		return RenderType.create("loot_beam_glowing", DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 256, false, true, state);
+		RenderType type = createFromConfig(CONFIG.cullShard, CONFIG.depthShard, CONFIG.layeringShard, CONFIG.lightmapShard, CONFIG.lineShard, CONFIG.outputShard, CONFIG.overlayShard, CONFIG.shaderShard, CONFIG.textureShard, CONFIG.texturingShard, CONFIG.transparencyShard, CONFIG.writeShard, CONFIG.affectsOutline);
+		GLOWING_BEAM = type;
+		return type;
 	}
 	
 	private static RenderType createShadowRenderType() {
-		RenderType.CompositeState state = RenderType.CompositeState.builder()
+		CompositeState state = CompositeState.builder()
 				.setShaderState(RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_SHADER)
-				.setTextureState(new RenderStateShard.TextureStateShard(GLOW_TEXTURE, false, false))
+				.setTextureState(new TextureStateShard(GLOW_TEXTURE, false, false))
 				.setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
 				.setCullState(RenderStateShard.NO_CULL)
 				.setLightmapState(RenderStateShard.LIGHTMAP)
@@ -313,5 +323,119 @@ public class LootBeamRenderer extends RenderType {
 				.setOverlayState(RenderStateShard.OVERLAY)
 				.createCompositeState(true);
 		return RenderType.create("loot_beam_glow", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, true, state);
+	}
+
+	private static RenderType createFromConfig(CullShard cullShard, DepthShard depthShard, LayeringShard layeringShard, LightmapShard lightmapShard, LineShard lineShard, OutputShard outputShard, OverlayShard overlayShard, ShaderShard shaderShard, TextureShard textureShard, TexturingShard texturingShard, TransparencyShard transparencyShard, WriteShard writeShard, boolean affectsOutline) {
+		CompositeState.CompositeStateBuilder builder = CompositeState.builder();
+		builder.setCullState(switch(cullShard) {
+			case NO_CULL -> NO_CULL;
+			case CULL -> CULL;
+		});
+		builder.setDepthTestState(switch(depthShard) {
+			case NO_DEPTH_TEST -> NO_DEPTH_TEST;
+			case EQUAL_DEPTH_TEST -> EQUAL_DEPTH_TEST;
+			case LEQUAL_DEPTH_TEST -> LEQUAL_DEPTH_TEST;
+		});
+		builder.setLayeringState(switch(layeringShard) {
+			case NO_LAYERING -> NO_LAYERING;
+			case POLYGON_OFFSET_LAYERING -> POLYGON_OFFSET_LAYERING;
+			case VIEW_OFFSET_Z_LAYERING -> VIEW_OFFSET_Z_LAYERING;
+		});
+		builder.setLightmapState(switch(lightmapShard) {
+			case LIGHTMAP -> LIGHTMAP;
+			case NO_LIGHTMAP -> NO_LIGHTMAP;
+		});
+		builder.setLineState(switch(lineShard) {
+			case DEFAULT_LINE -> DEFAULT_LINE;
+		});
+		builder.setOutputState(switch(outputShard) {
+			case MAIN_TARGET -> MAIN_TARGET;
+			case OUTLINE_TARGET -> OUTLINE_TARGET;
+            case TRANSLUCENT_TARGET -> TRANSLUCENT_TARGET;
+            case PARTICLES_TARGET -> PARTICLES_TARGET;
+            case WEATHER_TARGET -> WEATHER_TARGET;
+            case CLOUDS_TARGET -> CLOUDS_TARGET;
+            case ITEM_ENTITY_TARGET -> ITEM_ENTITY_TARGET;
+        });
+		builder.setOverlayState(switch(overlayShard) {
+			case NO_OVERLAY -> NO_OVERLAY;
+			case OVERLAY -> OVERLAY;
+		});
+		builder.setShaderState(switch(shaderShard) {
+			case NO_SHADER -> NO_SHADER;
+			case BLOCK_SHADER -> BLOCK_SHADER;
+			case NEW_ENTITY_SHADER -> NEW_ENTITY_SHADER;
+			case POSITION_COLOR_LIGHTMAP_SHADER -> POSITION_COLOR_LIGHTMAP_SHADER;
+			case POSITION_SHADER -> POSITION_SHADER;
+			case POSITION_COLOR_TEX_SHADER -> POSITION_COLOR_TEX_SHADER;
+			case POSITION_TEX_SHADER -> POSITION_TEX_SHADER;
+			case POSITION_COLOR_TEX_LIGHTMAP_SHADER -> POSITION_COLOR_TEX_LIGHTMAP_SHADER;
+			case POSITION_COLOR_SHADER -> POSITION_COLOR_SHADER;
+			case RENDERTYPE_SOLID_SHADER -> RENDERTYPE_SOLID_SHADER;
+			case RENDERTYPE_CUTOUT_MIPPED_SHADER -> RENDERTYPE_CUTOUT_MIPPED_SHADER;
+			case RENDERTYPE_CUTOUT_SHADER -> RENDERTYPE_CUTOUT_SHADER;
+			case RENDERTYPE_TRANSLUCENT_SHADER -> RENDERTYPE_TRANSLUCENT_SHADER;
+			case RENDERTYPE_TRANSLUCENT_MOVING_BLOCK_SHADER -> RENDERTYPE_TRANSLUCENT_MOVING_BLOCK_SHADER;
+			case RENDERTYPE_TRANSLUCENT_NO_CRUMBLING_SHADER -> RENDERTYPE_TRANSLUCENT_NO_CRUMBLING_SHADER;
+			case RENDERTYPE_ARMOR_CUTOUT_NO_CULL_SHADER -> RENDERTYPE_ARMOR_CUTOUT_NO_CULL_SHADER;
+			case RENDERTYPE_ENTITY_SOLID_SHADER -> RENDERTYPE_ENTITY_SOLID_SHADER;
+			case RENDERTYPE_ENTITY_CUTOUT_SHADER -> RENDERTYPE_ENTITY_CUTOUT_SHADER;
+			case RENDERTYPE_ENTITY_CUTOUT_NO_CULL_SHADER -> RENDERTYPE_ENTITY_CUTOUT_NO_CULL_SHADER;
+			case RENDERTYPE_ENTITY_CUTOUT_NO_CULL_Z_OFFSET_SHADER -> RENDERTYPE_ENTITY_CUTOUT_NO_CULL_Z_OFFSET_SHADER;
+			case RENDERTYPE_ITEM_ENTITY_TRANSLUCENT_CULL_SHADER -> RENDERTYPE_ITEM_ENTITY_TRANSLUCENT_CULL_SHADER;
+			case RENDERTYPE_ENTITY_TRANSLUCENT_CULL_SHADER -> RENDERTYPE_ENTITY_TRANSLUCENT_CULL_SHADER;
+			case RENDERTYPE_ENTITY_TRANSLUCENT_SHADER -> RENDERTYPE_ENTITY_TRANSLUCENT_SHADER;
+			case RENDERTYPE_ENTITY_SMOOTH_CUTOUT_SHADER -> RENDERTYPE_ENTITY_SMOOTH_CUTOUT_SHADER;
+			case RENDERTYPE_BEACON_BEAM_SHADER -> RENDERTYPE_BEACON_BEAM_SHADER;
+			case RENDERTYPE_ENTITY_DECAL_SHADER -> RENDERTYPE_ENTITY_DECAL_SHADER;
+			case RENDERTYPE_ENTITY_NO_OUTLINE_SHADER -> RENDERTYPE_ENTITY_NO_OUTLINE_SHADER;
+			case RENDERTYPE_ENTITY_SHADOW_SHADER -> RENDERTYPE_ENTITY_SHADOW_SHADER;
+			case RENDERTYPE_ENTITY_ALPHA_SHADER -> RENDERTYPE_ENTITY_ALPHA_SHADER;
+			case RENDERTYPE_EYES_SHADER -> RENDERTYPE_EYES_SHADER;
+			case RENDERTYPE_ENERGY_SWIRL_SHADER -> RENDERTYPE_ENERGY_SWIRL_SHADER;
+			case RENDERTYPE_LEASH_SHADER -> RENDERTYPE_LEASH_SHADER;
+			case RENDERTYPE_WATER_MASK_SHADER -> RENDERTYPE_WATER_MASK_SHADER;
+			case RENDERTYPE_OUTLINE_SHADER -> RENDERTYPE_OUTLINE_SHADER;
+			case RENDERTYPE_ARMOR_GLINT_SHADER -> RENDERTYPE_ARMOR_GLINT_SHADER;
+			case RENDERTYPE_ARMOR_ENTITY_GLINT_SHADER -> RENDERTYPE_ARMOR_ENTITY_GLINT_SHADER;
+			case RENDERTYPE_GLINT_TRANSLUCENT_SHADER -> RENDERTYPE_GLINT_TRANSLUCENT_SHADER;
+			case RENDERTYPE_GLINT_SHADER -> RENDERTYPE_GLINT_SHADER;
+			case RENDERTYPE_ENTITY_GLINT_SHADER -> RENDERTYPE_ENTITY_GLINT_SHADER;
+			case RENDERTYPE_ENTITY_GLINT_DIRECT_SHADER -> RENDERTYPE_ENTITY_GLINT_DIRECT_SHADER;
+			case RENDERTYPE_CRUMBLING_SHADER -> RENDERTYPE_CRUMBLING_SHADER;
+			case RENDERTYPE_TEXT_SHADER -> RENDERTYPE_TEXT_SHADER;
+			case RENDERTYPE_TEXT_INTENSITY_SHADER -> RENDERTYPE_TEXT_INTENSITY_SHADER;
+			case RENDERTYPE_TEXT_SEE_THROUGH_SHADER -> RENDERTYPE_TEXT_SEE_THROUGH_SHADER;
+			case RENDERTYPE_TEXT_INTENSITY_SEE_THROUGH_SHADER -> RENDERTYPE_TEXT_INTENSITY_SEE_THROUGH_SHADER;
+			case RENDERTYPE_LIGHTNING_SHADER -> RENDERTYPE_LIGHTNING_SHADER;
+			case RENDERTYPE_TRIPWIRE_SHADER -> RENDERTYPE_TRIPWIRE_SHADER;
+			case RENDERTYPE_END_PORTAL_SHADER -> RENDERTYPE_END_PORTAL_SHADER;
+			case RENDERTYPE_END_GATEWAY_SHADER -> RENDERTYPE_END_GATEWAY_SHADER;
+			case RENDERTYPE_LINES_SHADER -> RENDERTYPE_LINES_SHADER;
+		});
+		builder.setTextureState(switch(textureShard) {
+			case BLOCK_SHEET_MIPPED -> BLOCK_SHEET_MIPPED;
+			case BLOCK_SHEET -> BLOCK_SHEET;
+			case NO_TEXTURE -> NO_TEXTURE;
+		});
+		builder.setTexturingState(switch (texturingShard) {
+			case DEFAULT_TEXTURING -> DEFAULT_TEXTURING;
+			case GLINT_TEXTURING -> GLINT_TEXTURING;
+			case ENTITY_GLINT_TEXTURING -> ENTITY_GLINT_TEXTURING;
+		});
+		builder.setTransparencyState(switch (transparencyShard) {
+			case NO_TRANSPARENCY -> NO_TRANSPARENCY;
+			case ADDITIVE_TRANSPARENCY -> ADDITIVE_TRANSPARENCY;
+			case LIGHTNING_TRANSPARENCY -> LIGHTNING_TRANSPARENCY;
+			case GLINT_TRANSPARENCY -> GLINT_TRANSPARENCY;
+			case CRUMBLING_TRANSPARENCY -> CRUMBLING_TRANSPARENCY;
+			case TRANSLUCENT_TRANSPARENCY -> TRANSLUCENT_TRANSPARENCY;
+		});
+		builder.setWriteMaskState(switch (writeShard) {
+			case COLOR_WRITE -> COLOR_WRITE;
+			case COLOR_DEPTH_WRITE -> COLOR_DEPTH_WRITE;
+			case DEPTH_WRITE -> DEPTH_WRITE;
+		});
+		return RenderType.create(UUID.randomUUID().toString().toLowerCase(Locale.ROOT).replace('-', '_'), DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, true, builder.createCompositeState(affectsOutline));
 	}
 }
