@@ -7,7 +7,7 @@ plugins {
 apply plugin: 'org.spongepowered.mixin'
 
 group = 'me.justahuman.vaultlootbeams'
-version = '1.18.2-release'
+version = '1.0.0-beta'
 
 java {
     archivesBaseName = 'VaultLootBeams'
