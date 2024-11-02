@@ -47,6 +47,8 @@ public class Utils {
         ItemStack itemStack = itemEntity.getItem();
         if (itemStack.getItem() instanceof LootBeamHolder holder) {
             return holder.shouldRenderBeam(itemEntity, itemStack);
+        } else if (CONFIG.whitelistColorOverrides && CONFIG.colorOverrides.contains(itemStack.getItem())) {
+            return true;
         }
         return passes(CONFIG.renderCondition, CONFIG.renderWhitelist, CONFIG.renderBlacklist, itemEntity.getItem());
     }
@@ -226,10 +228,7 @@ public class Utils {
 
     public static boolean passes(ItemCondition condition, ItemList whitelist, ItemList blacklist, ItemStack itemStack) {
         Item item = itemStack.getItem();
-        return (condition.test(itemStack)
-                    || whitelist.contains(item)
-                    || (CONFIG.whitelistColorOverrides && CONFIG.colorOverrides.contains(item))
-               ) && !blacklist.contains(item);
+        return (condition.test(itemStack) || whitelist.contains(item)) && !blacklist.contains(item);
     }
 
     public static void enableWarnings() {
