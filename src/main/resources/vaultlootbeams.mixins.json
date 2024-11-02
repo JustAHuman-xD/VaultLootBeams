@@ -7,6 +7,7 @@
   "mixins": [
     "ItemEntityMixin",
     "colors.AugmentItemMixin",
+    "colors.BlessingItemMixin",
     "colors.BottleItemMixin",
     "colors.CrystalItemMixin",
     "colors.InfusedCatalystItemMixin",
