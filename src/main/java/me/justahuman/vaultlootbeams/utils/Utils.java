@@ -27,15 +27,15 @@ import net.minecraftforge.registries.tags.ITagManager;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static me.justahuman.vaultlootbeams.config.ModConfig.CONFIG;
 
 public class Utils {
-    private static final Map<ItemEntity, List<Component>> TOOLTIP_CACHE = new HashMap<>();
+    private static final Map<ItemEntity, List<Component>> TOOLTIP_CACHE = new ConcurrentHashMap<>();
     private static boolean warnings = true;
 
     public static boolean rendersBeam(ItemEntity itemEntity) {

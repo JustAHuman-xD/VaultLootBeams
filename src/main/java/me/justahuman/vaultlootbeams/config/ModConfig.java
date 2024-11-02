@@ -36,7 +36,8 @@ public class ModConfig {
             .add(ModItems.IDOL_BENEVOLENT, ModItems.IDOL_MALEVOLENCE, ModItems.IDOL_OMNISCIENT, ModItems.IDOL_TIMEKEEPER)
             .add(ModItems.AXE, ModItems.SWORD)
             .add(ModItems.MAGNET, ModItems.TRINKET, ModItems.SMALL_CHARM, ModItems.LARGE_CHARM, ModItems.GRAND_CHARM, ModItems.MAJESTIC_CHARM, ModItems.CARD_DECK)
-            .add(ModItems.GEMSTONE, ModItems.KEY_PIECE, ModItems.BLANK_KEY, ModItems.UNIDENTIFIED_TREASURE_KEY);
+            .add(ModItems.GEMSTONE, ModItems.KEY_PIECE, ModItems.BLANK_KEY, ModItems.UNIDENTIFIED_TREASURE_KEY)
+            .add(ModItems.KNOWLEDGE_STAR);
     public ItemList renderBlacklist = new ItemList();
 
     public double beamRadius = 1;
