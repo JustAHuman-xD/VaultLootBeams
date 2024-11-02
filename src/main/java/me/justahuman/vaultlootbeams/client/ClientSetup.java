@@ -10,7 +10,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.RenderNameplateEvent;
 import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;

@@ -3,25 +3,15 @@ package me.justahuman.vaultlootbeams.config;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import iskallia.vault.init.ModBlocks;
+import iskallia.vault.init.ModItems;
 import me.justahuman.vaultlootbeams.VaultLootBeams;
-import me.justahuman.vaultlootbeams.client.LootBeamRenderer;
 import me.justahuman.vaultlootbeams.client.types.BeamColorMode;
 import me.justahuman.vaultlootbeams.client.types.BeamRenderMode;
 import me.justahuman.vaultlootbeams.client.types.ItemCondition;
 import me.justahuman.vaultlootbeams.client.types.ItemList;
 import me.justahuman.vaultlootbeams.client.types.ColorMap;
-import me.justahuman.vaultlootbeams.client.types.temp.CullShard;
-import me.justahuman.vaultlootbeams.client.types.temp.DepthShard;
-import me.justahuman.vaultlootbeams.client.types.temp.LayeringShard;
-import me.justahuman.vaultlootbeams.client.types.temp.LightmapShard;
-import me.justahuman.vaultlootbeams.client.types.temp.LineShard;
-import me.justahuman.vaultlootbeams.client.types.temp.OutputShard;
-import me.justahuman.vaultlootbeams.client.types.temp.OverlayShard;
-import me.justahuman.vaultlootbeams.client.types.temp.ShaderShard;
-import me.justahuman.vaultlootbeams.client.types.temp.TextureShard;
-import me.justahuman.vaultlootbeams.client.types.temp.TexturingShard;
-import me.justahuman.vaultlootbeams.client.types.temp.TransparencyShard;
-import me.justahuman.vaultlootbeams.client.types.temp.WriteShard;
+import me.justahuman.vaultlootbeams.utils.ItemColors;
 import me.justahuman.vaultlootbeams.utils.JsonUtils;
 import net.minecraftforge.fml.loading.FMLPaths;
 
@@ -36,25 +26,18 @@ public class ModConfig {
     public static final ModConfig DEFAULT = new ModConfig();
     public static final ModConfig CONFIG = new ModConfig();
 
-    public CullShard cullShard = CullShard.CULL;
-    public DepthShard depthShard = DepthShard.LEQUAL_DEPTH_TEST;
-    public LayeringShard layeringShard = LayeringShard.NO_LAYERING;
-    public LightmapShard lightmapShard = LightmapShard.NO_LIGHTMAP;
-    public LineShard lineShard = LineShard.DEFAULT_LINE;
-    public OutputShard outputShard = OutputShard.WEATHER_TARGET;
-    public OverlayShard overlayShard = OverlayShard.NO_OVERLAY;
-    public ShaderShard shaderShard = ShaderShard.RENDERTYPE_LIGHTNING_SHADER;
-    public TextureShard textureShard = TextureShard.NO_TEXTURE;
-    public TexturingShard texturingShard = TexturingShard.DEFAULT_TEXTURING;
-    public TransparencyShard transparencyShard = TransparencyShard.LIGHTNING_TRANSPARENCY;
-    public WriteShard writeShard = WriteShard.COLOR_DEPTH_WRITE;
-    public boolean affectsOutline = false;
-
     public double renderDistance = 24;
     public boolean requireGround = true;
+    public boolean whitelistColorOverrides = true;
     public ItemCondition renderCondition = ItemCondition.LISTS_ONLY;
-    public ItemList renderWhitelist = new ItemList();
-    public ItemList renderBlacklist =new ItemList();
+    public ItemList renderWhitelist = new ItemList()
+            .add(ModItems.HELMET, ModItems.CHESTPLATE, ModItems.LEGGINGS, ModItems.BOOTS)
+            .add(ModItems.WAND, ModItems.FOCUS, ModItems.SHIELD)
+            .add(ModItems.IDOL_BENEVOLENT, ModItems.IDOL_MALEVOLENCE, ModItems.IDOL_OMNISCIENT, ModItems.IDOL_TIMEKEEPER)
+            .add(ModItems.AXE, ModItems.SWORD)
+            .add(ModItems.MAGNET, ModItems.TRINKET, ModItems.SMALL_CHARM, ModItems.LARGE_CHARM, ModItems.GRAND_CHARM, ModItems.MAJESTIC_CHARM, ModItems.CARD_DECK)
+            .add(ModItems.GEMSTONE, ModItems.KEY_PIECE, ModItems.BLANK_KEY, ModItems.UNIDENTIFIED_TREASURE_KEY);
+    public ItemList renderBlacklist = new ItemList();
 
     public double beamRadius = 1;
     public double beamHeight = 2;
@@ -66,7 +49,38 @@ public class ModConfig {
     public boolean animateShadow = true;
     public BeamRenderMode beamRenderMode = BeamRenderMode.GLOWING;
     public BeamColorMode beamColorMode = BeamColorMode.NAME_OR_RARITY;
-    public ColorMap colorOverrides = new ColorMap();
+    public ColorMap colorOverrides = new ColorMap()
+            .add(ModItems.ARTIFACT_FRAGMENT, ItemColors.ARTIFACT)
+            .add(ModItems.UNIDENTIFIED_ARTIFACT, ItemColors.ARTIFACT)
+            .add(ModBlocks.VAULT_ARTIFACT.asItem(), ItemColors.ARTIFACT)
+            .add(ModItems.INSCRIPTION, ItemColors.INSCRIPTION)
+            .add(ModItems.LOST_BOUNTY, ItemColors.LOST_BOUNTY)
+            .add(ModItems.OLD_NOTES, ItemColors.OLD_NOTES)
+            .add(ModItems.BOUNTY_PEARL, ItemColors.BOUNTY_PEARL)
+            .add(ModItems.VAULT_CATALYST, ItemColors.CATALYST)
+            .add(ModItems.CARD_DECK, ItemColors.DECK)
+            .add(ModItems.POG, ItemColors.POG)
+            .add(ModItems.ECHO_POG, ItemColors.POG)
+            .add(ModItems.OMEGA_POG, ItemColors.POG)
+            .add(ModItems.ASHIUM_KEY, ItemColors.ASHIUM)
+            .add(ModItems.BOMIGNITE_KEY, ItemColors.BOMIGNITE_RED,
+                    ItemColors.TRANSITION,
+                    ItemColors.BOMIGNITE_BLUE,
+                    ItemColors.TRANSITION)
+            .add(ModItems.GORGINITE_KEY, ItemColors.GORGINITE)
+            .add(ModItems.ISKALLIUM_KEY, ItemColors.ISKALLIUM)
+            .add(ModItems.PETZANITE_KEY, ItemColors.PETZANITE)
+            .add(ModItems.SPARKLETINE_KEY, ItemColors.SPARKLETINE)
+            .add(ModItems.TUBIUM_KEY, ItemColors.TUBIUM)
+            .add(ModItems.UPALINE_KEY, ItemColors.UPALINE)
+            .add(ModItems.XENIUM_KEY, ItemColors.XENIUM)
+            .add(ModItems.CRYSTAL_SEAL_RAID, ItemColors.DEVASTATOR)
+            .add(ModItems.CRYSTAL_SEAL_ARCHITECT, ItemColors.ARCHITECT)
+            .add(ModItems.CRYSTAL_SEAL_HUNTER, ItemColors.HUNTER)
+            .add(ModItems.CRYSTAL_SEAL_EXECUTIONER, ItemColors.EXECUTIONER)
+            .add(ModItems.CRYSTAL_SEAL_SAGE, ItemColors.SAGE)
+            .add(ModItems.CRYSTAL_SEAL_SCOUT, ItemColors.SCOUT)
+            .add(ModItems.CRYSTAL_SEAL_PROPHET, ItemColors.PROPHET);
 
     public boolean beamParticles = true;
     public double particleSize = 0.25;
@@ -161,20 +175,6 @@ public class ModConfig {
 
     public void saveToFile() {
         JsonObject root = new JsonObject();
-        root.addProperty("cullShard", cullShard.name());
-        root.addProperty("depthShard", depthShard.name());
-        root.addProperty("layeringShard", layeringShard.name());
-        root.addProperty("lightmapShard", lightmapShard.name());
-        root.addProperty("lineShard", lineShard.name());
-        root.addProperty("outputShard", outputShard.name());
-        root.addProperty("overlayShard", overlayShard.name());
-        root.addProperty("shaderShard", shaderShard.name());
-        root.addProperty("textureShard", textureShard.name());
-        root.addProperty("texturingShard", texturingShard.name());
-        root.addProperty("transparencyShard", transparencyShard.name());
-        root.addProperty("writeShard", writeShard.name());
-        root.addProperty("affectsOutline", affectsOutline);
-
         root.addProperty("renderDistance", renderDistance);
         root.addProperty("requireGround", requireGround);
         root.addProperty("renderCondition", renderCondition.name());
@@ -230,8 +230,6 @@ public class ModConfig {
         } catch (IOException e) {
             VaultLootBeams.LOGGER.error("Error saving the config!", e);
         }
-
-        LootBeamRenderer.GLOWING_BEAM = null;
     }
 
     private static File getConfigFile() {

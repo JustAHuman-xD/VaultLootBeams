@@ -14,7 +14,7 @@ import net.minecraftforge.registries.tags.ITagManager;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,13 +24,33 @@ public class ColorMap {
     protected final Map<String, List<Color>> modColors;
 
     public ColorMap() {
-        this(new HashMap<>(), new HashMap<>(), new HashMap<>());
+        this(new LinkedHashMap<>(), new LinkedHashMap<>(), new LinkedHashMap<>());
     }
 
     private ColorMap(Map<Item, List<Color>> itemColors, Map<TagKey<Item>, List<Color>> tagColors, Map<String, List<Color>> modColors) {
         this.itemColors = itemColors;
         this.tagColors = tagColors;
         this.modColors = modColors;
+    }
+
+    public ColorMap add(Item item, Color... color) {
+        itemColors.put(item, List.of(color));
+        return this;
+    }
+
+    public ColorMap add(TagKey<Item> tag, Color... color) {
+        tagColors.put(tag, List.of(color));
+        return this;
+    }
+
+    public ColorMap add(String modId, Color... color) {
+        modColors.put(modId, List.of(color));
+        return this;
+    }
+
+    public boolean contains(Item item) {
+        List<Color> colors = get(item);
+        return colors != null && !colors.isEmpty();
     }
 
     public List<Color> get(Item item) {
@@ -102,9 +122,9 @@ public class ColorMap {
         }
 
         Utils.enableWarnings();
-        Map<Item, List<Color>> itemColors = new HashMap<>();
-        Map<TagKey<Item>, List<Color>> tagColors = new HashMap<>();
-        Map<String, List<Color>> modColors = new HashMap<>();
+        Map<Item, List<Color>> itemColors = new LinkedHashMap<>();
+        Map<TagKey<Item>, List<Color>> tagColors = new LinkedHashMap<>();
+        Map<String, List<Color>> modColors = new LinkedHashMap<>();
         for (String itemKey : serializedColors.keySet()) {
             List<Color> colors = getColors(key, itemKey, serializedColors.get(itemKey));
              if (itemKey.startsWith("#")) {

@@ -51,6 +51,20 @@ public class Utils {
         return passes(CONFIG.renderCondition, CONFIG.renderWhitelist, CONFIG.renderBlacklist, itemEntity.getItem());
     }
 
+    public static Color getGradientColor(ItemEntity itemEntity, List<Color> colors) {
+        if (colors.size() == 1) {
+            return colors.get(0);
+        }
+
+        int stage = (itemEntity.getAge() / 40) % colors.size();
+        int progress = itemEntity.getAge() % 40;
+
+        Color colorStart = colors.get(stage);
+        Color colorEnd = colors.get((stage + 1) % colors.size());
+        float blendFactor = progress / 40.0f;
+        return blendColors(colorStart, colorEnd, blendFactor);
+    }
+
     /**
      * Returns the color from the item's name, rarity, tag, or override.
      */
@@ -60,24 +74,15 @@ public class Utils {
             return Color.WHITE;
         }
 
-        if (itemStack.getItem() instanceof LootBeamHolder holder) {
-            return holder.getBeamColor(itemEntity, itemStack);
-        }
-
-        // From custom colors
+        // From player config
         List<Color> override = CONFIG.colorOverrides.get(itemStack.getItem());
         if (override != null && !override.isEmpty()) {
-            if (override.size() == 1) {
-                return override.get(0);
-            }
+            return getGradientColor(itemEntity, override);
+        }
 
-            int stage = (itemEntity.getAge() / 40) % override.size();
-            int progress = itemEntity.getAge() % 40;
-
-            Color colorStart = override.get(stage);
-            Color colorEnd = override.get((stage + 1) % override.size());
-            float blendFactor = progress / 40.0f;
-            return blendColors(colorStart, colorEnd, blendFactor);
+        // From Item
+        if (itemStack.getItem() instanceof LootBeamHolder holder) {
+            return holder.getBeamColor(itemEntity, itemStack);
         }
 
         // From NBT
@@ -220,7 +225,11 @@ public class Utils {
     }
 
     public static boolean passes(ItemCondition condition, ItemList whitelist, ItemList blacklist, ItemStack itemStack) {
-        return (condition.test(itemStack) || whitelist.contains(itemStack.getItem())) && !blacklist.contains(itemStack.getItem());
+        Item item = itemStack.getItem();
+        return (condition.test(itemStack)
+                    || whitelist.contains(item)
+                    || (CONFIG.whitelistColorOverrides && CONFIG.colorOverrides.contains(item))
+               ) && !blacklist.contains(item);
     }
 
     public static void enableWarnings() {

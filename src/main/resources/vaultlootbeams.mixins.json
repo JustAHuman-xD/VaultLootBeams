@@ -5,7 +5,12 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "vaultlootbeams.refmap.json",
   "mixins": [
-    "ItemEntityMixin"
+    "ItemEntityMixin",
+    "colors.AugmentItemMixin",
+    "colors.BottleItemMixin",
+    "colors.CrystalItemMixin",
+    "colors.InfusedCatalystItemMixin",
+    "colors.JewelItemMixin"
   ],
   "client": [
     "ItemEntityRendererMixin"

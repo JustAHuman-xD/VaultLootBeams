@@ -5,18 +5,6 @@ import me.justahuman.vaultlootbeams.client.types.BeamColorMode;
 import me.justahuman.vaultlootbeams.client.types.BeamRenderMode;
 import me.justahuman.vaultlootbeams.client.types.ItemCondition;
 import me.justahuman.vaultlootbeams.client.types.ItemList;
-import me.justahuman.vaultlootbeams.client.types.temp.CullShard;
-import me.justahuman.vaultlootbeams.client.types.temp.DepthShard;
-import me.justahuman.vaultlootbeams.client.types.temp.LayeringShard;
-import me.justahuman.vaultlootbeams.client.types.temp.LightmapShard;
-import me.justahuman.vaultlootbeams.client.types.temp.LineShard;
-import me.justahuman.vaultlootbeams.client.types.temp.OutputShard;
-import me.justahuman.vaultlootbeams.client.types.temp.OverlayShard;
-import me.justahuman.vaultlootbeams.client.types.temp.ShaderShard;
-import me.justahuman.vaultlootbeams.client.types.temp.TextureShard;
-import me.justahuman.vaultlootbeams.client.types.temp.TexturingShard;
-import me.justahuman.vaultlootbeams.client.types.temp.TransparencyShard;
-import me.justahuman.vaultlootbeams.client.types.temp.WriteShard;
 import me.justahuman.vaultlootbeams.utils.Utils;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
@@ -40,26 +28,11 @@ public class ConfigScreen {
                 .setSavingRunnable(CONFIG::saveToFile);
 
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
-        ConfigCategory renderType = builder.getOrCreateCategory(translate("category.render_type"));
         ConfigCategory general = builder.getOrCreateCategory(translate("category.general"));
         ConfigCategory beamProperties = builder.getOrCreateCategory(translate("category.beam_properties"));
         ConfigCategory beamParticles = builder.getOrCreateCategory(translate("category.beam_particles"));
         ConfigCategory beamNameplate = builder.getOrCreateCategory(translate("category.beam_nameplate"));
         ConfigCategory landingSound = builder.getOrCreateCategory(translate("category.landing_sound"));
-
-        enumEntry(renderType, entryBuilder, "cullShard", CullShard.class);
-        enumEntry(renderType, entryBuilder, "depthShard", DepthShard.class);
-        enumEntry(renderType, entryBuilder, "layeringShard", LayeringShard.class);
-        enumEntry(renderType, entryBuilder, "lightmapShard", LightmapShard.class);
-        enumEntry(renderType, entryBuilder, "lineShard", LineShard.class);
-        enumEntry(renderType, entryBuilder, "outputShard", OutputShard.class);
-        enumEntry(renderType, entryBuilder, "overlayShard", OverlayShard.class);
-        enumEntry(renderType, entryBuilder, "shaderShard", ShaderShard.class);
-        enumEntry(renderType, entryBuilder, "textureShard", TextureShard.class);
-        enumEntry(renderType, entryBuilder, "texturingShard", TexturingShard.class);
-        enumEntry(renderType, entryBuilder, "transparencyShard", TransparencyShard.class);
-        enumEntry(renderType, entryBuilder, "writeShard", WriteShard.class);
-        booleanEntry(renderType, entryBuilder, "affectsOutline");
 
         doubleEntry(general, entryBuilder, "renderDistance", 0, 1024);
         booleanEntry(general, entryBuilder, "requireGround");

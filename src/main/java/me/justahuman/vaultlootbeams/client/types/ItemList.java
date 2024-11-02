@@ -13,21 +13,39 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.tags.ITagManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ItemList {
-    protected final List<Item> items;
-    protected final List<TagKey<Item>> tags;
-    protected final List<String> modIds;
+    protected final Set<Item> items;
+    protected final Set<TagKey<Item>> tags;
+    protected final Set<String> modIds;
 
     public ItemList() {
-        this(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+        this(new LinkedHashSet<>(), new LinkedHashSet<>(), new LinkedHashSet<>());
     }
 
-    private ItemList(List<Item> items, List<TagKey<Item>> tags, List<String> modIds) {
+    private ItemList(Set<Item> items, Set<TagKey<Item>> tags, Set<String> modIds) {
         this.items = items;
         this.tags = tags;
         this.modIds = modIds;
+    }
+
+    public ItemList add(Item... items) {
+        this.items.addAll(Arrays.asList(items));
+        return this;
+    }
+
+    public ItemList add(TagKey<Item> tag) {
+        tags.add(tag);
+        return this;
+    }
+
+    public ItemList add(String modId) {
+        modIds.add(modId);
+        return this;
     }
 
     public boolean contains(Item item) {
@@ -105,9 +123,9 @@ public class ItemList {
 
     public static ItemList deserialize(String key, List<String> serialized) {
         Utils.enableWarnings();
-        List<Item> items = new ArrayList<>();
-        List<TagKey<Item>> tags = new ArrayList<>();
-        List<String> modIds = new ArrayList<>();
+        Set<Item> items = new LinkedHashSet<>();
+        Set<TagKey<Item>> tags = new LinkedHashSet<>();
+        Set<String> modIds = new LinkedHashSet<>();
 
         for (String itemKey : serialized) {
             if (itemKey.startsWith("#")) {
