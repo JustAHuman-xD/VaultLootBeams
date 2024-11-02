@@ -56,12 +56,12 @@ public class Utils {
             return colors.get(0);
         }
 
-        int stage = (itemEntity.getAge() / 40) % colors.size();
-        int progress = itemEntity.getAge() % 40;
+        int stage = (itemEntity.getAge() / 30) % colors.size();
+        int progress = itemEntity.getAge() % 30;
 
         Color colorStart = colors.get(stage);
         Color colorEnd = colors.get((stage + 1) % colors.size());
-        float blendFactor = progress / 40.0f;
+        float blendFactor = progress / 30.0f;
         return blendColors(colorStart, colorEnd, blendFactor);
     }
 
