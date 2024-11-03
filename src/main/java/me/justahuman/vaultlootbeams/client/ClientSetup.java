@@ -1,6 +1,7 @@
 package me.justahuman.vaultlootbeams.client;
 
 import me.justahuman.vaultlootbeams.VaultLootBeams;
+import me.justahuman.vaultlootbeams.compat.ModCompat;
 import me.justahuman.vaultlootbeams.utils.Utils;
 import me.justahuman.vaultlootbeams.config.ConfigScreen;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -29,6 +30,7 @@ public class ClientSetup {
 	public static final KeyMapping RELOAD_CONFIG = new KeyMapping(KEYBIND_PREFIX + "reload_config", InputConstants.KEY_L, KEYBINDS_CATEGORY);
 
 	public static void init(FMLClientSetupEvent ignored) {
+		ModCompat.init();
 		CONFIG.loadFromFile();
 		OPEN_CONFIG.setKeyModifierAndCode(KeyModifier.ALT, InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_L));
 		RELOAD_CONFIG.setKeyModifierAndCode(KeyModifier.CONTROL, InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_L));
