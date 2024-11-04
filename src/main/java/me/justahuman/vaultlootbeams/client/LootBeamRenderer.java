@@ -16,7 +16,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
@@ -69,7 +68,7 @@ public class LootBeamRenderer extends RenderType {
 
 		boolean solidBeam = CONFIG.beamRenderMode == BeamRenderMode.SOLID;
 		float beamRadius = 0.05f * (float) CONFIG.beamRadius;
-		float glowRadius = beamRadius + (beamRadius * 0.2f);
+		float glowRadius = beamRadius * 1.2f;
 		float beamHeight = (float) CONFIG.beamHeight;
 		float yOffset = (float) CONFIG.beamYOffset;
 
@@ -78,11 +77,11 @@ public class LootBeamRenderer extends RenderType {
 		float g = color.getGreen() / 255.0F;
 		float b = color.getBlue() / 255.0F;
 
-		// I will rewrite the beam rendering code soon! I promise!
+		// Beam Rendering Code
 
 		stack.pushPose();
 
-		//Render main beam
+		// Render main beam
 		stack.pushPose();
 		float rotation = (float) Math.floorMod(worldTime, 40L) + pTicks;
 		stack.mulPose(Vector3f.YP.rotationDegrees(rotation * 2.25F - 45.0F));
@@ -94,7 +93,7 @@ public class LootBeamRenderer extends RenderType {
 		renderPart(stack, buffer.getBuffer(getBeam()), r, g, b, beamAlpha, beamHeight, 0.0F, beamRadius, beamRadius, 0.0F, -beamRadius, 0.0F, 0.0F, -beamRadius, !solidBeam);
 		stack.popPose();
 
-		//Render glow around main beam
+		// Render glow around main beam
 		stack.pushPose();
 		stack.translate(0, yOffset, 0);
 		stack.translate(0, 1, 0);
@@ -301,10 +300,10 @@ public class LootBeamRenderer extends RenderType {
 
 	private static RenderType createBeamRenderType(String type, ResourceLocation texture) {
 		CompositeState state = CompositeState.builder()
-				.setShaderState(RenderStateShard.RENDERTYPE_BEACON_BEAM_SHADER)
+				.setShaderState(RENDERTYPE_BEACON_BEAM_SHADER)
 				.setTextureState(new TextureStateShard(texture, false, false))
 				.setTransparencyState(LOOTBEAM_TRANSPARENCY)
-				.setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
+				.setWriteMaskState(COLOR_DEPTH_WRITE)
 				.createCompositeState(false);
 		return RenderType.create("loot_beam_" + type, DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, true, state);
 	}
@@ -323,13 +322,13 @@ public class LootBeamRenderer extends RenderType {
 	
 	private static RenderType createShadowRenderType() {
 		CompositeState state = CompositeState.builder()
-				.setShaderState(RenderStateShard.RENDERTYPE_ENTITY_TRANSLUCENT_SHADER)
+				.setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_SHADER)
 				.setTextureState(new TextureStateShard(GLOW_TEXTURE, false, false))
-				.setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
-				.setCullState(RenderStateShard.NO_CULL)
-				.setLightmapState(RenderStateShard.LIGHTMAP)
-				.setWriteMaskState(RenderStateShard.COLOR_WRITE)
-				.setOverlayState(RenderStateShard.OVERLAY)
+				.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+				.setCullState(NO_CULL)
+				.setLightmapState(LIGHTMAP)
+				.setWriteMaskState(COLOR_WRITE)
+				.setOverlayState(OVERLAY)
 				.createCompositeState(true);
 		return RenderType.create("loot_beam_glow", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, true, state);
 	}
