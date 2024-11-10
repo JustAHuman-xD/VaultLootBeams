@@ -1,7 +1,5 @@
 package me.justahuman.vaultlootbeams.client;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import me.justahuman.vaultlootbeams.VaultLootBeams;
 import me.justahuman.vaultlootbeams.utils.Utils;
 import me.justahuman.vaultlootbeams.client.types.BeamRenderMode;
@@ -38,7 +36,6 @@ public class LootBeamRenderer extends RenderType {
 	private static final ResourceLocation WHITE_TEXTURE = new ResourceLocation(VaultLootBeams.MODID, "textures/entity/white.png");
 	public static final ResourceLocation GLOW_TEXTURE = new ResourceLocation(VaultLootBeams.MODID, "textures/entity/glow.png");
 
-	private static final TransparencyStateShard LOOTBEAM_TRANSPARENCY = createTransparencyShard();
 	private static final RenderType DEFAULT_BEAM = createBeamRenderType("default", LOOT_BEAM_TEXTURE);
 	private static final RenderType SOLID_BEAM = createBeamRenderType("solid", WHITE_TEXTURE);
 	private static final RenderType GLOWING_BEAM = createGlowingBeamRenderType();
@@ -285,25 +282,11 @@ public class LootBeamRenderer extends RenderType {
 		};
 	}
 
-	private static TransparencyStateShard createTransparencyShard() {
-		return new TransparencyStateShard("lootbeam_transparency", () -> {
-			RenderSystem.enableBlend();
-			RenderSystem.blendFuncSeparate(
-					GlStateManager.SourceFactor.SRC_ALPHA.value,
-					GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.value,
-					GlStateManager.SourceFactor.ONE.value,
-					GlStateManager.DestFactor.SRC_ALPHA.value);
-		}, () -> {
-			RenderSystem.disableBlend();
-			RenderSystem.defaultBlendFunc();
-		});
-	}
-
 	private static RenderType createBeamRenderType(String type, ResourceLocation texture) {
 		CompositeState state = CompositeState.builder()
 				.setShaderState(RENDERTYPE_BEACON_BEAM_SHADER)
 				.setTextureState(new TextureStateShard(texture, false, false))
-				.setTransparencyState(LOOTBEAM_TRANSPARENCY)
+				.setTransparencyState(LIGHTNING_TRANSPARENCY)
 				.setWriteMaskState(COLOR_DEPTH_WRITE)
 				.createCompositeState(false);
 		return RenderType.create("loot_beam_" + type, DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 256, false, true, state);
@@ -313,7 +296,7 @@ public class LootBeamRenderer extends RenderType {
 		CompositeState state = RenderType.CompositeState.builder()
 				.setShaderState(RENDERTYPE_LIGHTNING_SHADER)
 				.setWriteMaskState(COLOR_DEPTH_WRITE)
-				.setTransparencyState(LOOTBEAM_TRANSPARENCY)
+				.setTransparencyState(LIGHTNING_TRANSPARENCY)
 				.setOutputState(WEATHER_TARGET)
 				.setLightmapState(NO_LIGHTMAP)
 				.createCompositeState(false);
