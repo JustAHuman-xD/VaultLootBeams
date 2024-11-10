@@ -45,12 +45,17 @@ public class Utils {
         }
 
         ItemStack itemStack = itemEntity.getItem();
+        Item item = itemStack.getItem();
+        if (CONFIG.renderBlacklist.contains(item)) {
+            return false;
+        }
+
         if (itemStack.getItem() instanceof LootBeamHolder holder) {
             return holder.shouldRenderBeam(itemEntity, itemStack);
-        } else if (CONFIG.whitelistColorOverrides && CONFIG.colorOverrides.contains(itemStack.getItem())) {
+        } else if (CONFIG.whitelistColorOverrides && CONFIG.colorOverrides.contains(item)) {
             return true;
         }
-        return passes(CONFIG.renderCondition, CONFIG.renderWhitelist, CONFIG.renderBlacklist, itemEntity.getItem());
+        return CONFIG.renderCondition.test(itemStack) || CONFIG.renderWhitelist.contains(item);
     }
 
     public static Color getGradientColor(ItemEntity itemEntity, List<Color> colors) {

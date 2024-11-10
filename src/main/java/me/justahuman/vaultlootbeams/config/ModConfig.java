@@ -37,6 +37,7 @@ public class ModConfig {
     public boolean whiteBeamCenter = true;
     public boolean beamShadow = true;
     public double shadowRadius = 0.5;
+    public double shadowAlphaMultiplier = 1;
     public boolean animateShadow = true;
     public BeamRenderMode beamRenderMode = BeamRenderMode.GLOWING;
     public BeamColorMode beamColorMode = BeamColorMode.NAME_OR_RARITY;
@@ -96,6 +97,7 @@ public class ModConfig {
         whiteBeamCenter = JsonUtils.get(root, "whiteBeamCenter", DEFAULT.whiteBeamCenter);
         beamShadow = JsonUtils.get(root, "beamShadow", DEFAULT.beamShadow);
         shadowRadius = JsonUtils.getBounded(root, "shadowRadius", 0.00001, 1, DEFAULT.shadowRadius);
+        shadowAlphaMultiplier = JsonUtils.getBounded(root, "shadowAlphaMultiplier", 0.00001, 3, DEFAULT.shadowAlphaMultiplier);
         animateShadow = JsonUtils.get(root, "animateShadow", DEFAULT.animateShadow);
         beamRenderMode = JsonUtils.get(root, "beamRenderMode", DEFAULT.beamRenderMode, BeamRenderMode.class);
         beamColorMode = JsonUtils.get(root, "beamColorMode", DEFAULT.beamColorMode, BeamColorMode.class);
@@ -148,6 +150,7 @@ public class ModConfig {
         root.addProperty("whiteBeamCenter", whiteBeamCenter);
         root.addProperty("beamShadow", beamShadow);
         root.addProperty("shadowRadius", shadowRadius);
+        root.addProperty("shadowAlphaMultiplier", shadowAlphaMultiplier);
         root.addProperty("animateShadow", animateShadow);
         root.addProperty("beamRenderMode", beamRenderMode.name());
         root.addProperty("beamColorMode", beamColorMode.name());

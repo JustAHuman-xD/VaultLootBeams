@@ -44,10 +44,11 @@ public class ConfigScreen {
         doubleEntry(beamProperties, entryBuilder, "beamRadius", 0, 5);
         doubleEntry(beamProperties, entryBuilder, "beamHeight", 0, 10);
         doubleEntry(beamProperties, entryBuilder, "beamYOffset", -30, 30);
-        doubleEntry(beamProperties, entryBuilder, "beamAlpha", 0, 1);
+        doubleEntry(beamProperties, entryBuilder, "beamAlpha", 0.00001, 1);
         booleanEntry(beamProperties, entryBuilder, "whiteBeamCenter");
         booleanEntry(beamProperties, entryBuilder, "beamShadow");
         doubleEntry(beamProperties, entryBuilder, "shadowRadius", 0.00001, 1);
+        doubleEntry(beamProperties, entryBuilder, "shadowAlphaMultiplier", 0.00001, 3);
         booleanEntry(beamProperties, entryBuilder, "animateShadow");
         enumEntry(beamProperties, entryBuilder, "beamRenderMode", BeamRenderMode.class);
         enumEntry(beamProperties, entryBuilder, "beamColorMode", BeamColorMode.class);

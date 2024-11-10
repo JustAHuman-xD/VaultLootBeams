@@ -123,6 +123,7 @@ public class LootBeamRenderer extends RenderType {
 				beamAlpha *= multiplier;
 				radius *= multiplier;
 			}
+			beamAlpha = Math.min(1, beamAlpha * (float) CONFIG.shadowAlphaMultiplier);
 			renderShadow(stack, buffer.getBuffer(BEAM_SHADOW), r, g, b, beamAlpha, radius);
 			stack.popPose();
 		}
@@ -313,9 +314,8 @@ public class LootBeamRenderer extends RenderType {
 				.setShaderState(RENDERTYPE_LIGHTNING_SHADER)
 				.setWriteMaskState(COLOR_DEPTH_WRITE)
 				.setTransparencyState(LOOTBEAM_TRANSPARENCY)
-				.setOutputState(ITEM_ENTITY_TARGET)
-				.setOverlayState(OVERLAY)
-				.setLayeringState(POLYGON_OFFSET_LAYERING)
+				.setOutputState(WEATHER_TARGET)
+				.setLightmapState(NO_LIGHTMAP)
 				.createCompositeState(false);
 		return RenderType.create("loot_beam_glowing", DefaultVertexFormat.BLOCK, VertexFormat.Mode.QUADS, 1536, false, true, state);
 	}

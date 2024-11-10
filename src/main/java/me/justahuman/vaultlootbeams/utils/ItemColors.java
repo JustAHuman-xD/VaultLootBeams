@@ -4,7 +4,7 @@ import java.awt.*;
 import java.util.List;
 
 public class ItemColors {
-    public static final Color TRANSITION = new Color(0x777777);
+    public static final Color TRANSITION = new Color(0x111111);
 
     public static final Color ARTIFACT = new Color(0xFFA800);
     public static final Color INSCRIPTION = new Color(0x8BFFCA);

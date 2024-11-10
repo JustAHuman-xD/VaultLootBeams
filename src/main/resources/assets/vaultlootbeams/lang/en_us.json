@@ -37,6 +37,8 @@
   "vaultlootbeams.config.beamShadow.tooltip": "Should the beam render a glowing shadow.",
   "vaultlootbeams.config.shadowRadius": "Shadow Radius",
   "vaultlootbeams.config.shadowRadius.tooltip": "The radius of the shadow.",
+  "vaultlootbeams.config.shadowAlphaMultiplier": "Shadow Alpha Multiplier",
+  "vaultlootbeams.config.shadowAlphaMultiplier.tooltip": "A multiplier applied to the shadow's alpha.",
   "vaultlootbeams.config.animateShadow": "Animate Shadow",
   "vaultlootbeams.config.animateShadow.tooltip": "Should the beam's shadow be animated with the item bobbing.",
   "vaultlootbeams.config.beamRenderMode": "Beam Render Mode",
