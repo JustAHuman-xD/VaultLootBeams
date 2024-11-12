@@ -313,6 +313,6 @@ public class LootBeamRenderer extends RenderType {
 				.setWriteMaskState(COLOR_WRITE)
 				.setOverlayState(OVERLAY)
 				.createCompositeState(true);
-		return RenderType.create("loot_beam_glow", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, true, state);
+		return RenderType.create("loot_beam_shadow", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, true, true, state);
 	}
 }
