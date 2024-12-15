@@ -11,6 +11,7 @@
     "colors.BottleItemMixin",
     "colors.CrystalItemMixin",
     "colors.InfusedCatalystItemMixin",
+    "colors.InscriptionItemMixin",
     "colors.JewelItemMixin"
   ],
   "client": [

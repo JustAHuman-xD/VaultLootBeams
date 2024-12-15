@@ -38,7 +38,7 @@ dependencies {
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
     api fg.deobf("me.shedaniel.cloth:cloth-config-forge:6.3.81")
-    implementation fg.deobf("curse.maven:vault-hunters-official-mod-458203:5631250")
+    implementation fg.deobf("curse.maven:vault-hunters-official-mod-458203:5925633")
 }
 
 mixin {
