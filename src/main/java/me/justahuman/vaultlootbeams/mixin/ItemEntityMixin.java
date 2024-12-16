@@ -2,6 +2,7 @@ package me.justahuman.vaultlootbeams.mixin;
 
 import me.justahuman.vaultlootbeams.VaultLootBeams;
 import me.justahuman.vaultlootbeams.client.LootBeamRenderer;
+import me.justahuman.vaultlootbeams.client.types.ParticleGroup;
 import me.justahuman.vaultlootbeams.utils.Utils;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -13,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static me.justahuman.vaultlootbeams.config.ModConfig.CONFIG;
+import static me.justahuman.vaultlootbeams.client.config.ModConfig.CONFIG;
 
 @Mixin(ItemEntity.class)
 public abstract class ItemEntityMixin {
@@ -25,8 +26,9 @@ public abstract class ItemEntityMixin {
     private void onTick(CallbackInfo ci) {
         ItemEntity itemEntity = (ItemEntity) (Object) this;
         ItemStack itemStack = itemEntity.getItem();
-        if (CONFIG.beamParticles && Utils.passes(CONFIG.particleCondition, CONFIG.particleWhitelist, CONFIG.particleBlacklist, itemStack)) {
-            LootBeamRenderer.spawnParticles(itemEntity, this.age, Utils.getItemColor(itemEntity));
+        ParticleGroup particleGroup = CONFIG.particleGroup(itemStack);
+        if (CONFIG.beamParticles && Utils.passes(particleGroup.particleCondition(), particleGroup.particleWhitelist(), particleGroup.particleBlacklist(), itemStack)) {
+            LootBeamRenderer.spawnParticles(itemEntity, this.age, particleGroup, Utils.getItemColor(itemEntity));
         }
 
         if (CONFIG.landingSound && !vaultLootBeams$playedSound && (itemEntity.isOnGround() || (itemEntity.isOnGround() && (itemEntity.tickCount < 10 && itemEntity.tickCount > 3)))) {

@@ -32,7 +32,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static me.justahuman.vaultlootbeams.config.ModConfig.CONFIG;
+import static me.justahuman.vaultlootbeams.client.config.ModConfig.CONFIG;
 
 public class Utils {
     private static final Map<ItemEntity, List<Component>> TOOLTIP_CACHE = new ConcurrentHashMap<>();

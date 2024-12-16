@@ -1,4 +1,4 @@
-package me.justahuman.vaultlootbeams.config;
+package me.justahuman.vaultlootbeams.client.config;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -9,14 +9,19 @@ import me.justahuman.vaultlootbeams.client.types.BeamRenderMode;
 import me.justahuman.vaultlootbeams.client.types.ItemCondition;
 import me.justahuman.vaultlootbeams.client.types.ItemList;
 import me.justahuman.vaultlootbeams.client.types.ColorMap;
+import me.justahuman.vaultlootbeams.client.types.ParticleGroup;
 import me.justahuman.vaultlootbeams.utils.JsonUtils;
+import me.justahuman.vaultlootbeams.utils.Utils;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ModConfig {
     private static final Gson GSON = new Gson().newBuilder().setPrettyPrinting().create();
@@ -44,14 +49,15 @@ public class ModConfig {
     public ColorMap colorOverrides = new ColorMap();
 
     public boolean beamParticles = true;
-    public double particleSize = 0.25;
-    public double particleSpeed = 0.1;
-    public double particleSpread = 0.05;
-    public int particleCount = 19;
-    public int particleLifetime = 20;
-    public ItemCondition particleCondition = ItemCondition.LISTS_ONLY;
-    public ItemList particleWhitelist = new ItemList();
-    public ItemList particleBlacklist = new ItemList();
+    public Map<String, ParticleGroup> particleGroups = ParticleGroup.defaultGroups();
+    public ParticleGroup particleGroup(ItemStack itemStack) {
+        for (ParticleGroup group : particleGroups.values()) {
+            if (Utils.passes(group.particleCondition(), group.particleWhitelist(), group.particleBlacklist(), itemStack)) {
+                return group;
+            }
+        }
+        return ParticleGroup.DEFAULT;
+    }
 
     public boolean beamNameplate = true;
     public boolean nameplateOnLook = true;
@@ -104,14 +110,17 @@ public class ModConfig {
         colorOverrides = ColorMap.deserialize(root, "colorOverrides", DEFAULT.colorOverrides);
 
         beamParticles = JsonUtils.get(root, "beamParticles", DEFAULT.beamParticles);
-        particleSize = JsonUtils.getBounded(root, "particleSize", 0.00001, 10, DEFAULT.particleSize);
-        particleSpeed = JsonUtils.getBounded(root, "particleSpeed", 0.00001, 10, DEFAULT.particleSpeed);
-        particleSpread = JsonUtils.getBounded(root, "particleSpread", 0.00001, 10, DEFAULT.particleSpread);
-        particleCount = JsonUtils.getBounded(root, "particleCount", 1, 20, DEFAULT.particleCount);
-        particleLifetime = JsonUtils.getBounded(root, "particleLifetime", 1, 100, DEFAULT.particleLifetime);
-        particleCondition = JsonUtils.get(root, "particleCondition", DEFAULT.particleCondition, ItemCondition.class);
-        particleWhitelist = ItemList.deserialize(root, "particleWhitelist", DEFAULT.particleWhitelist);
-        particleBlacklist = ItemList.deserialize(root, "particleBlacklist", DEFAULT.particleBlacklist);
+        JsonObject serializedGroups = JsonUtils.get(root, "particleGroups", (JsonObject) null);
+        if (serializedGroups != null) {
+            particleGroups = new HashMap<>();
+            for (String group : serializedGroups.keySet()) {
+                JsonObject serialized = JsonUtils.get(serializedGroups, group, (JsonObject) null);
+                ParticleGroup particleGroup = ParticleGroup.deserialize(serialized);
+                if (particleGroup != null) {
+                    particleGroups.put(group, particleGroup);
+                }
+            }
+        }
 
         beamNameplate = JsonUtils.get(root, "beamNameplate", DEFAULT.beamNameplate);
         nameplateOnLook = JsonUtils.get(root, "nameplateOnLook", DEFAULT.nameplateOnLook);
@@ -157,14 +166,13 @@ public class ModConfig {
         root.add("colorOverrides", colorOverrides.serialize());
 
         root.addProperty("beamParticles", beamParticles);
-        root.addProperty("particleSize", particleSize);
-        root.addProperty("particleSpeed", particleSpeed);
-        root.addProperty("particleSpread", particleSpread);
-        root.addProperty("particleCount", particleCount);
-        root.addProperty("particleLifetime", particleLifetime);
-        root.addProperty("particleCondition", particleCondition.name());
-        root.add("particleWhitelist", particleWhitelist.serialize());
-        root.add("particleBlacklist", particleBlacklist.serialize());
+        if (!particleGroups.isEmpty()) {
+            JsonObject groups = new JsonObject();
+            for (Map.Entry<String, ParticleGroup> group : particleGroups.entrySet()) {
+                groups.add(group.getKey(), group.getValue().serialize());
+            }
+            root.add("particleGroups", groups);
+        }
 
         root.addProperty("beamNameplate", beamNameplate);
         root.addProperty("nameplateOnLook", nameplateOnLook);

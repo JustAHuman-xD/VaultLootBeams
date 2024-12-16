@@ -1,4 +1,4 @@
-package me.justahuman.vaultlootbeams.config;
+package me.justahuman.vaultlootbeams.client.config;
 
 import me.justahuman.vaultlootbeams.VaultLootBeams;
 import me.justahuman.vaultlootbeams.client.types.BeamColorMode;
@@ -17,8 +17,8 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 
-import static me.justahuman.vaultlootbeams.config.ModConfig.CONFIG;
-import static me.justahuman.vaultlootbeams.config.ModConfig.DEFAULT;
+import static me.justahuman.vaultlootbeams.client.config.ModConfig.CONFIG;
+import static me.justahuman.vaultlootbeams.client.config.ModConfig.DEFAULT;
 
 public class ConfigScreen {
     public static Screen create() {
@@ -55,14 +55,7 @@ public class ConfigScreen {
         beamProperties.addEntry(entryBuilder.startTextDescription(translate("colorOverrides")).build());
 
         booleanEntry(beamParticles, entryBuilder, "beamParticles");
-        doubleEntry(beamParticles, entryBuilder, "particleSize", 0.00001, 10);
-        doubleEntry(beamParticles, entryBuilder, "particleSpeed", 0.00001, 10);
-        doubleEntry(beamParticles, entryBuilder, "particleSpread", 0.00001, 10);
-        intEntry(beamParticles, entryBuilder, "particleCount", 1, 20);
-        intEntry(beamParticles, entryBuilder, "particleLifetime", 1, 100);
-        enumEntry(beamParticles, entryBuilder, "particleCondition", ItemCondition.class);
-        itemListEntry(beamParticles, entryBuilder, "particleWhitelist");
-        itemListEntry(beamParticles, entryBuilder, "particleBlacklist");
+        beamProperties.addEntry(entryBuilder.startTextDescription(translate("particleGroups")).build());
 
         booleanEntry(beamNameplate, entryBuilder, "beamNameplate");
         booleanEntry(beamNameplate, entryBuilder, "nameplateOnLook");

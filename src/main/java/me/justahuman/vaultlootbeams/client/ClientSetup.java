@@ -3,7 +3,7 @@ package me.justahuman.vaultlootbeams.client;
 import me.justahuman.vaultlootbeams.VaultLootBeams;
 import me.justahuman.vaultlootbeams.compat.ModCompat;
 import me.justahuman.vaultlootbeams.utils.Utils;
-import me.justahuman.vaultlootbeams.config.ConfigScreen;
+import me.justahuman.vaultlootbeams.client.config.ConfigScreen;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
@@ -19,7 +19,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
-import static me.justahuman.vaultlootbeams.config.ModConfig.CONFIG;
+import static me.justahuman.vaultlootbeams.client.config.ModConfig.CONFIG;
 
 @Mod.EventBusSubscriber(modid = VaultLootBeams.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class ClientSetup {

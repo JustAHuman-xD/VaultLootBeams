@@ -1,6 +1,7 @@
 package me.justahuman.vaultlootbeams.client;
 
 import me.justahuman.vaultlootbeams.VaultLootBeams;
+import me.justahuman.vaultlootbeams.client.types.ParticleGroup;
 import me.justahuman.vaultlootbeams.utils.Utils;
 import me.justahuman.vaultlootbeams.client.types.BeamRenderMode;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
@@ -29,7 +30,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.Random;
 
-import static me.justahuman.vaultlootbeams.config.ModConfig.CONFIG;
+import static me.justahuman.vaultlootbeams.client.config.ModConfig.CONFIG;
 
 public class LootBeamRenderer extends RenderType {
 	private static final ResourceLocation LOOT_BEAM_TEXTURE = new ResourceLocation(VaultLootBeams.MODID, "textures/entity/loot_beam.png");
@@ -131,17 +132,17 @@ public class LootBeamRenderer extends RenderType {
 		}
 	}
 
-	public static void spawnParticles(ItemEntity item, int entityTime, Color color) {
-		float particleCount = Math.abs(20 - CONFIG.particleCount);
+	public static void spawnParticles(ItemEntity item, int entityTime, ParticleGroup particleGroup, Color color) {
+		float particleCount = Math.abs(20 - particleGroup.particleCount());
 		if (entityTime % particleCount == 0 && !Minecraft.getInstance().isPaused()) {
-			addParticle(ModClientEvents.GLOW_TEXTURE, color, 1.0f, CONFIG.particleLifetime,
-					RANDOM.nextFloat((float) (0.25f * CONFIG.particleSize), (float) (1.1f * CONFIG.particleSize)),
-					new Vec3(RANDOM.nextDouble(item.getX() - CONFIG.particleSpread, item.getX() + CONFIG.particleSpread),
-							RANDOM.nextDouble(item.getY() - (CONFIG.particleSpread / 3f), item.getY() + (CONFIG.particleSpread / 3f)),
-							RANDOM.nextDouble(item.getZ() - CONFIG.particleSpread, item.getZ() + CONFIG.particleSpread)),
-					new Vec3(RANDOM.nextDouble(-CONFIG.particleSpeed / 2.0f, CONFIG.particleSpeed / 2.0f),
-							RANDOM.nextDouble(CONFIG.particleSpeed),
-							RANDOM.nextDouble(-CONFIG.particleSpeed / 2.0f, CONFIG.particleSpeed / 2.0f)));
+			addParticle(ModClientEvents.GLOW_TEXTURE, color, 1.0f, particleGroup.particleLifetime(),
+					RANDOM.nextFloat((float) (0.25f * particleGroup.particleSize()), (float) (1.1f * particleGroup.particleSize())),
+					new Vec3(RANDOM.nextDouble(item.getX() - particleGroup.particleSpread(), item.getX() + particleGroup.particleSpread()),
+							RANDOM.nextDouble(item.getY() - (particleGroup.particleSpread() / 3f), item.getY() + (particleGroup.particleSpread() / 3f)),
+							RANDOM.nextDouble(item.getZ() - particleGroup.particleSpread(), item.getZ() + particleGroup.particleSpread())),
+					new Vec3(RANDOM.nextDouble(-particleGroup.particleSpeed() / 2.0f, particleGroup.particleSpeed() / 2.0f),
+							RANDOM.nextDouble(particleGroup.particleSpeed()),
+							RANDOM.nextDouble(-particleGroup.particleSpeed() / 2.0f, particleGroup.particleSpeed() / 2.0f)));
 		}
 	}
 

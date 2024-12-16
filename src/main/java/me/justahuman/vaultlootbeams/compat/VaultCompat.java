@@ -4,7 +4,7 @@ import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModItems;
 import me.justahuman.vaultlootbeams.utils.ItemColors;
 
-import static me.justahuman.vaultlootbeams.config.ModConfig.DEFAULT;
+import static me.justahuman.vaultlootbeams.client.config.ModConfig.DEFAULT;
 
 public class VaultCompat {
     public static void init() {
