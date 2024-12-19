@@ -32,6 +32,7 @@ public class ClientSetup {
 	public static void init(FMLClientSetupEvent ignored) {
 		ModCompat.init();
 		CONFIG.loadFromFile();
+		CONFIG.saveToFile();
 		OPEN_CONFIG.setKeyModifierAndCode(KeyModifier.ALT, InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_L));
 		RELOAD_CONFIG.setKeyModifierAndCode(KeyModifier.CONTROL, InputConstants.Type.KEYSYM.getOrCreate(InputConstants.KEY_L));
 		MinecraftForge.EVENT_BUS.register(ClientSetup.class);
