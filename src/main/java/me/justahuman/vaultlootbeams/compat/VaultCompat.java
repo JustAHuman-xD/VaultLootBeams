@@ -18,18 +18,22 @@ public class VaultCompat {
                 .add(ModItems.KNOWLEDGE_STAR);
 
         DEFAULT.colorOverrides
-                .add(ModItems.ARTIFACT_FRAGMENT, ItemColors.ARTIFACT)
-                .add(ModItems.UNIDENTIFIED_ARTIFACT, ItemColors.ARTIFACT)
-                .add(ModBlocks.VAULT_ARTIFACT.asItem(), ItemColors.ARTIFACT)
+                .add("artifacts", items -> items.add(
+                        ModItems.ARTIFACT_FRAGMENT,
+                        ModItems.UNIDENTIFIED_ARTIFACT,
+                        ModBlocks.VAULT_ARTIFACT.asItem()),
+                ItemColors.ARTIFACT)
                 .add(ModItems.INSCRIPTION, ItemColors.INSCRIPTION)
                 .add(ModItems.LOST_BOUNTY, ItemColors.LOST_BOUNTY)
                 .add(ModItems.OLD_NOTES, ItemColors.OLD_NOTES)
                 .add(ModItems.BOUNTY_PEARL, ItemColors.BOUNTY_PEARL)
                 .add(ModItems.VAULT_CATALYST, ItemColors.CATALYST)
                 .add(ModItems.CARD_DECK, ItemColors.DECK)
-                .add(ModItems.POG, ItemColors.POG)
-                .add(ModItems.ECHO_POG, ItemColors.POG)
-                .add(ModItems.OMEGA_POG, ItemColors.POG)
+                .add("pog", items -> items.add(
+                        ModItems.POG,
+                        ModItems.ECHO_POG,
+                        ModItems.OMEGA_POG)
+                , ItemColors.POG)
                 .add(ModItems.ASHIUM_KEY, ItemColors.ASHIUM)
                 .add(ModItems.BOMIGNITE_KEY, ItemColors.BOMIGNITE_RED,
                         ItemColors.TRANSITION,

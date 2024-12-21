@@ -45,6 +45,7 @@ public class ModConfig {
     public double shadowAlphaMultiplier = 1;
     public boolean animateShadow = true;
     public BeamRenderMode beamRenderMode = BeamRenderMode.GLOWING;
+
     public BeamColorMode beamColorMode = BeamColorMode.NAME_OR_RARITY;
     public ColorMap colorOverrides = new ColorMap();
 
@@ -52,7 +53,7 @@ public class ModConfig {
     public Map<String, ParticleGroup> particleGroups = ParticleGroup.defaultGroups();
     public ParticleGroup particleGroup(ItemStack itemStack) {
         for (ParticleGroup group : particleGroups.values()) {
-            if (Utils.passes(group.particleCondition(), group.particleWhitelist(), group.particleBlacklist(), itemStack)) {
+            if (Utils.passes(group.particleCondition, group.particleWhitelist, group.particleBlacklist, itemStack)) {
                 return group;
             }
         }
@@ -121,7 +122,7 @@ public class ModConfig {
                 }
             }
             if (!particleGroups.containsKey("default")) {
-                particleGroups.put("default", ParticleGroup.DEFAULT);
+                particleGroups.put("default", ParticleGroup.defaultGroup());
             }
         }
 

@@ -27,7 +27,7 @@ public abstract class ItemEntityMixin {
         ItemEntity itemEntity = (ItemEntity) (Object) this;
         ItemStack itemStack = itemEntity.getItem();
         ParticleGroup particleGroup = CONFIG.particleGroup(itemStack);
-        if (CONFIG.beamParticles && Utils.passes(particleGroup.particleCondition(), particleGroup.particleWhitelist(), particleGroup.particleBlacklist(), itemStack)) {
+        if (CONFIG.beamParticles && Utils.passes(particleGroup.particleCondition, particleGroup.particleWhitelist, particleGroup.particleBlacklist, itemStack)) {
             LootBeamRenderer.spawnParticles(itemEntity, this.age, particleGroup, Utils.getItemColor(itemEntity));
         }
 

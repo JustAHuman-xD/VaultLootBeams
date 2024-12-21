@@ -4,13 +4,32 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import me.justahuman.vaultlootbeams.utils.JsonUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 
-public record ParticleGroup(double particleSize, double particleSpeed, double particleSpread, int particleCount,
-                            int particleLifetime, ItemCondition particleCondition, ItemList particleWhitelist,
-                            ItemList particleBlacklist) {
-    public static final ParticleGroup DEFAULT = new ParticleGroup(0.25, 0.1, 0.05, 19, 20,
-            ItemCondition.LISTS_ONLY, new ItemList(), new ItemList());
+public final class ParticleGroup {
+    public static final ParticleGroup DEFAULT = defaultGroup();
+    public double particleSize;
+    public double particleSpeed;
+    public double particleSpread;
+    public int particleCount;
+    public int particleLifetime;
+    public ItemCondition particleCondition;
+    public ItemList particleWhitelist;
+    public ItemList particleBlacklist;
+
+    public ParticleGroup(double particleSize, double particleSpeed, double particleSpread, int particleCount,
+                         int particleLifetime, ItemCondition particleCondition, ItemList particleWhitelist,
+                         ItemList particleBlacklist) {
+        this.particleSize = particleSize;
+        this.particleSpeed = particleSpeed;
+        this.particleSpread = particleSpread;
+        this.particleCount = particleCount;
+        this.particleLifetime = particleLifetime;
+        this.particleCondition = particleCondition;
+        this.particleWhitelist = particleWhitelist;
+        this.particleBlacklist = particleBlacklist;
+    }
 
     public JsonElement serialize() {
         JsonObject root = new JsonObject();
@@ -25,8 +44,13 @@ public record ParticleGroup(double particleSize, double particleSpeed, double pa
         return root;
     }
 
+    public static ParticleGroup defaultGroup() {
+        return new ParticleGroup(0.25, 0.1, 0.05, 19, 20,
+                ItemCondition.LISTS_ONLY, new ItemList(), new ItemList());
+    }
+
     public static Map<String, ParticleGroup> defaultGroups() {
-        return Map.of("default", DEFAULT);
+        return new HashMap<>(Map.of("default", defaultGroup()));
     }
 
     public static ParticleGroup deserialize(JsonObject root) {
@@ -34,14 +58,15 @@ public record ParticleGroup(double particleSize, double particleSpeed, double pa
             return null;
         }
 
-        double particleSize = JsonUtils.getBounded(root, "particleSize", 0.00001, 10, DEFAULT.particleSize);
-        double particleSpeed = JsonUtils.getBounded(root, "particleSpeed", 0.00001, 10, DEFAULT.particleSpeed);
-        double particleSpread = JsonUtils.getBounded(root, "particleSpread", 0.00001, 10, DEFAULT.particleSpread);
-        int particleCount = JsonUtils.getBounded(root, "particleCount", 1, 20, DEFAULT.particleCount);
-        int particleLifetime = JsonUtils.getBounded(root, "particleLifetime", 1, 100, DEFAULT.particleLifetime);
-        ItemCondition particleCondition = JsonUtils.get(root, "particleCondition", DEFAULT.particleCondition, ItemCondition.class);
-        ItemList particleWhitelist = ItemList.deserialize(root, "particleWhitelist", DEFAULT.particleWhitelist);
-        ItemList particleBlacklist = ItemList.deserialize(root, "particleBlacklist", DEFAULT.particleBlacklist);
+        ParticleGroup defaultGroup = defaultGroup();
+        double particleSize = JsonUtils.getBounded(root, "particleSize", 0.00001, 10, defaultGroup.particleSize);
+        double particleSpeed = JsonUtils.getBounded(root, "particleSpeed", 0.00001, 10, defaultGroup.particleSpeed);
+        double particleSpread = JsonUtils.getBounded(root, "particleSpread", 0.00001, 10, defaultGroup.particleSpread);
+        int particleCount = JsonUtils.getBounded(root, "particleCount", 1, 20, defaultGroup.particleCount);
+        int particleLifetime = JsonUtils.getBounded(root, "particleLifetime", 1, 100, defaultGroup.particleLifetime);
+        ItemCondition particleCondition = JsonUtils.get(root, "particleCondition", defaultGroup.particleCondition, ItemCondition.class);
+        ItemList particleWhitelist = ItemList.deserialize(root, "particleWhitelist", defaultGroup.particleWhitelist);
+        ItemList particleBlacklist = ItemList.deserialize(root, "particleBlacklist", defaultGroup.particleBlacklist);
         return new ParticleGroup(particleSize, particleSpeed, particleSpread, particleCount, particleLifetime, particleCondition, particleWhitelist, particleBlacklist);
     }
 }

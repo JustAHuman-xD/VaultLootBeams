@@ -5,9 +5,12 @@
 
   "vaultlootbeams.config.title": "VaultLootBeams Config",
   "vaultlootbeams.config.listSyntax": "All item lists entries can be any of the following: {modid}:{item} (that item only), #{tag} (all items in the tag), or {modid} (all items in the mod).",
+  "vaultlootbeams.config.new_id": "New ID",
+  "vaultlootbeams.config.new_id.tooltip": "Renames the current id to this value.",
 
   "vaultlootbeams.config.category.general": "General",
   "vaultlootbeams.config.category.beam_properties": "Beam Properties",
+  "vaultlootbeams.config.category.beam_colors": "Beam Colors",
   "vaultlootbeams.config.category.beam_particles": "Beam Particles",
   "vaultlootbeams.config.category.beam_nameplate": "Beam Nameplate",
   "vaultlootbeams.config.category.landing_sound": "Landing Sound",
@@ -43,13 +46,37 @@
   "vaultlootbeams.config.animateShadow.tooltip": "Should the beam's shadow be animated with the item bobbing.",
   "vaultlootbeams.config.beamRenderMode": "Beam Render Mode",
   "vaultlootbeams.config.beamRenderMode.tooltip": "Controls the texture and shader of the beam.",
+
   "vaultlootbeams.config.beamColorMode": "Beam Color Mode",
   "vaultlootbeams.config.beamColorMode.tooltip": "What should determine the color of the beam.",
-  "vaultlootbeams.config.colorOverrides": "You cannot edit color overrides in the gui, you must edit the config file directly.",
+  "vaultlootbeams.config.manage_color_groups": "Manage Color Groups",
+  "vaultlootbeams.config.manage_color_groups.tooltip": "Enter any new color groups you want to add/delete, they'll be added/deleted when you re-open this editor.",
+  "vaultlootbeams.config.colors": "Colors",
+  "vaultlootbeams.config.colors.preview": "Preview Colors:",
+  "vaultlootbeams.config.colors.tooltip": "The colors of the beam. Having multiple will transition between them.",
+  "vaultlootbeams.config.items": "Items",
+  "vaultlootbeams.config.items.tooltip": "The items that should use these colors.",
 
   "vaultlootbeams.config.beamParticles": "Render Beam Particles",
   "vaultlootbeams.config.beamParticles.tooltip": "Should any beam particles be rendered.",
-  "vaultlootbeams.config.particleGroups": "You cannot edit particle groups in the gui, you must edit the config file directly.",
+  "vaultlootbeams.config.manage_particle_groups": "Manage Particle Groups",
+  "vaultlootbeams.config.manage_particle_groups.tooltip": "Enter any new particle groups you want to add/delete, they'll be added/deleted when you re-open this editor.",
+  "vaultlootbeams.config.particleSize": "Particle Size",
+  "vaultlootbeams.config.particleSize.tooltip": "The size of the particles.",
+  "vaultlootbeams.config.particleSpeed": "Particle Speed",
+  "vaultlootbeams.config.particleSpeed.tooltip": "The speed of the particles.",
+  "vaultlootbeams.config.particleSpread": "Particle Spread",
+  "vaultlootbeams.config.particleSpread.tooltip": "The spread of the particles.",
+  "vaultlootbeams.config.particleCount": "Particle Count",
+  "vaultlootbeams.config.particleCount.tooltip": "How many particles should spawn per second.",
+  "vaultlootbeams.config.particleLifetime": "Particle Lifetime",
+  "vaultlootbeams.config.particleLifetime.tooltip": "The lifetime of the particles in ticks.",
+  "vaultlootbeams.config.particleCondition": "Render Particle Condition",
+  "vaultlootbeams.config.particleCondition.tooltip": "The general condition for particles to render.",
+  "vaultlootbeams.config.particleWhitelist": "Render Particle Whitelist",
+  "vaultlootbeams.config.particleWhitelist.tooltip": "Items that should render particles regardless of the render condition.",
+  "vaultlootbeams.config.particleBlacklist": "Render Particle Blacklist",
+  "vaultlootbeams.config.particleBlacklist.tooltip": "Items that should not render particles no matter what.",
 
   "vaultlootbeams.config.beamNameplate": "Render Beam Nameplate",
   "vaultlootbeams.config.beamNameplate.tooltip": "Should any nameplates be rendered. Nameplates consist of the item name, count(configurable), and rarity(configurable).",
@@ -93,5 +120,6 @@
 
   "vaultlootbeams.config.error.invalidModId": "Invalid mod id",
   "vaultlootbeams.config.error.invalidTag": "Invalid tag identifier",
-  "vaultlootbeams.config.error.invalidItem": "Invalid item identifier"
+  "vaultlootbeams.config.error.invalidItem": "Invalid item identifier",
+  "vaultlootbeams.config.error.invalidColor": "Invalid color, should be formatted like 0xFFFFFF"
 }

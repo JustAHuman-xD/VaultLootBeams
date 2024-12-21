@@ -8,7 +8,7 @@ plugins {
 apply plugin: 'org.spongepowered.mixin'
 
 group = 'me.justahuman.vaultlootbeams'
-version = '1.0.0-beta2'
+version = '1.0.0-beta3'
 
 java {
     archivesBaseName = 'VaultLootBeams'
@@ -39,6 +39,7 @@ dependencies {
 
     api fg.deobf("me.shedaniel.cloth:cloth-config-forge:6.3.81")
     implementation fg.deobf("curse.maven:vault-hunters-official-mod-458203:5925633")
+    implementation fg.deobf("curse.maven:curios-309927:4418032")
 }
 
 mixin {

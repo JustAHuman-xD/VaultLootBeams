@@ -133,16 +133,16 @@ public class LootBeamRenderer extends RenderType {
 	}
 
 	public static void spawnParticles(ItemEntity item, int entityTime, ParticleGroup particleGroup, Color color) {
-		float particleCount = Math.abs(20 - particleGroup.particleCount());
+		float particleCount = Math.abs(20 - particleGroup.particleCount);
 		if (entityTime % particleCount == 0 && !Minecraft.getInstance().isPaused()) {
-			addParticle(ModClientEvents.GLOW_TEXTURE, color, 1.0f, particleGroup.particleLifetime(),
-					RANDOM.nextFloat((float) (0.25f * particleGroup.particleSize()), (float) (1.1f * particleGroup.particleSize())),
-					new Vec3(RANDOM.nextDouble(item.getX() - particleGroup.particleSpread(), item.getX() + particleGroup.particleSpread()),
-							RANDOM.nextDouble(item.getY() - (particleGroup.particleSpread() / 3f), item.getY() + (particleGroup.particleSpread() / 3f)),
-							RANDOM.nextDouble(item.getZ() - particleGroup.particleSpread(), item.getZ() + particleGroup.particleSpread())),
-					new Vec3(RANDOM.nextDouble(-particleGroup.particleSpeed() / 2.0f, particleGroup.particleSpeed() / 2.0f),
-							RANDOM.nextDouble(particleGroup.particleSpeed()),
-							RANDOM.nextDouble(-particleGroup.particleSpeed() / 2.0f, particleGroup.particleSpeed() / 2.0f)));
+			addParticle(ModClientEvents.GLOW_TEXTURE, color, 1.0f, particleGroup.particleLifetime,
+					RANDOM.nextFloat((float) (0.25f * particleGroup.particleSize), (float) (1.1f * particleGroup.particleSize)),
+					new Vec3(RANDOM.nextDouble(item.getX() - particleGroup.particleSpread, item.getX() + particleGroup.particleSpread),
+							RANDOM.nextDouble(item.getY() - (particleGroup.particleSpread / 3f), item.getY() + (particleGroup.particleSpread / 3f)),
+							RANDOM.nextDouble(item.getZ() - particleGroup.particleSpread, item.getZ() + particleGroup.particleSpread)),
+					new Vec3(RANDOM.nextDouble(-particleGroup.particleSpeed / 2.0f, particleGroup.particleSpeed / 2.0f),
+							RANDOM.nextDouble(particleGroup.particleSpeed),
+							RANDOM.nextDouble(-particleGroup.particleSpeed / 2.0f, particleGroup.particleSpeed / 2.0f)));
 		}
 	}
 
