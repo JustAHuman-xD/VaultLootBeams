@@ -120,6 +120,9 @@ public class ModConfig {
                     particleGroups.put(group, particleGroup);
                 }
             }
+            if (!particleGroups.containsKey("default")) {
+                particleGroups.put("default", ParticleGroup.DEFAULT);
+            }
         }
 
         beamNameplate = JsonUtils.get(root, "beamNameplate", DEFAULT.beamNameplate);
