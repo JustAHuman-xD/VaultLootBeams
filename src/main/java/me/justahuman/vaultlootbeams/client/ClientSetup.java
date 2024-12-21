@@ -29,7 +29,7 @@ public class ClientSetup {
 	public static final KeyMapping OPEN_CONFIG = new KeyMapping(KEYBIND_PREFIX + "open_config", InputConstants.KEY_L, KEYBINDS_CATEGORY);
 	public static final KeyMapping RELOAD_CONFIG = new KeyMapping(KEYBIND_PREFIX + "reload_config", InputConstants.KEY_L, KEYBINDS_CATEGORY);
 
-	public static void init(FMLClientSetupEvent ignored) {
+	public static void setup(FMLClientSetupEvent ignored) {
 		ModCompat.init();
 		CONFIG.loadFromFile();
 		CONFIG.saveToFile();

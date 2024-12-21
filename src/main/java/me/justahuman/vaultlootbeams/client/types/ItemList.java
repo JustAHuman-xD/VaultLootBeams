@@ -14,20 +14,29 @@ import net.minecraftforge.registries.tags.ITagManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class ItemList {
+    protected final Set<String> dynamicKeys;
+    protected final Set<Item> allDynamic;
     protected final Set<Item> items;
     protected final Set<TagKey<Item>> tags;
     protected final Set<String> modIds;
 
     public ItemList() {
-        this(new LinkedHashSet<>(), new LinkedHashSet<>(), new LinkedHashSet<>());
+        this(new LinkedHashMap<>(), new LinkedHashSet<>(), new LinkedHashSet<>(), new LinkedHashSet<>());
     }
 
-    private ItemList(Set<Item> items, Set<TagKey<Item>> tags, Set<String> modIds) {
+    private ItemList(Map<String, Set<Item>> dynamic, Set<Item> items, Set<TagKey<Item>> tags, Set<String> modIds) {
+        this.dynamicKeys = new LinkedHashSet<>(dynamic.keySet());
+        this.allDynamic = new LinkedHashSet<>(dynamic.values().stream().reduce(new LinkedHashSet<>(), (a, b) -> {
+            a.addAll(b);
+            return a;
+        }));
         this.items = items;
         this.tags = tags;
         this.modIds = modIds;
@@ -49,7 +58,7 @@ public class ItemList {
     }
 
     public boolean contains(Item item) {
-        if (items.contains(item)) {
+        if (allDynamic.contains(item) || items.contains(item)) {
             return true;
         }
 
@@ -76,7 +85,8 @@ public class ItemList {
     }
 
     public List<String> toStringList() {
-        List<String> items = new ArrayList<>();
+        List<String> items = new ArrayList<>(this.dynamicKeys);
+
         for (Item item : this.items) {
             ResourceLocation registryName = item.getRegistryName();
             if (registryName == null) {
@@ -123,6 +133,7 @@ public class ItemList {
 
     public static ItemList deserialize(String key, List<String> serialized) {
         Utils.enableWarnings();
+        Map<String, Set<Item>> dynamic = new LinkedHashMap<>();
         Set<Item> items = new LinkedHashSet<>();
         Set<TagKey<Item>> tags = new LinkedHashSet<>();
         Set<String> modIds = new LinkedHashSet<>();
@@ -137,6 +148,11 @@ public class ItemList {
                 if (Utils.isModId(key, itemKey)) {
                     modIds.add(itemKey);
                 }
+            } else if (key.contains("*")) {
+                List<Item> matching = Utils.getMatchingItems(key, itemKey);
+                if (!matching.isEmpty()) {
+                    dynamic.put(itemKey, new LinkedHashSet<>(matching));
+                }
             } else {
                 Item item = Utils.getItem(key, itemKey);
                 if (item != null) {
@@ -144,6 +160,6 @@ public class ItemList {
                 }
             }
         }
-        return new ItemList(items, tags, modIds);
+        return new ItemList(dynamic, items, tags, modIds);
     }
 }

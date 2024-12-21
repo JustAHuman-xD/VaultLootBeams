@@ -294,6 +294,10 @@ public class ConfigScreen {
                             if (!Utils.isModId(fieldName, string)) {
                                 return Optional.of(translate("error.invalidModId"));
                             }
+                        } else if (string.contains("*")) {
+                            if (Utils.getMatchingItems(fieldName, string).isEmpty()) {
+                                return Optional.of(translate("error.invalidItemMatcher"));
+                            }
                         } else {
                             if (Utils.getItem(fieldName, string) == null) {
                                 return Optional.of(translate("error.invalidItem"));

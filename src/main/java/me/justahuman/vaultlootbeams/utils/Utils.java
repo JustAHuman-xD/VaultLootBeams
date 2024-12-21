@@ -199,6 +199,26 @@ public class Utils {
         return TagKey.create(ForgeRegistries.ITEMS.getRegistryKey(), tagResource);
     }
 
+    public static List<Item> getMatchingItems(String context, String itemKey) {
+        if (itemKey.length() == itemKey.indexOf(':') + 2) {
+            if (warnings) {
+                VaultLootBeams.LOGGER.warn("No value in identifier \"{}\" in {}", itemKey, context);
+            }
+            return new ArrayList<>();
+        }
+        String namespace = itemKey.substring(0, itemKey.indexOf(':'));
+        String ending = itemKey.substring(itemKey.indexOf(':') + 2);
+        List<Item> items = ForgeRegistries.ITEMS.getValues().stream()
+                .filter(item -> {
+                    ResourceLocation location = ForgeRegistries.ITEMS.getKey(item);
+                    return location != null && location.getNamespace().equals(namespace) && location.getPath().endsWith(ending);
+                }).toList();
+        if (items.isEmpty() && warnings) {
+            VaultLootBeams.LOGGER.warn("Couldn't find any items for identifier \"{}\" in {}", itemKey, context);
+        }
+        return items;
+    }
+
     public static Item getItem(String context, String itemKey) {
         ResourceLocation itemResource = ResourceLocation.tryParse(itemKey);
         if (itemResource == null) {

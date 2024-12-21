@@ -4,7 +4,7 @@
   "key.vaultlootbeams.reload_config": "Reload Config (From File)",
 
   "vaultlootbeams.config.title": "VaultLootBeams Config",
-  "vaultlootbeams.config.listSyntax": "All item lists entries can be any of the following: {modid}:{item} (that item only), #{tag} (all items in the tag), or {modid} (all items in the mod).",
+  "vaultlootbeams.config.listSyntax": "All item lists entries can be any of the following: {modid}:{item} (that item only), {modid}:*{matcher} (any items from that mod whose id ends with matcher), #{tag} (all items in the tag), or {modid} (all items in the mod).",
   "vaultlootbeams.config.new_id": "New ID",
   "vaultlootbeams.config.new_id.tooltip": "Renames the current id to this value.",
 
@@ -121,5 +121,6 @@
   "vaultlootbeams.config.error.invalidModId": "Invalid mod id",
   "vaultlootbeams.config.error.invalidTag": "Invalid tag identifier",
   "vaultlootbeams.config.error.invalidItem": "Invalid item identifier",
+  "vaultlootbeams.config.error.invalidItemMatcher": "Invalid item matcher",
   "vaultlootbeams.config.error.invalidColor": "Invalid color, should be formatted like 0xFFFFFF"
 }

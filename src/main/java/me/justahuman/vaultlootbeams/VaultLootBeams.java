@@ -25,7 +25,7 @@ public class VaultLootBeams {
 	public static final RegistryObject<SoundEvent> LOOT_DROP = register(new SoundEvent(new ResourceLocation(MODID, "loot_drop")));
 
 	public VaultLootBeams() {
-		FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::init);
+		FMLJavaModLoadingContext.get().getModEventBus().addListener(ClientSetup::setup);
 		SOUNDS.register(FMLJavaModLoadingContext.get().getModEventBus());
 	}
 
