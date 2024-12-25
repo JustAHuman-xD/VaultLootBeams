@@ -10,13 +10,13 @@ import net.minecraft.world.item.Item;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class ColorMap {
-    public final Map<Item, List<Color>> cache = new LinkedHashMap<>();
+    public final Map<Item, List<Color>> cache = new ConcurrentHashMap<>();
     public final List<ColorGroup> colors;
 
     public ColorMap() {

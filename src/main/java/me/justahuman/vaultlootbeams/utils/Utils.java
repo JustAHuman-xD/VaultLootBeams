@@ -35,6 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static me.justahuman.vaultlootbeams.client.config.ModConfig.CONFIG;
 
 public class Utils {
+    private static final Map<String, List<Item>> WILDCARD_CACHE = new ConcurrentHashMap<>();
     private static final Map<ItemEntity, List<Component>> TOOLTIP_CACHE = new ConcurrentHashMap<>();
     private static boolean warnings = true;
 
@@ -200,23 +201,25 @@ public class Utils {
     }
 
     public static List<Item> getMatchingItems(String context, String itemKey) {
-        if (itemKey.length() == itemKey.indexOf(':') + 2) {
-            if (warnings) {
-                VaultLootBeams.LOGGER.warn("No value in identifier \"{}\" in {}", itemKey, context);
+        return WILDCARD_CACHE.computeIfAbsent(itemKey, k -> {
+            if (itemKey.length() == itemKey.indexOf(':') + 2) {
+                if (warnings) {
+                    VaultLootBeams.LOGGER.warn("No value in identifier \"{}\" in {}", itemKey, context);
+                }
+                return new ArrayList<>();
             }
-            return new ArrayList<>();
-        }
-        String namespace = itemKey.substring(0, itemKey.indexOf(':'));
-        String ending = itemKey.substring(itemKey.indexOf(':') + 2);
-        List<Item> items = ForgeRegistries.ITEMS.getValues().stream()
-                .filter(item -> {
-                    ResourceLocation location = ForgeRegistries.ITEMS.getKey(item);
-                    return location != null && location.getNamespace().equals(namespace) && location.getPath().endsWith(ending);
-                }).toList();
-        if (items.isEmpty() && warnings) {
-            VaultLootBeams.LOGGER.warn("Couldn't find any items for identifier \"{}\" in {}", itemKey, context);
-        }
-        return items;
+            String namespace = itemKey.substring(0, itemKey.indexOf(':'));
+            String ending = itemKey.substring(itemKey.indexOf(':') + 2);
+            List<Item> items = ForgeRegistries.ITEMS.getValues().stream()
+                    .filter(item -> {
+                        ResourceLocation location = ForgeRegistries.ITEMS.getKey(item);
+                        return location != null && location.getNamespace().equals(namespace) && location.getPath().endsWith(ending);
+                    }).toList();
+            if (items.isEmpty() && warnings) {
+                VaultLootBeams.LOGGER.warn("Couldn't find any items for identifier \"{}\" in {}", itemKey, context);
+            }
+            return items;
+        });
     }
 
     public static Item getItem(String context, String itemKey) {
