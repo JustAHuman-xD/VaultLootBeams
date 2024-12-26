@@ -4,6 +4,8 @@ import iskallia.vault.init.ModBlocks;
 import iskallia.vault.init.ModItems;
 import me.justahuman.vaultlootbeams.utils.ItemColors;
 
+import java.awt.*;
+
 import static me.justahuman.vaultlootbeams.client.config.ModConfig.DEFAULT;
 
 public class VaultCompat {
@@ -33,7 +35,7 @@ public class VaultCompat {
                         ModItems.POG,
                         ModItems.ECHO_POG,
                         ModItems.OMEGA_POG)
-                , ItemColors.POG)
+                , ItemColors.POG.toArray(new Color[0]))
                 .add(ModItems.ASHIUM_KEY, ItemColors.ASHIUM)
                 .add(ModItems.BOMIGNITE_KEY, ItemColors.BOMIGNITE_RED,
                         ItemColors.TRANSITION,

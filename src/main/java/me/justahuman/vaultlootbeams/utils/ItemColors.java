@@ -25,7 +25,7 @@ public class ItemColors {
     public static final Color UPALINE = new Color(0xF8DFF4);
     public static final Color XENIUM = new Color(0x322589);
 
-    public static final Color[] POG = { new Color(0x6FE400), new Color(0x0249F4), new Color(0xFF21FF), new Color(0xDF1A1A) };
+    public static final List<Color> POG = List.of(new Color(0x6FE400), new Color(0x0249F4), new Color(0xFF21FF), new Color(0xDF1A1A));
 
     public static final List<Color> WOODEN = List.of(new Color(0xB87A46));
     public static final List<Color> GILDED = List.of(new Color(0xFFEC51));
@@ -45,4 +45,13 @@ public class ItemColors {
     public static final Color SAGE = new Color(0xC113E5);
     public static final Color SCOUT = new Color(0xE0DC0E);
     public static final Color PROPHET = new Color(0x409CB7);
+
+    public static final List<Color> CHROMATIC_IRON = List.of(new Color(0xC7E7F7), new Color(0xBDE1F1), new Color(0xEFC2ED), new Color(0xD9DBE3),
+            new Color(0xC1C7FC), new Color(0xC1C7FC), new Color(0xC7D3F1), new Color(0xC3CBF3));
+    public static final List<Color> CHROMATIC_STEEL = List.of(new Color(0x5F858F), new Color(0x48818C), new Color(0x8F5389), new Color(0x7C7B82),
+            new Color(0x388692), new Color(0x515E92), new Color(0x5E718B), new Color(0x58638E));
+    public static final List<Color> VAULTERITE = List.of(new Color(0x960209), new Color(0x721216), new Color(0x6c4d4e));
+    public static final List<Color> BLACK_CHROMATIC_STEEL = List.of(new Color(0x50495D), new Color(0x524B59), new Color(0x544C56), new Color(0x414E5F),
+            new Color(0x464F5C), new Color(0x45485F), new Color(0x4A4A5D), new Color(0x3F585F));
+    public static final List<Color> ECHOING = List.of(new Color(0x1A0133), new Color(0x4E0599));
 }

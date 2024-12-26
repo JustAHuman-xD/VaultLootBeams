@@ -12,7 +12,8 @@
     "colors.CrystalItemMixin",
     "colors.InfusedCatalystItemMixin",
     "colors.InscriptionItemMixin",
-    "colors.JewelItemMixin"
+    "colors.JewelItemMixin",
+    "colors.ToolItemMixin"
   ],
   "client": [
     "ItemEntityRendererMixin"

@@ -16,7 +16,7 @@ public class InfusedCatalystItemMixin implements LootBeamHolder {
     @Override
     public Color getBeamColor(ItemEntity entity, ItemStack itemStack) {
         int model = itemStack.getTag() == null ? 0 : itemStack.getTag().getInt("model");
-        return Utils.getGradientColor(entity,switch(model) {
+        return Utils.getGradientColor(entity, switch(model) {
             case 1 -> WOODEN;
             case 2, 10 -> GILDED;
             case 3, 11 -> LIVING;
