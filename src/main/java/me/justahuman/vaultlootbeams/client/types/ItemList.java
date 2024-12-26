@@ -148,7 +148,7 @@ public class ItemList {
                 if (Utils.isModId(key, itemKey)) {
                     modIds.add(itemKey);
                 }
-            } else if (key.contains("*")) {
+            } else if (itemKey.contains("*")) {
                 List<Item> matching = Utils.getMatchingItems(key, itemKey);
                 if (!matching.isEmpty()) {
                     dynamic.put(itemKey, new LinkedHashSet<>(matching));
