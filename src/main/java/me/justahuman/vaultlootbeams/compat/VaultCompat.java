@@ -14,10 +14,13 @@ public class VaultCompat {
                 .add(ModItems.HELMET, ModItems.CHESTPLATE, ModItems.LEGGINGS, ModItems.BOOTS)
                 .add(ModItems.WAND, ModItems.FOCUS, ModItems.SHIELD)
                 .add(ModItems.IDOL_BENEVOLENT, ModItems.IDOL_MALEVOLENCE, ModItems.IDOL_OMNISCIENT, ModItems.IDOL_TIMEKEEPER)
+                .add(ModItems.SMALL_CHARM, ModItems.LARGE_CHARM, ModItems.GRAND_CHARM, ModItems.MAJESTIC_CHARM)
+                .add(ModItems.VAULT_GOD_CHARM)
                 .add(ModItems.AXE, ModItems.SWORD)
-                .add(ModItems.MAGNET, ModItems.TRINKET, ModItems.SMALL_CHARM, ModItems.LARGE_CHARM, ModItems.GRAND_CHARM, ModItems.MAJESTIC_CHARM, ModItems.CARD_DECK)
+                .add(ModItems.MAGNET, ModItems.TRINKET, ModItems.CARD_DECK)
                 .add(ModItems.GEMSTONE, ModItems.KEY_PIECE, ModItems.BLANK_KEY, ModItems.UNIDENTIFIED_TREASURE_KEY)
-                .add(ModItems.KNOWLEDGE_STAR);
+                .add(ModItems.KNOWLEDGE_STAR)
+                .add(ModItems.ANTIQUE);
 
         DEFAULT.colorOverrides
                 .add("artifacts", items -> items.add(

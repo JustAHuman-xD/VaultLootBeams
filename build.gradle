@@ -7,16 +7,16 @@ plugins {
 
 apply plugin: 'org.spongepowered.mixin'
 
-group = 'me.justahuman.vaultlootbeams'
-version = '1.0.0-beta6'
+group = project.group_name
+version = project.mod_version
 
 java {
-    archivesBaseName = 'VaultLootBeams'
+    archivesBaseName = project.archives_base_name
     toolchain.languageVersion = JavaLanguageVersion.of(17)
 }
 
 minecraft {
-    mappings channel: 'parchment', version: '2022.11.06-1.18.2'
+    mappings channel: "${mappings_channel}", version: "${mappings_version}-${minecraft_version}"
 
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 }
@@ -34,30 +34,41 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.93'
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    api fg.deobf("me.shedaniel.cloth:cloth-config-forge:6.3.81")
-    implementation fg.deobf("curse.maven:vault-hunters-official-mod-458203:5925633")
-    implementation fg.deobf("curse.maven:curios-309927:4418032")
+    api fg.deobf("me.shedaniel.cloth:cloth-config-forge:${cloth_config_version}")
+
+    implementation fg.deobf("curse.maven:vault-hunters-official-mod-458203:${vault_hunters_version}")
+    implementation fg.deobf("curse.maven:curios-309927:${curios_version}")
+
+    annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
 }
 
 mixin {
-    add sourceSets.main, "vaultlootbeams.refmap.json"
-    config 'vaultlootbeams.mixins.json'
+    add sourceSets.main, "${mod_id}.refmap.json"
+    config "${mod_id}.mixins.json"
     debug.verbose = true
     debug.export = true
+}
+
+processResources {
+    inputs.property "version", project.version
+    filesMatching('META-INF/mods.toml') {
+        expand version: project.version,
+                mod_id: project.mod_id,
+                mod_name: project.mod_name
+    }
 }
 
 jar {
     manifest {
         attributes([
-                "Specification-Title": "vaultlootbeams",
-                //"Specification-Vendor": "lootbeams authors",
+                "Specification-Title": "${mod_id}",
+                "Specification-Vendor": "${mod_id}sareus",
                 "Specification-Version": "1",
                 "Implementation-Title": project.name,
                 "Implementation-Version": project.jar.archiveVersion,
-                //"Implementation-Vendor": "lootbeams authors",
+                "Implementation-Vendor": "${mod_id}sareus",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }

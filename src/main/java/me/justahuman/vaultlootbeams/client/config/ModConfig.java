@@ -93,6 +93,7 @@ public class ModConfig {
 
         renderDistance = JsonUtils.getBounded(root, "renderDistance", 0, 1024, DEFAULT.renderDistance);
         requireGround = JsonUtils.get(root, "requireGround", DEFAULT.requireGround);
+        whitelistColorOverrides = JsonUtils.get(root, "whitelistColorOverrides", DEFAULT.whitelistColorOverrides);
         renderCondition = JsonUtils.get(root, "renderCondition", DEFAULT.renderCondition, ItemCondition.class);
         renderWhitelist = ItemList.deserialize(root, "renderWhitelist", DEFAULT.renderWhitelist);
         renderBlacklist = ItemList.deserialize(root, "renderBlacklist", DEFAULT.renderBlacklist);
@@ -152,6 +153,7 @@ public class ModConfig {
         JsonObject root = new JsonObject();
         root.addProperty("renderDistance", renderDistance);
         root.addProperty("requireGround", requireGround);
+        root.addProperty("whitelistColorOverrides", whitelistColorOverrides);
         root.addProperty("renderCondition", renderCondition.name());
         root.add("renderWhitelist", renderWhitelist.serialize());
         root.add("renderBlacklist", renderBlacklist.serialize());

@@ -54,4 +54,5 @@ public class ItemColors {
     public static final List<Color> BLACK_CHROMATIC_STEEL = List.of(new Color(0x50495D), new Color(0x524B59), new Color(0x544C56), new Color(0x414E5F),
             new Color(0x464F5C), new Color(0x45485F), new Color(0x4A4A5D), new Color(0x3F585F));
     public static final List<Color> ECHOING = List.of(new Color(0x1A0133), new Color(0x4E0599));
+    public static final List<Color> ROYALE = List.of(new Color(0xFCD80F), new Color(0xC58F08));
 }

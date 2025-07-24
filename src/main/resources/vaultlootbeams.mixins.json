@@ -4,19 +4,18 @@
   "package": "me.justahuman.vaultlootbeams.mixin",
   "compatibilityLevel": "JAVA_8",
   "refmap": "vaultlootbeams.refmap.json",
-  "mixins": [
-    "ItemEntityMixin",
-    "colors.AugmentItemMixin",
-    "colors.BlessingItemMixin",
-    "colors.BottleItemMixin",
-    "colors.CrystalItemMixin",
-    "colors.InfusedCatalystItemMixin",
-    "colors.InscriptionItemMixin",
-    "colors.JewelItemMixin",
-    "colors.ToolItemMixin"
-  ],
   "client": [
-    "ItemEntityRendererMixin"
+    "ItemEntityMixin",
+    "ItemEntityRendererMixin",
+    "ItemMixin",
+    "colors.vault.AugmentItemMixin",
+    "colors.vault.BlessingItemMixin",
+    "colors.vault.BottleItemMixin",
+    "colors.vault.CrystalItemMixin",
+    "colors.vault.InfusedCatalystItemMixin",
+    "colors.vault.InscriptionItemMixin",
+    "colors.vault.JewelItemMixin",
+    "colors.vault.ToolItemMixin"
   ],
   "injectors": {
     "defaultRequire": 1

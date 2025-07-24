@@ -45,8 +45,16 @@ public final class ParticleGroup {
     }
 
     public static ParticleGroup defaultGroup() {
-        return new ParticleGroup(0.25, 0.1, 0.05, 19, 20,
-                ItemCondition.LISTS_ONLY, new ItemList(), new ItemList());
+        return new ParticleGroup(
+                0.25,
+                0.1,
+                0.05,
+                19,
+                20,
+                ItemCondition.LISTS_ONLY,
+                new ItemList(),
+                new ItemList()
+        );
     }
 
     public static Map<String, ParticleGroup> defaultGroups() {

@@ -1,6 +1,7 @@
 package me.justahuman.vaultlootbeams.utils;
 
 import me.justahuman.vaultlootbeams.VaultLootBeams;
+import me.justahuman.vaultlootbeams.api.ItemExtension;
 import me.justahuman.vaultlootbeams.api.LootBeamHolder;
 import me.justahuman.vaultlootbeams.client.types.ItemCondition;
 import me.justahuman.vaultlootbeams.client.types.ItemList;
@@ -51,7 +52,8 @@ public class Utils {
             return false;
         }
 
-        if (itemStack.getItem() instanceof LootBeamHolder holder) {
+        LootBeamHolder holder = ((ItemExtension) item).vaultLootBeams$getLootBeamHolder();
+        if (holder != null) {
             return holder.shouldRenderBeam(itemEntity, itemStack);
         } else if (CONFIG.whitelistColorOverrides && CONFIG.colorOverrides.contains(item)) {
             return true;
@@ -81,15 +83,17 @@ public class Utils {
         if (VaultLootBeams.CRASH_BLACKLIST.contains(itemStack)) {
             return Color.WHITE;
         }
+        Item item = itemStack.getItem();
 
         // From player config
-        List<Color> override = CONFIG.colorOverrides.get(itemStack.getItem());
+        List<Color> override = CONFIG.colorOverrides.get(item);
         if (override != null && !override.isEmpty()) {
             return getGradientColor(itemEntity, override);
         }
 
         // From Item
-        if (itemStack.getItem() instanceof LootBeamHolder holder) {
+        LootBeamHolder holder = ((ItemExtension) item).vaultLootBeams$getLootBeamHolder();
+        if (holder != null) {
             return holder.getBeamColor(itemEntity, itemStack);
         }
 

@@ -46,6 +46,7 @@ public class ConfigScreen {
 
         general.addEntry(doubleEntry(entryBuilder, "renderDistance", 0, 1024));
         general.addEntry(booleanEntry(entryBuilder, "requireGround"));
+        general.addEntry(booleanEntry(entryBuilder, "whitelistColorOverrides"));
         general.addEntry(enumEntry(entryBuilder, "renderCondition", ItemCondition.class));
         general.addEntry(itemListEntry(entryBuilder, "renderWhitelist"));
         general.addEntry(itemListEntry(entryBuilder, "renderBlacklist"));

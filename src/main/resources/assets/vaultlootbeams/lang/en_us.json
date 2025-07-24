@@ -19,6 +19,8 @@
   "vaultlootbeams.config.renderDistance.tooltip": "How close the player has to be to see the beam. (note: in vanilla items stop rendering at 24 blocks.)",
   "vaultlootbeams.config.requireGround": "Require Item On Ground",
   "vaultlootbeams.config.requireGround.tooltip": "If the item needs to be on the ground to render the Loot Beam.",
+  "vaultlootbeams.config.whitelistColorOverrides": "Whitelist Color Overrides",
+  "vaultlootbeams.config.whitelistColorOverrides.tooltip": "Should items with a color override count as whitelisted for rendering.",
   "vaultlootbeams.config.renderCondition": "Render Condition",
   "vaultlootbeams.config.renderCondition.tooltip": "The general requirement for an item to render a Loot Beam.",
   "vaultlootbeams.config.renderWhitelist": "Render Whitelist",
