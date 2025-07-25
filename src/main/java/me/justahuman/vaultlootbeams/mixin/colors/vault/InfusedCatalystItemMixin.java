@@ -15,7 +15,7 @@ import static me.justahuman.vaultlootbeams.utils.ItemColors.*;
 @Mixin(InfusedCatalystItem.class)
 public class InfusedCatalystItemMixin implements LootBeamHolder {
     @Override
-    public @Nonnull Color getBeamColor(ItemEntity entity, ItemStack itemStack) {
+    public @Nonnull Color getBeamColor(ItemEntity entity, ItemStack itemStack, float partialTicks) {
         int model = itemStack.getTag() == null ? 0 : itemStack.getTag().getInt("model");
         return Utils.getGradientColor(entity, switch(model) {
             case 1 -> WOODEN;

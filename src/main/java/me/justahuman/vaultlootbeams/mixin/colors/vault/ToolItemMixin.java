@@ -15,7 +15,7 @@ import static me.justahuman.vaultlootbeams.utils.ItemColors.*;
 @Mixin(ToolItem.class)
 public class ToolItemMixin implements LootBeamHolder {
     @Override
-    public @Nonnull Color getBeamColor(ItemEntity entity, ItemStack itemStack) {
+    public @Nonnull Color getBeamColor(ItemEntity entity, ItemStack itemStack, float partialTicks) {
         return Utils.getGradientColor(entity, switch(ToolItem.getMaterial(itemStack)) {
             case CHROMATIC_IRON_INGOT -> CHROMATIC_IRON;
             case CHROMATIC_STEEL_INGOT -> CHROMATIC_STEEL;

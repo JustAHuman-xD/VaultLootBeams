@@ -12,7 +12,7 @@ import java.awt.*;
 @Mixin(BottleItem.class)
 public class BottleItemMixin implements LootBeamHolder {
     @Override
-    public @Nonnull Color getBeamColor(ItemEntity entity, ItemStack itemStack) {
+    public @Nonnull Color getBeamColor(ItemEntity entity, ItemStack itemStack, float partialTicks) {
         return new Color(BottleItem.getEffectColor(itemStack));
     }
 }

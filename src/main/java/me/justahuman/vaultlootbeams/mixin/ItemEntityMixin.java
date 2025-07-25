@@ -4,6 +4,7 @@ import me.justahuman.vaultlootbeams.VaultLootBeams;
 import me.justahuman.vaultlootbeams.client.LootBeamRenderer;
 import me.justahuman.vaultlootbeams.client.types.ParticleGroup;
 import me.justahuman.vaultlootbeams.utils.Utils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -28,7 +29,7 @@ public abstract class ItemEntityMixin {
         ItemStack itemStack = itemEntity.getItem();
         ParticleGroup particleGroup = CONFIG.particleGroup(itemStack);
         if (CONFIG.beamParticles && Utils.passes(particleGroup.particleCondition, particleGroup.particleWhitelist, particleGroup.particleBlacklist, itemStack)) {
-            LootBeamRenderer.spawnParticles(itemEntity, this.age, particleGroup, Utils.getItemColor(itemEntity));
+            LootBeamRenderer.spawnParticles(itemEntity, this.age, particleGroup, Utils.getItemColor(itemEntity, Minecraft.getInstance().getFrameTime()));
         }
 
         if (CONFIG.landingSound && !vaultLootBeams$playedSound && (itemEntity.isOnGround() || (itemEntity.isOnGround() && (itemEntity.tickCount < 10 && itemEntity.tickCount > 3)))) {

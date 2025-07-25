@@ -12,7 +12,7 @@ import java.awt.*;
 @Mixin(GodBlessingItem.class)
 public class BlessingItemMixin implements LootBeamHolder {
     @Override
-    public @Nonnull Color getBeamColor(ItemEntity entity, ItemStack itemStack) {
+    public @Nonnull Color getBeamColor(ItemEntity entity, ItemStack itemStack, float partialTicks) {
         return new Color(GodBlessingItem.getGod(itemStack).getColor());
     }
 }

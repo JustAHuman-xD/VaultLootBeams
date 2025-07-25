@@ -15,6 +15,7 @@ import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.impl.builders.SubCategoryBuilder;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 
@@ -97,13 +98,20 @@ public class ConfigScreen {
                             return Optional.of(new Component[] { translate("colors.tooltip") });
                         }
                         List<Component> tooltip = new ArrayList<>();
+                        tooltip.add(translate("colors.tooltip"));
                         tooltip.add(translate("colors.preview"));
+                        List<Color> decoded = new ArrayList<>();
                         for (String color : newValue) {
                             try {
-                                tooltip.add(new TextComponent(color).withStyle(style -> style.withColor(Color.decode(color).getRGB())));
+                                Color decodedColor = Color.decode(color);
+                                decoded.add(decodedColor);
+                                tooltip.add(new TextComponent(color).withStyle(style -> style.withColor(decodedColor.getRGB())));
                             } catch (Exception ignored) {}
                         }
-                        tooltip.add(translate("colors.tooltip"));
+                        if (decoded.size() > 1) {
+                            tooltip.add(translate("colors.transition")
+                                    .withStyle(style -> style.withColor(Utils.getGradientColor((int) System.currentTimeMillis() / 50, decoded).getRGB())));
+                        }
                         return Optional.of(tooltip.toArray(new Component[0]));
                     })
                     .setDefaultValue(colors)
@@ -328,7 +336,7 @@ public class ConfigScreen {
         VaultLootBeams.LOGGER.error("Failed to add config entry for field {}", fieldName);
     }
 
-    public static Component translate(String key) {
+    public static MutableComponent translate(String key) {
         return new TranslatableComponent(VaultLootBeams.MODID + ".config." + key);
     }
 }

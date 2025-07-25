@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import java.awt.*;
 
 public interface LootBeamHolder {
-    @Nonnull Color getBeamColor(ItemEntity entity, ItemStack itemStack);
+    @Nonnull Color getBeamColor(ItemEntity entity, ItemStack itemStack, float partialTicks);
 
     default boolean shouldRenderBeam(ItemEntity entity, ItemStack itemStack) {
         return true;
@@ -15,7 +15,7 @@ public interface LootBeamHolder {
 
     LootBeamHolder NONE = new LootBeamHolder() {
         @Override
-        public @Nonnull Color getBeamColor(ItemEntity entity, ItemStack itemStack) {
+        public @Nonnull Color getBeamColor(ItemEntity entity, ItemStack itemStack, float partialTicks) {
             return Color.WHITE;
         }
 

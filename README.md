@@ -137,7 +137,7 @@ An item list is a special type of list that is used to collect items for various
 Item lists can either be inlined as a singular entry, or as a full list of entries.
 Entries can be formatted in a number of ways:
 - Item Identifier - Targets a single item with the provided identifier, such as `minecraft:diamond`.
-- Partial Item Identifier - A partial identifier indicated with a `*`, such as `minecraft:*_axe`, partial identifiers target all items under the same namespace whose path ends with the suffix after the `*`
+- Partial Item Identifier - A partial identifier indicated using a `*`, such as `minecraft:*_axe` or `minecraft:diamond_*`, partial identifiers target all items under the same namespace whose identifier starts/ends with the provided identifier.
 - Item Tag - Targets all items within the provided tag, such as `minecraft:beds`.
 - Mod Id - Targets all items within the provided mod, such as `minecraft` or `the_vault`.
 

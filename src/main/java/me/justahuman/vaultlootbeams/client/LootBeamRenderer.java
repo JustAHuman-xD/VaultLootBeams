@@ -70,7 +70,7 @@ public class LootBeamRenderer extends RenderType {
 		float beamHeight = (float) CONFIG.beamHeight;
 		float yOffset = (float) CONFIG.beamYOffset;
 
-		Color color = Utils.getItemColor(itemEntity);
+		Color color = Utils.getItemColor(itemEntity, pTicks);
 		float r = color.getRed() / 255.0F;
 		float g = color.getGreen() / 255.0F;
 		float b = color.getBlue() / 255.0F;

@@ -7,12 +7,10 @@ public class ItemColors {
     public static final Color TRANSITION = new Color(0x000000);
 
     public static final Color ARTIFACT = new Color(0xFFA800);
-    public static final Color INSCRIPTION = new Color(0x8BFFCA);
     public static final Color LOST_BOUNTY = new Color(0xFFFA9E);
     public static final Color OLD_NOTES = new Color(0xD4A661);
     public static final Color BOUNTY_PEARL = new Color(0x38203E);
     public static final Color CATALYST = new Color(0xDCCE90);
-    public static final Color DECK = new Color(0x008080);
 
     public static final Color ASHIUM = new Color(0xD9772F);
     public static final Color BOMIGNITE_RED = new Color(0xE03847);

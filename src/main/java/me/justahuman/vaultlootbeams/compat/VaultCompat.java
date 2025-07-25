@@ -17,7 +17,7 @@ public class VaultCompat {
                 .add(ModItems.SMALL_CHARM, ModItems.LARGE_CHARM, ModItems.GRAND_CHARM, ModItems.MAJESTIC_CHARM)
                 .add(ModItems.VAULT_GOD_CHARM)
                 .add(ModItems.AXE, ModItems.SWORD)
-                .add(ModItems.MAGNET, ModItems.TRINKET, ModItems.CARD_DECK)
+                .add(ModItems.MAGNET, ModItems.TRINKET)
                 .add(ModItems.GEMSTONE, ModItems.KEY_PIECE, ModItems.BLANK_KEY, ModItems.UNIDENTIFIED_TREASURE_KEY)
                 .add(ModItems.KNOWLEDGE_STAR)
                 .add(ModItems.ANTIQUE);
@@ -28,12 +28,10 @@ public class VaultCompat {
                         ModItems.UNIDENTIFIED_ARTIFACT,
                         ModBlocks.VAULT_ARTIFACT.asItem()),
                 ItemColors.ARTIFACT)
-                .add(ModItems.INSCRIPTION, ItemColors.INSCRIPTION)
                 .add(ModItems.LOST_BOUNTY, ItemColors.LOST_BOUNTY)
                 .add(ModItems.OLD_NOTES, ItemColors.OLD_NOTES)
                 .add(ModItems.BOUNTY_PEARL, ItemColors.BOUNTY_PEARL)
                 .add(ModItems.VAULT_CATALYST, ItemColors.CATALYST)
-                .add(ModItems.CARD_DECK, ItemColors.DECK)
                 .add("pog", items -> items.add(
                         ModItems.POG,
                         ModItems.ECHO_POG,

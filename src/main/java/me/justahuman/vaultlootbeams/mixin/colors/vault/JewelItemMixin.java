@@ -12,7 +12,7 @@ import java.awt.*;
 @Mixin(JewelItem.class)
 public class JewelItemMixin implements LootBeamHolder {
     @Override
-    public @Nonnull Color getBeamColor(ItemEntity entity, ItemStack itemStack) {
+    public @Nonnull Color getBeamColor(ItemEntity entity, ItemStack itemStack, float partialTicks) {
         return new Color(JewelItem.getColor(itemStack));
     }
 }

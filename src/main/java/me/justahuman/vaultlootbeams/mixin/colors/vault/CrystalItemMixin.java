@@ -1,5 +1,6 @@
 package me.justahuman.vaultlootbeams.mixin.colors.vault;
 
+import iskallia.vault.client.util.ClientScheduler;
 import iskallia.vault.item.crystal.CrystalData;
 import iskallia.vault.item.crystal.VaultCrystalItem;
 import me.justahuman.vaultlootbeams.api.LootBeamHolder;
@@ -13,8 +14,8 @@ import java.awt.*;
 @Mixin(VaultCrystalItem.class)
 public class CrystalItemMixin implements LootBeamHolder {
     @Override
-    public @Nonnull Color getBeamColor(ItemEntity entity, ItemStack itemStack) {
+    public @Nonnull Color getBeamColor(ItemEntity entity, ItemStack itemStack, float partialTicks) {
         CrystalData data = CrystalData.read(itemStack);
-        return new Color(data.getModel().getBlockColor(data, (float) entity.getAge()));
+        return new Color(data.getModel().getBlockColor(data, (float) ClientScheduler.INSTANCE.getTick() + partialTicks));
     }
 }

@@ -1,5 +1,7 @@
 package me.justahuman.vaultlootbeams.utils;
 
+import iskallia.vault.item.CardDeckItem;
+import iskallia.vault.item.render.CardDeckItemRenderer;
 import me.justahuman.vaultlootbeams.VaultLootBeams;
 import me.justahuman.vaultlootbeams.api.ItemExtension;
 import me.justahuman.vaultlootbeams.api.LootBeamHolder;
@@ -62,12 +64,16 @@ public class Utils {
     }
 
     public static Color getGradientColor(ItemEntity itemEntity, List<Color> colors) {
+        return getGradientColor(itemEntity.getAge(), colors);
+    }
+
+    public static Color getGradientColor(int time, List<Color> colors) {
         if (colors.size() == 1) {
             return colors.get(0);
         }
 
-        int stage = (itemEntity.getAge() / 30) % colors.size();
-        int progress = itemEntity.getAge() % 30;
+        int stage = (time / 30) % colors.size();
+        int progress = time % 30;
 
         Color colorStart = colors.get(stage);
         Color colorEnd = colors.get((stage + 1) % colors.size());
@@ -78,7 +84,7 @@ public class Utils {
     /**
      * Returns the color from the item's name, rarity, tag, or override.
      */
-    public static Color getItemColor(ItemEntity itemEntity) {
+    public static Color getItemColor(ItemEntity itemEntity, float pTicks) {
         ItemStack itemStack = itemEntity.getItem();
         if (VaultLootBeams.CRASH_BLACKLIST.contains(itemStack)) {
             return Color.WHITE;
@@ -94,7 +100,7 @@ public class Utils {
         // From Item
         LootBeamHolder holder = ((ItemExtension) item).vaultLootBeams$getLootBeamHolder();
         if (holder != null) {
-            return holder.getBeamColor(itemEntity, itemStack);
+            return holder.getBeamColor(itemEntity, itemStack, pTicks);
         }
 
         // From NBT
@@ -212,13 +218,34 @@ public class Utils {
                 }
                 return new ArrayList<>();
             }
+
             String namespace = itemKey.substring(0, itemKey.indexOf(':'));
-            String ending = itemKey.substring(itemKey.indexOf(':') + 2);
-            List<Item> items = ForgeRegistries.ITEMS.getValues().stream()
-                    .filter(item -> {
-                        ResourceLocation location = ForgeRegistries.ITEMS.getKey(item);
-                        return location != null && location.getNamespace().equals(namespace) && location.getPath().endsWith(ending);
-                    }).toList();
+            String value = itemKey.substring(itemKey.indexOf(':') + 1);
+
+            List<Item> items;
+            int wildcardIndex = value.indexOf('*');
+            if (wildcardIndex == 0) {
+                String suffix = value.substring(1);
+                items = ForgeRegistries.ITEMS.getValues().stream()
+                        .filter(item -> {
+                            ResourceLocation location = ForgeRegistries.ITEMS.getKey(item);
+                            return location != null && location.getNamespace().equals(namespace) && location.getPath().endsWith(suffix);
+                        }).toList();
+            } else {
+                if (wildcardIndex != value.length() - 1) {
+                    if (warnings) {
+                        VaultLootBeams.LOGGER.warn("Wildcard in identifier \"{}\" must be at the start or end in {}", itemKey, context);
+                    }
+                    return new ArrayList<>();
+                }
+                String prefix = value.substring(0, value.length() - 1);
+                items = ForgeRegistries.ITEMS.getValues().stream()
+                        .filter(item -> {
+                            ResourceLocation location = ForgeRegistries.ITEMS.getKey(item);
+                            return location != null && location.getNamespace().equals(namespace) && location.getPath().startsWith(prefix);
+                        }).toList();
+            }
+
             if (items.isEmpty() && warnings) {
                 VaultLootBeams.LOGGER.warn("Couldn't find any items for identifier \"{}\" in {}", itemKey, context);
             }
